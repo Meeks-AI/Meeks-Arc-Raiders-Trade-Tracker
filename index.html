@@ -98,13 +98,16 @@
         .btn-amber:hover { filter: brightness(1.1); }
         .btn-ghost { background: transparent; color: var(--muted); }
         .btn-ghost:hover { color: var(--text); background: var(--bg-3); }
+        /* Green sell button */
+        .btn-sell { background: rgba(16,185,129,0.15); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); padding: 6px 12px; font-size: 0.7rem; }
+        .btn-sell:hover { background: rgba(16,185,129,0.25); border-color: var(--emerald); }
         .tag { font-size: 0.65rem; padding: 4px 8px; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
         .tag-fir { background: rgba(6,182,212,0.2); color: var(--cyan); }
         .tag-buy { background: rgba(100,116,139,0.25); color: var(--text-dim); }
         .tag-trd { background: rgba(139,92,246,0.2); color: #a78bfa; }
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; padding: 12px 16px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); border-bottom: 1px solid var(--border); }
-        td { padding: 12px 16px; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
+        td { padding: 10px 16px; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
         tbody tr:hover { background: var(--bg-3); }
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.2s ease; }
@@ -123,15 +126,20 @@
         .analytics-grid { display: grid; gap: 1.5rem; }
         .tools-grid { max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
         .tool-block { padding: 1.25rem; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-1); }
-        .tool-block label { display: block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.5rem; }
+        .tool-block label { display: block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.75rem; }
         .version-tag { font-size: 0.6rem; padding: 2px 6px; border: 1px solid var(--amber); color: var(--amber); border-radius: 4px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em; }
         .session-divider td { background: rgba(139,92,246,0.08) !important; color: var(--violet); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 5px 16px; border-top: 1px solid rgba(139,92,246,0.3); border-bottom: 1px solid rgba(139,92,246,0.3); }
+        .setting-row { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+        .setting-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .setting-row input[type=checkbox] { width: 16px; height: 16px; margin-top: 2px; padding: 0; cursor: pointer; accent-color: var(--cyan); flex-shrink: 0; }
+        .setting-label { font-size: 0.8rem; font-weight: 600; color: var(--text); }
+        .setting-desc { font-size: 0.7rem; color: var(--muted); margin: 3px 0 0; }
     </style>
 </head>
 <body>
     <!-- Price History Modal -->
     <div id="priceHistoryModal" onclick="handleModalClick(event)" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
-        <div id="priceHistoryInner" style="background:var(--bg-2);border:1px solid var(--border-bright);border-radius:12px;padding:1.5rem;width:min(580px,90vw);">
+        <div style="background:var(--bg-2);border:1px solid var(--border-bright);border-radius:12px;padding:1.5rem;width:min(580px,90vw);">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
                 <div>
                     <span id="priceHistoryTitle" style="font-weight:700;font-size:1rem;color:var(--cyan);font-family:'JetBrains Mono',monospace;"></span>
@@ -146,7 +154,7 @@
 
     <div class="app">
         <aside class="sidebar">
-            <div class="version-tag" style="margin-bottom: 0.5rem;">v4.20.69b</div>
+            <div class="version-tag" style="margin-bottom:0.5rem;">v4.20.69b</div>
             <button class="nav-btn active" id="nav-trade" onclick="switchTab('trade')" title="Operations">📦<span>Operations</span></button>
             <button class="nav-btn" id="nav-analytics" onclick="switchTab('analytics')" title="Analytics">📊<span>Analytics</span></button>
             <button class="nav-btn" id="nav-audit" onclick="switchTab('audit')" title="Ledger">📋<span>Ledger</span></button>
@@ -173,7 +181,7 @@
                         <div class="ops-forms">
                             <div style="display:flex;align-items:center;justify-content:space-between;">
                                 <span style="font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);">Actions</span>
-                                <button class="btn btn-ghost" onclick="startNewSession()" style="font-size:0.7rem;padding:5px 12px;border:1px solid var(--border-bright);color:var(--violet);" title="Mark the start of a new raid session — groups entries together for per-session analytics">⚑ New Session</button>
+                                <button class="btn btn-ghost" onclick="startNewSession()" style="font-size:0.7rem;padding:5px 12px;border:1px solid var(--border-bright);color:var(--violet);" title="Mark the start of a new raid session — groups entries for per-session analytics">⚑ New Session</button>
                             </div>
                             <div class="form-block">
                                 <h3>Raid Recovery (FIR)</h3>
@@ -213,7 +221,11 @@
                             </div>
                             <div style="overflow-x:auto;max-height:calc(100vh - 280px)">
                                 <table>
-                                    <thead><tr><th>Item</th><th>Source</th><th>Qty</th><th>Cost</th><th>Market</th><th style="text-align:right">Action</th></tr></thead>
+                                    <thead><tr>
+                                        <th>Item</th><th>Source</th><th>Qty</th><th>Cost</th>
+                                        <th title="Median price from your own sell history">Your Median</th>
+                                        <th style="text-align:right">Action</th>
+                                    </tr></thead>
                                     <tbody id="inventoryTable"></tbody>
                                 </table>
                             </div>
@@ -290,17 +302,26 @@
                         </div>
                         <div class="tool-block">
                             <label>Metaforge Item List</label>
-                            <p id="metaforgeStatus" style="font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem">Not synced</p>
+                            <p id="metaforgeStatus" style="font-size:0.8rem;color:var(--muted);margin-bottom:0.75rem">Not synced</p>
                             <button class="btn btn-cyan" id="resyncBtn" onclick="resyncMetaforge()">Resync API</button>
                         </div>
                         <div class="tool-block">
                             <label>Settings</label>
-                            <div style="display:flex;align-items:flex-start;gap:0.75rem;">
-                                <input type="checkbox" id="allowCustomItemsToggle" onchange="toggleCustomItems(this)" style="width:16px;height:16px;margin-top:2px;padding:0;cursor:pointer;accent-color:var(--cyan);flex-shrink:0;">
+                            <div class="setting-row">
+                                <input type="checkbox" id="allowCustomItemsToggle" onchange="toggleCustomItems(this)">
                                 <div>
-                                    <span style="font-size:0.8rem;font-weight:600;color:var(--text);">Allow Custom Named Items</span>
-                                    <p style="font-size:0.7rem;color:var(--muted);margin:3px 0 0;">When off, only Metaforge items are accepted. Prevents typos and mismatched names.</p>
+                                    <div class="setting-label">Allow Custom Named Items</div>
+                                    <div class="setting-desc">When off, only Metaforge items are accepted. Prevents typos and mismatched names.</div>
                                 </div>
+                            </div>
+                        </div>
+                        <!-- Shown only when custom items are enabled -->
+                        <div class="tool-block" id="customMergeBlock" style="display:none;border-color:rgba(139,92,246,0.3);">
+                            <label style="color:#a78bfa;">Rename Custom Item</label>
+                            <div class="fields">
+                                <input type="text" id="mergeFromInput" list="itemOptions" placeholder="Current name">
+                                <input type="text" id="mergeToInput" placeholder="New name">
+                                <button class="btn btn-violet" onclick="mergeCustomItems()">Rename All Instances</button>
                             </div>
                         </div>
                         <div class="tool-block">
