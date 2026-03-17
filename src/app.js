@@ -654,7 +654,7 @@ function importData(input) {
     liquidSeeds = d.liquidSeeds ?? 0;
     if (d.aliasMap) {
       aliasMap = d.aliasMap;
-      writeJson(ALIAS_KEY, aliasMap);
+      writeJson(STORAGE_KEYS.itemAliases, aliasMap);
     }
     render();
   };
@@ -708,4 +708,3 @@ function init() {
 }
 
 init();
-
