@@ -19,7 +19,6 @@ export const STORAGE_PREFIX = 'arc_trade_tracker_v1';
 export const STORAGE_KEYS = Object.freeze({
   metaforgeCache: `${STORAGE_PREFIX}_metaforge_cache`,
   metaforgeCacheTs: `${STORAGE_PREFIX}_metaforge_cache_ts`,
-  itemAliases: `${STORAGE_PREFIX}_item_aliases`,
   stock: `${STORAGE_PREFIX}_stock`,
   audit: `${STORAGE_PREFIX}_audit`,
   liquidSeeds: `${STORAGE_PREFIX}_liquid_seeds`,
