@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Arc Trade Tracker v0.19</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-0: #06080a;
+            --bg-1: #0c0f14;
+            --bg-2: #12161d;
+            --bg-3: #181d26;
+            --border: #1e2633;
+            --border-bright: #2a3544;
+            --muted: #64748b;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --cyan: #06b6d4;
+            --cyan-dim: rgba(6,182,212,0.15);
+            --amber: #f59e0b;
+            --amber-dim: rgba(245,158,11,0.15);
+            --emerald: #10b981;
+            --emerald-dim: rgba(16,185,129,0.15);
+            --violet: #8b5cf6;
+            --violet-dim: rgba(139,92,246,0.15);
+            --rose: #f43f5e;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg-0);
+            color: var(--text);
+            font-family: 'Outfit', system-ui, sans-serif;
+            background-image:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(6,182,212,0.08), transparent),
+                linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%);
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .app { display: flex; min-height: 100vh; }
+        .sidebar {
+            width: 72px;
+            flex-shrink: 0;
+            background: var(--bg-2);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem 0;
+            gap: 0.5rem;
+        }
+        .nav-btn {
+            position: relative;
+            width: 44px; height: 44px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { background: var(--bg-3); color: var(--text); }
+        .nav-btn.active { background: var(--cyan-dim); color: var(--cyan); border-color: rgba(6,182,212,0.3); }
+        .nav-btn span { font-size: 10px; position: absolute; left: 100%; margin-left: 12px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; background: var(--bg-2); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); }
+        .nav-btn:hover span { opacity: 1; }
+        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .top-bar {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .brand { display: flex; align-items: baseline; gap: 1rem; }
+        .brand h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+        .brand .badge { font-size: 0.65rem; padding: 3px 8px; border-radius: 4px; background: var(--emerald-dim); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; }
+        .stats-row { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .stat { display: flex; flex-direction: column; gap: 2px; }
+        .stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+        .stat-value { font-size: 1.25rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+        .stat-value.liquid { color: var(--amber); }
+        .stat-value.assets { color: var(--cyan); }
+        .stat-value.net { color: var(--text); }
+        .stat-value.profit { color: var(--emerald); }
+        .content { flex: 1; padding: 1.5rem; overflow: auto; }
+        .card {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .card-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .card-title { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); }
+        input, textarea, select {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-0) !important;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px var(--cyan-dim);
+        }
+        .btn {
+            font-family: 'Outfit', sans-serif;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+        }
+        .btn-cyan { background: var(--cyan); color: #000; }
+        .btn-cyan:hover { filter: brightness(1.15); transform: translateY(-1px); }
+        .btn-slate { background: var(--bg-3); color: var(--text); border: 1px solid var(--border); }
+        .btn-slate:hover { background: var(--border-bright); }
+        .btn-violet { background: var(--violet); color: white; }
+        .btn-violet:hover { filter: brightness(1.1); }
+        .btn-amber { background: var(--amber); color: #000; }
+        .btn-amber:hover { filter: brightness(1.1); }
+        .btn-ghost { background: transparent; color: var(--muted); }
+        .btn-ghost:hover { color: var(--text); background: var(--bg-3); }
+        .tag { font-size: 0.65rem; padding: 4px 8px; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+        .tag-fir { background: rgba(6,182,212,0.2); color: var(--cyan); }
+        .tag-buy { background: rgba(100,116,139,0.25); color: var(--text-dim); }
+        .tag-trd { background: rgba(139,92,246,0.2); color: #a78bfa; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px 16px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); border-bottom: 1px solid var(--border); }
+        td { padding: 12px 16px; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
+        tbody tr:hover { background: var(--bg-3); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .ops-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+        @media (min-width: 1024px) { .ops-grid { grid-template-columns: 340px 1fr; } }
+        .ops-forms { display: flex; flex-direction: column; gap: 1.25rem; }
+        .form-block { padding: 1.25rem; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-1); border-left: 3px solid var(--cyan); }
+        .form-block.buy { border-left-color: var(--muted); }
+        .form-block.barter { border-left-color: var(--violet); }
+        .form-block h3 { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; color: var(--cyan); }
+        .form-block.buy h3 { color: var(--text-dim); }
+        .form-block.barter h3 { color: #a78bfa; }
+        .form-block .fields { display: flex; flex-direction: column; gap: 0.75rem; }
+        .form-block .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+        .analytics-grid { display: grid; gap: 1.5rem; }
+        .tools-grid { max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+        .tool-block { padding: 1.25rem; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-1); }
+        .tool-block label { display: block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.5rem; }
+        .version-tag { font-size: 0.6rem; padding: 2px 6px; border: 1px solid var(--amber); color: var(--amber); border-radius: 4px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em; }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="version-tag" style="margin-bottom: 0.5rem;">v4.20.69b</div>
+            <button class="nav-btn active" id="nav-trade" onclick="switchTab('trade')" title="Operations">📦<span>Operations</span></button>
+            <button class="nav-btn" id="nav-analytics" onclick="switchTab('analytics')" title="Analytics">📊<span>Analytics</span></button>
+            <button class="nav-btn" id="nav-audit" onclick="switchTab('audit')" title="Ledger">📋<span>Ledger</span></button>
+            <button class="nav-btn" id="nav-tools" onclick="switchTab('tools')" title="Tools">⚙<span>Tools</span></button>
+        </aside>
+        <main class="main">
+            <header class="top-bar">
+                <div class="brand">
+                    <h1>Speranza Logistics</h1>
+                    <span class="badge">● CONNECTED</span>
+                </div>
+                <div class="stats-row">
+                    <div class="stat">
+                        <span class="stat-label">Liquid</span>
+                        <span id="liquidDisplay" class="stat-value liquid font-mono">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Assets</span>
+                        <span id="assetValuation" class="stat-value assets font-mono">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Net Worth</span>
+                        <span id="netWorth" class="stat-value net font-mono">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Profit</span>
+                        <span id="totalProfit" class="stat-value profit font-mono">0</span>
+                    </div>
+                </div>
+            </header>
+            <div class="content">
+                <div id="view-trade" class="tab-content active">
+                    <div class="ops-grid">
+                        <div class="ops-forms">
+                            <div class="form-block">
+                                <h3>Raid Recovery (FIR)</h3>
+                                <div class="fields">
+                                    <textarea id="bulkText" rows="4" placeholder="Qty ItemName... (one per line)"></textarea>
+                                    <button class="btn btn-cyan" onclick="massIngest()">Process Loot</button>
+                                </div>
+                            </div>
+                            <div class="form-block buy">
+                                <h3>Market Acquisition</h3>
+                                <div class="fields">
+                                    <input type="text" id="buyName" list="itemOptions" placeholder="Item name">
+                                    <div class="row">
+                                        <div><label class="stat-label" style="margin-bottom:4px">Qty</label><input type="number" id="buyQty" value="1" style="width:100%"></div>
+                                        <div><label class="stat-label" style="margin-bottom:4px">Cost/ea</label><input type="number" id="buyPrice" placeholder="Seeds"></div>
+                                    </div>
+                                    <button class="btn btn-slate" onclick="buyItem()">Purchase & Deduct</button>
+                                </div>
+                            </div>
+                            <div class="form-block barter">
+                                <h3>Barter Exchange</h3>
+                                <div class="fields">
+                                    <label class="stat-label">Giving</label>
+                                    <select id="tradeFrom"></select>
+                                    <input type="number" id="tradeFromQty" value="1" min="1" placeholder="Qty">
+                                    <label class="stat-label">Receiving</label>
+                                    <input type="text" id="tradeTo" list="itemOptions" placeholder="Item name">
+                                    <input type="number" id="tradeQty" value="1" min="1" placeholder="Qty">
+                                    <button class="btn btn-violet" onclick="executeBarter()">Swap Assets</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">Warehouse · <span id="invCount">0</span> items</span>
+                                <input type="text" id="invSearch" oninput="render()" placeholder="Filter..." style="width:180px;padding:8px 12px;font-size:0.8rem">
+                            </div>
+                            <div style="overflow-x:auto;max-height:calc(100vh - 280px)">
+                                <table>
+                                    <thead><tr><th>Item</th><th>Source</th><th>Qty</th><th>Cost</th><th>Market</th><th style="text-align:right">Action</th></tr></thead>
+                                    <tbody id="inventoryTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="view-analytics" class="tab-content">
+                    <div class="analytics-grid">
+                        <div class="card" style="padding:1.25rem">
+                            <h3 class="card-title" style="margin-bottom:1rem">Net Worth & Profit</h3>
+                            <div style="height:240px"><canvas id="chartCanvas"></canvas></div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+                            <div class="card" style="padding:1.25rem">
+                                <h3 class="card-title" style="margin-bottom:1rem;color:var(--amber)">Investment Efficiency</h3>
+                                <table><tbody id="topFlipBody"></tbody></table>
+                            </div>
+                            <div class="card" style="padding:1.25rem">
+                                <h3 class="card-title" style="margin-bottom:1rem;color:var(--cyan)">Raid Revenue</h3>
+                                <table><tbody id="topFirBody"></tbody></table>
+                            </div>
+                        </div>
+                        <div class="card" style="overflow-x:auto">
+                            <div class="card-header"><span class="card-title" style="color:var(--emerald)">Per-Item Sales</span></div>
+                            <table><thead><tr><th>Item</th><th style="text-align:right">Qty</th><th style="text-align:right">Revenue</th><th style="text-align:right">Avg</th><th style="text-align:right">Cost</th><th style="text-align:right">Profit</th><th style="text-align:right">ROI</th></tr></thead><tbody id="perItemStatsBody"></tbody></table>
+                        </div>
+                    </div>
+                </div>
+                <div id="view-audit" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Transaction Ledger</span>
+                            <div style="display:flex;gap:0.5rem">
+                                <input type="file" id="importFile" class="hidden" onchange="importData(this)">
+                                <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()">Import</button>
+                                <button class="btn btn-ghost" onclick="exportData()">Export</button>
+                            </div>
+                        </div>
+                        <div style="overflow-x:auto;max-height:calc(100vh - 220px)"><table><tbody id="auditTable"></tbody></table></div>
+                    </div>
+                </div>
+                <div id="view-tools" class="tab-content">
+                    <div class="tools-grid">
+                        <div class="tool-block">
+                            <label>Seed Balance Adjustment</label>
+                            <div style="display:flex;gap:0.5rem">
+                                <input type="number" id="adjAmount" placeholder="Amount" style="flex:1">
+                                <button class="btn btn-amber" onclick="adjustBalance()">Apply</button>
+                            </div>
+                        </div>
+                        <div class="tool-block">
+                            <label>Metaforge Item List</label>
+                            <p id="metaforgeStatus" style="font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem">Not synced</p>
+                            <button class="btn btn-cyan" id="resyncBtn" onclick="resyncMetaforge()">Resync API</button>
+                        </div>
+                        <div class="tool-block">
+                            <label>Merge / Rename Item</label>
+                            <select id="mergeFrom" style="margin-bottom:0.5rem"></select>
+                            <input type="text" id="mergeTo" placeholder="New name" style="margin-bottom:0.5rem">
+                            <button class="btn btn-violet" onclick="mergeItems()">Execute Rewrite</button>
+                        </div>
+                        <div class="tool-block">
+                            <label>Testing</label>
+                            <button class="btn btn-slate" onclick="generateRandomHistory()" style="border-color:var(--amber);color:var(--amber)">Generate Random History</button>
+                        </div>
+                        <button class="btn" onclick="if(confirm('Wipe all data?')){localStorage.clear();location.reload()}" style="background:transparent;color:var(--rose);border:1px solid rgba(244,63,94,0.4)">Factory Reset</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <datalist id="itemOptions"></datalist>
+
+    <script>
+        const METAFORGE_URL = 'https://metaforge.app/api/arc-raiders';
+        const CACHE_KEY = 'meeks_v95_metaforge';
+        const CACHE_TS_KEY = 'meeks_v95_metaforge_ts';
+        const ALIAS_KEY = 'meeks_v95_aliases';
+
+        let stock = JSON.parse(localStorage.getItem('meeks_v95_stock')) || [];
+        let audit = JSON.parse(localStorage.getItem('meeks_v95_audit')) || [];
+        let liquidSeeds = parseFloat(localStorage.getItem('meeks_v95_liquid')) || 0;
+        let priceCache = {};
+        let apiItems = [];
+        let aliasMap = JSON.parse(localStorage.getItem(ALIAS_KEY)) || { 'Anvil BP': 'Anvil Blueprint', 'Seeds': 'Raw Seeds' };
+        let chartInstance = null;
+
+        function genId() { return 'e' + Date.now() + '_' + Math.random().toString(36).slice(2, 9); }
+
+        function loadMetaforgeCache() {
+            try {
+                const raw = localStorage.getItem(CACHE_KEY);
+                const ts = localStorage.getItem(CACHE_TS_KEY);
+                if (raw) {
+                    const data = JSON.parse(raw);
+                    apiItems = Array.isArray(data) ? data : (data.data || []);
+                    const el = document.getElementById('metaforgeStatus');
+                    if (el) el.textContent = ts ? `Synced ${new Date(+ts).toLocaleString()}` : 'Cached';
+                }
+            } catch (_) { apiItems = []; }
+        }
+        async function fetchMetaforgeAll() {
+            const out = [];
+            let page = 1, hasMore = true;
+            while (hasMore) {
+                const res = await fetch(`${METAFORGE_URL}/items?page=${page}&limit=100&minimal=true`);
+                const json = await res.json();
+                out.push(...(json.data || []));
+                hasMore = json.pagination?.hasNextPage || false;
+                page++;
+            }
+            return out;
+        }
+        async function resyncMetaforge() {
+            const btn = document.getElementById('resyncBtn');
+            if (btn) { btn.disabled = true; btn.textContent = 'Syncing...'; }
+            try {
+                apiItems = await fetchMetaforgeAll();
+                localStorage.setItem(CACHE_KEY, JSON.stringify(apiItems));
+                localStorage.setItem(CACHE_TS_KEY, String(Date.now()));
+                const el = document.getElementById('metaforgeStatus');
+                if (el) el.textContent = `Synced ${new Date().toLocaleString()} (${apiItems.length})`;
+            } catch (e) {
+                const el = document.getElementById('metaforgeStatus');
+                if (el) el.textContent = 'Sync failed. Use http:// (e.g. npx serve)';
+            }
+            if (btn) { btn.disabled = false; btn.textContent = 'Resync API'; }
+            render();
+        }
+        function normalizeItemName(input) {
+            if (!input || typeof input !== 'string') return input;
+            const t = input.trim(), lower = t.toLowerCase();
+            const canon = aliasMap[t] || Object.entries(aliasMap).find(([k]) => k.toLowerCase() === lower)?.[1];
+            if (canon) return canon;
+            const match = apiItems.find(i => (i.name || '').toLowerCase() === lower);
+            return match ? match.name : t;
+        }
+
+        function buildPriceCache() {
+            priceCache = {};
+            const sells = audit.filter(a => a.action === 'SELL' && a.name !== 'Raw Seeds');
+            [...new Set(sells.map(a => a.name))].forEach(name => {
+                const prices = sells.filter(a => a.name === name).sort((a,b) => b.ts - a.ts).slice(0, 5).map(s => s.price).sort((a,b) => a - b);
+                if (prices.length) {
+                    const m = Math.floor(prices.length / 2);
+                    priceCache[name] = prices.length % 2 ? prices[m] : (prices[m-1] + prices[m]) / 2;
+                }
+            });
+        }
+
+        function switchTab(t) {
+            document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`view-${t}`).classList.add('active');
+            document.getElementById(`nav-${t}`).classList.add('active');
+            if (t === 'analytics') renderAnalytics();
+        }
+
+        function render() {
+            buildPriceCache();
+            const invBody = document.getElementById('inventoryTable');
+            const auditBody = document.getElementById('auditTable');
+            const barterSelect = document.getElementById('tradeFrom');
+            const mergeSelect = document.getElementById('mergeFrom');
+            const dataList = document.getElementById('itemOptions');
+            const searchQuery = (document.getElementById('invSearch').value || '').toLowerCase();
+
+            invBody.innerHTML = '';
+            auditBody.innerHTML = '';
+            dataList.innerHTML = '';
+            barterSelect.innerHTML = '<option value="">— Choose item —</option>';
+            mergeSelect.innerHTML = '<option value="">— Select —</option>';
+
+            let totalProfit = 0, assetValuation = 0;
+            const grouped = stock.reduce((acc, item) => {
+                const k = `${item.name}-${item.source}-${Math.floor(item.cost)}`;
+                if (!acc[k]) acc[k] = { ...item, count: 0 };
+                acc[k].count++;
+                return acc;
+            }, {});
+
+            Object.values(grouped).sort((a,b) => a.name.localeCompare(b.name)).forEach((g, i) => {
+                const mp = priceCache[g.name] || null;
+                assetValuation += (mp ?? g.cost) * g.count;
+                if (searchQuery && !g.name.toLowerCase().includes(searchQuery)) return;
+
+                const safeId = `item-${i}`;
+                const tag = g.source === 'FIR' ? 'tag-fir' : (g.source === 'TRD' ? 'tag-trd' : 'tag-buy');
+                invBody.innerHTML += `<tr>
+                    <td class="font-mono font-semibold">${g.name}</td>
+                    <td><span class="tag ${tag}">${g.source}</span></td>
+                    <td class="font-mono">×${g.count}</td>
+                    <td class="font-mono text-[var(--muted)]">${Math.floor(g.cost).toLocaleString()}</td>
+                    <td class="font-mono ${mp ? 'text-[var(--cyan)]' : 'text-[var(--muted)]'}">${mp ? Math.floor(mp).toLocaleString() : '—'}</td>
+                    <td style="text-align:right">
+                        <input type="number" id="q-${safeId}" value="1" min="1" max="${g.count}" style="width:52px;padding:6px;margin-right:4px;display:inline-block">
+                        <input type="number" id="p-${safeId}" placeholder="Price" style="width:72px;padding:6px;margin-right:6px;display:inline-block">
+                        <button class="btn btn-ghost" style="padding:6px 12px;font-size:0.7rem" onclick="sellX('${g.name.replace(/'/g, "\\'")}', '${g.source}', ${g.cost}, '${safeId}')">Sell</button>
+                    </td>
+                </tr>`;
+                barterSelect.innerHTML += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${g.source}] ×${g.count}</option>`;
+            });
+
+            for (let idx = audit.length - 1; idx >= 0; idx--) {
+                const l = audit[idx];
+                const isS = l.action === 'SELL', isC = l.action === 'CURRENCY', isI = l.action === 'INITIAL', isV = l.action === 'VOID', isR = l.action === 'REVERTED', isB = l.action === 'BARTER';
+                const ex = isV || isR;
+                const p = (isI || isV || isR || isB) ? 0 : (isC ? l.price : (isS ? (l.price - l.cost) * l.qty : 0));
+                if (!ex) totalProfit += p;
+                const time = new Date(l.ts).toLocaleString([], { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
+                const actClr = p > 0 ? 'color:var(--emerald)' : (p < 0 ? 'color:var(--rose)' : (isI ? 'color:var(--cyan)' : (ex ? 'color:var(--muted)' : (isB ? 'color:#a78bfa' : ''))));
+                auditBody.insertAdjacentHTML('beforeend', `<tr style="${ex ? 'opacity:0.5' : ''}">
+                    <td class="font-mono" style="font-size:0.75rem;color:var(--muted)">${time}</td>
+                    <td style="font-weight:600;font-size:0.75rem;${actClr}">${l.action}</td>
+                    <td style="${ex ? 'text-decoration:line-through' : ''}">${l.name}</td>
+                    <td class="font-mono" style="color:var(--muted)">${(isC || isI) ? '—' : '×'+l.qty}</td>
+                    <td style="text-align:right;font-weight:600;${p >= 0 ? 'color:var(--amber)' : 'color:var(--rose)'}">${p !== 0 ? (p > 0 ? '+' : '') + Math.floor(p).toLocaleString() : (isI || isB ? Math.floor(l.price).toLocaleString() : '—')}</td>
+                    <td style="text-align:right">${!ex && l.action !== 'INITIAL' ? `<button class="btn btn-ghost" style="padding:2px 6px;font-size:0.65rem" onclick="voidEntry(${idx})">Void</button><button class="btn btn-ghost" style="padding:2px 6px;font-size:0.65rem" onclick="revertEntry(${idx})">Revert</button>` : (isR ? '<span style="font-size:0.7rem;color:var(--muted)">Reverted</span>' : '')}</td>
+                </tr>`);
+            }
+
+            const allNames = [...new Set([...stock.map(i => i.name), ...audit.map(i => i.name), ...apiItems.map(i => i.name)])].filter(Boolean).sort();
+            allNames.forEach(n => { dataList.innerHTML += `<option value="${n}">`; mergeSelect.innerHTML += `<option value="${n}">${n}</option>`; });
+
+            document.getElementById('liquidDisplay').textContent = Math.floor(liquidSeeds).toLocaleString();
+            document.getElementById('assetValuation').textContent = Math.floor(assetValuation).toLocaleString();
+            document.getElementById('netWorth').textContent = Math.floor(liquidSeeds + assetValuation).toLocaleString();
+            document.getElementById('totalProfit').textContent = Math.floor(totalProfit).toLocaleString();
+            document.getElementById('invCount').textContent = stock.length;
+
+            localStorage.setItem('meeks_v95_stock', JSON.stringify(stock));
+            localStorage.setItem('meeks_v95_audit', JSON.stringify(audit));
+            localStorage.setItem('meeks_v95_liquid', liquidSeeds);
+        }
+
+        function massIngest() {
+            const raw = (document.getElementById('bulkText').value || '').trim();
+            if (!raw) return;
+            raw.split('\n').forEach(line => {
+                const nums = line.match(/\d+/);
+                const text = normalizeItemName(line.replace(/\d+/, '').trim());
+                const qty = nums ? parseInt(nums[0]) : 1;
+                if (!text) return;
+                if (text.toLowerCase() === 'raw seeds' || text.toLowerCase() === 'seeds') {
+                    liquidSeeds += qty;
+                    audit.push({ id: genId(), ts: Date.now(), action: 'CURRENCY', name: 'Raw Seeds', qty: 1, price: qty, cost: 0, source: 'FIR', revertData: { deltaLiquid: -qty } });
+                } else {
+                    for (let i = 0; i < qty; i++) stock.push({ name: text, cost: 0, source: 'FIR' });
+                    audit.push({ id: genId(), ts: Date.now(), action: 'RECOVERY', name: text, qty, price: 0, cost: 0, source: 'FIR', revertData: { removeStock: [{ name: text, source: 'FIR', cost: 0, qty }] } });
+                }
+            });
+            document.getElementById('bulkText').value = '';
+            render();
+        }
+
+        function buyItem() {
+            const name = normalizeItemName((document.getElementById('buyName').value || '').trim());
+            const qty = parseInt(document.getElementById('buyQty').value) || 1;
+            const costPer = parseFloat(document.getElementById('buyPrice').value) || 0;
+            if (!name) return;
+            const total = costPer * qty;
+            liquidSeeds -= total;
+            for (let i = 0; i < qty; i++) stock.push({ name, cost: costPer, source: 'BUY' });
+            audit.push({ id: genId(), ts: Date.now(), action: 'PURCHASE', name, qty, price: costPer, cost: costPer, source: 'BUY', revertData: { deltaLiquid: total, removeStock: { name, source: 'BUY', cost: costPer, qty } } });
+            document.getElementById('buyName').value = document.getElementById('buyPrice').value = '';
+            render();
+        }
+
+        function sellX(name, source, cost, safeId) {
+            const p = parseFloat(document.getElementById(`p-${safeId}`).value);
+            const q = parseInt(document.getElementById(`q-${safeId}`).value) || 1;
+            if (isNaN(p) || q <= 0) return;
+            const matches = stock.filter(i => i.name === name && i.source === source && Math.floor(i.cost) == Math.floor(cost));
+            if (matches.length < q) { alert(`Only ${matches.length} in stock.`); return; }
+            let r = 0;
+            for (let i = stock.length - 1; i >= 0 && r < q; i--) {
+                if (stock[i].name === name && stock[i].source === source && Math.floor(stock[i].cost) == Math.floor(cost)) { stock.splice(i, 1); r++; }
+            }
+            liquidSeeds += p * q;
+            const addBack = [];
+            for (let i = 0; i < q; i++) addBack.push({ name, source, cost });
+            audit.push({ id: genId(), ts: Date.now(), action: 'SELL', name, qty: q, price: p, cost, source, revertData: { deltaLiquid: -(p * q), addStock: addBack } });
+            render();
+        }
+
+        function executeBarter() {
+            const fromData = document.getElementById('tradeFrom').value;
+            const fromQty = parseInt(document.getElementById('tradeFromQty').value) || 1;
+            const toName = (document.getElementById('tradeTo').value || '').trim();
+            const toQty = parseInt(document.getElementById('tradeQty').value) || 1;
+            if (!fromData || !toName) return;
+            const [oldName, oldSrc, oldCost] = fromData.split('|');
+            const matches = stock.filter(i => i.name === oldName && i.source === oldSrc && Math.floor(i.cost) == Math.floor(oldCost));
+            if (matches.length < fromQty) return alert('Insufficient stock.');
+            const unitVal = parseFloat(oldCost) > 0 ? parseFloat(oldCost) : (priceCache[oldName] || 0);
+            const totalVal = unitVal * fromQty;
+            let r = 0;
+            for (let i = stock.length - 1; i >= 0 && r < fromQty; i--) {
+                if (stock[i].name === oldName && stock[i].source === oldSrc && Math.floor(stock[i].cost) == Math.floor(oldCost)) { stock.splice(i, 1); r++; }
+            }
+            const toNorm = normalizeItemName(toName);
+            const costPer = Math.floor(totalVal / toQty);
+            for (let i = 0; i < toQty; i++) stock.push({ name: toNorm, cost: costPer, source: 'TRD' });
+            const addBack = [];
+            for (let i = 0; i < fromQty; i++) addBack.push({ name: oldName, source: oldSrc, cost: parseFloat(oldCost) });
+            audit.push({ id: genId(), ts: Date.now(), action: 'BARTER', name: `${fromQty}× ${oldName} → ${toQty}× ${toNorm}`, qty: toQty, price: totalVal, cost: totalVal, source: 'TRD', revertData: { removeStock: { name: toNorm, source: 'TRD', cost: costPer, qty: toQty }, addStock: addBack }, barterFrom: { name: oldName, source: oldSrc, cost: parseFloat(oldCost), qty: fromQty }, barterTo: { name: toNorm, qty: toQty } });
+            document.getElementById('tradeTo').value = document.getElementById('tradeQty').value = '1';
+            document.getElementById('tradeFromQty').value = '1';
+            render();
+        }
+
+        function mergeItems() {
+            const o = document.getElementById('mergeFrom').value, n = (document.getElementById('mergeTo').value || '').trim();
+            if (!o || !n || !confirm(`Merge "${o}" into "${n}"?`)) return;
+            stock = stock.map(i => i.name === o ? { ...i, name: n } : i);
+            audit = audit.map(a => {
+                if (a.name === o) return { ...a, name: n };
+                if (a.action === 'BARTER' && a.name && a.name.includes('→')) {
+                    const [L, R] = a.name.split(' → ');
+                    const l = (L || '').replace(/^\d+×\s*/, ''), r = (R || '').replace(/^\d+×\s*/, '');
+                    if (l === o || r === o) return { ...a, name: a.name.replace(new RegExp('\\b' + o.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), n) };
+                }
+                return a;
+            });
+            aliasMap[o] = n;
+            localStorage.setItem(ALIAS_KEY, JSON.stringify(aliasMap));
+            render();
+        }
+
+        function generateRandomHistory() {
+            if (!confirm('Replace all data with random test history?')) return;
+            const items = ['Iron Ore', 'Advanced Mechanical Components', 'Anvil Blueprint', 'Adrenaline Shot'];
+            const now = Date.now(), day = 86400000;
+            const ts = d => now - (7 - d) * day - Math.random() * day;
+            audit = []; stock = []; liquidSeeds = 50000;
+            audit.push({ id: genId(), ts: ts(0), action: 'INITIAL', name: 'Starting Capital', qty: 1, price: 50000, cost: 0, source: 'SYS' });
+            ['Iron Ore', 'Advanced Mechanical Components', 'Adrenaline Shot'].forEach((name, d) => {
+                const qty = 2 + Math.floor(Math.random() * 4);
+                for (let i = 0; i < qty; i++) stock.push({ name, cost: 0, source: 'FIR' });
+                audit.push({ id: genId(), ts: ts(d + 1), action: 'RECOVERY', name, qty, price: 0, cost: 0, source: 'FIR', revertData: { removeStock: [{ name, source: 'FIR', cost: 0, qty }] } });
+            });
+            const sq = 1500 + Math.floor(Math.random() * 2000);
+            liquidSeeds += sq;
+            audit.push({ id: genId(), ts: ts(2), action: 'CURRENCY', name: 'Raw Seeds', qty: 1, price: sq, cost: 0, source: 'FIR', revertData: { deltaLiquid: -sq } });
+            const costPer = 4500, bq = 2;
+            liquidSeeds -= costPer * bq;
+            for (let i = 0; i < bq; i++) stock.push({ name: 'Anvil Blueprint', cost: costPer, source: 'BUY' });
+            audit.push({ id: genId(), ts: ts(3), action: 'PURCHASE', name: 'Anvil Blueprint', qty: bq, price: costPer, cost: costPer, source: 'BUY', revertData: { deltaLiquid: costPer * bq, removeStock: { name: 'Anvil Blueprint', source: 'BUY', cost: costPer, qty: bq } } });
+            const sellQty = Math.min(3, stock.filter(s => s.name === 'Iron Ore').length) || 2;
+            let removed = 0;
+            for (let i = stock.length - 1; i >= 0 && removed < sellQty; i--) {
+                if (stock[i].name === 'Iron Ore' && stock[i].source === 'FIR') { stock.splice(i, 1); removed++; }
+            }
+            liquidSeeds += 1200 * sellQty;
+            const ab = [];
+            for (let i = 0; i < sellQty; i++) ab.push({ name: 'Iron Ore', source: 'FIR', cost: 0 });
+            audit.push({ id: genId(), ts: ts(4), action: 'SELL', name: 'Iron Ore', qty: sellQty, price: 1200, cost: 0, source: 'FIR', revertData: { deltaLiquid: -1200 * sellQty, addStock: ab } });
+            audit.push({ id: genId(), ts: ts(5), action: 'ADJUST', name: 'Manual Correction', qty: 1, price: -500, cost: 0, source: 'SYS', revertData: { deltaLiquid: 500 } });
+            liquidSeeds -= 500;
+            render();
+        }
+
+        function adjustBalance() {
+            const amt = parseFloat(document.getElementById('adjAmount').value);
+            if (isNaN(amt)) return;
+            liquidSeeds += amt;
+            audit.push({ id: genId(), ts: Date.now(), action: 'ADJUST', name: 'Manual Correction', qty: 1, price: amt, cost: 0, source: 'SYS', revertData: { deltaLiquid: -amt } });
+            document.getElementById('adjAmount').value = '';
+            render();
+        }
+
+        function voidEntry(idx) { if (confirm('Void (cosmetic only)?')) { audit[idx].action = 'VOID'; render(); } }
+        function revertEntry(idx) {
+            const e = audit[idx];
+            if (!e || ['VOID', 'REVERTED', 'INITIAL'].includes(e.action)) return;
+            const rd = e.revertData;
+            if (!rd && e.action !== 'BARTER') return;
+            if (!confirm('Revert this entry? This will undo changes.')) return;
+            if (rd) {
+                if (rd.deltaLiquid) liquidSeeds += rd.deltaLiquid;
+                if (rd.addStock) rd.addStock.forEach(i => stock.push(i));
+                if (rd.removeStock) {
+                    const arr = Array.isArray(rd.removeStock) ? rd.removeStock : [rd.removeStock];
+                    arr.forEach(item => {
+                        const { name, source, cost, qty } = item;
+                        const count = qty || 1;
+                        let r = 0;
+                        for (let i = stock.length - 1; i >= 0 && r < count; i--) {
+                            if (stock[i].name === name && stock[i].source === (source || 'TRD') && Math.floor(stock[i].cost) === Math.floor(cost || 0)) { stock.splice(i, 1); r++; }
+                        }
+                    });
+                }
+            } else if (e.action === 'BARTER' && e.barterFrom && e.barterTo) {
+                const from = e.barterFrom, to = e.barterTo;
+                const costPer = e.cost / to.qty;
+                let r = 0;
+                for (let i = stock.length - 1; i >= 0 && r < to.qty; i--) {
+                    if (stock[i].name === to.name && stock[i].source === 'TRD' && Math.floor(stock[i].cost) === Math.floor(costPer)) { stock.splice(i, 1); r++; }
+                }
+                for (let i = 0; i < from.qty; i++) stock.push({ name: from.name, source: from.source, cost: from.cost });
+            }
+            audit[idx].action = 'REVERTED';
+            render();
+        }
+
+        function renderAnalytics() {
+            const flipBody = document.getElementById('topFlipBody');
+            const firBody = document.getElementById('topFirBody');
+            const perBody = document.getElementById('perItemStatsBody');
+            flipBody.innerHTML = firBody.innerHTML = perBody.innerHTML = '';
+            const valid = audit.filter(l => !['VOID', 'REVERTED'].includes(l.action));
+            const stats = valid.reduce((acc, l) => {
+                if (l.action !== 'SELL') return acc;
+                if (!acc[l.name]) acc[l.name] = { profit: 0, qty: 0, revenue: 0, costBasis: 0, isFIR: l.source === 'FIR' };
+                acc[l.name].profit += (l.price - l.cost) * l.qty;
+                acc[l.name].qty += l.qty;
+                acc[l.name].revenue += l.price * l.qty;
+                acc[l.name].costBasis += l.cost * l.qty;
+                return acc;
+            }, {});
+            Object.entries(stats).sort((a, b) => b[1].profit - a[1].profit).forEach(([name, s]) => {
+                const row = `<tr><td>${name}</td><td style="text-align:right;color:var(--emerald);font-weight:600">+${Math.floor(s.profit).toLocaleString()}</td></tr>`;
+                if (s.isFIR) firBody.innerHTML += row; else flipBody.innerHTML += row;
+            });
+            Object.entries(stats).sort((a, b) => b[1].profit - a[1].profit).forEach(([name, s]) => {
+                const avgP = s.qty ? s.revenue / s.qty : 0, avgC = s.qty ? s.costBasis / s.qty : 0;
+                const roi = s.costBasis > 0 ? ((s.profit / s.costBasis) * 100).toFixed(0) + '%' : '—';
+                const roiStyle = s.costBasis > 0 ? (s.profit >= 0 ? 'color:var(--emerald)' : 'color:var(--rose)') : 'color:var(--muted)';
+                perBody.innerHTML += `<tr><td class="font-semibold">${name}</td><td style="text-align:right">${s.qty}</td><td style="text-align:right" class="font-mono">${Math.floor(s.revenue).toLocaleString()}</td><td style="text-align:right" class="font-mono">${Math.floor(avgP).toLocaleString()}</td><td style="text-align:right;color:var(--muted)" class="font-mono">${Math.floor(avgC).toLocaleString()}</td><td style="text-align:right;color:var(--emerald);font-weight:600">+${Math.floor(s.profit).toLocaleString()}</td><td style="text-align:right;${roiStyle}" class="font-mono">${roi}</td></tr>`;
+            });
+            buildNetWorthChart();
+        }
+
+        function buildNetWorthChart() {
+            const canvas = document.getElementById('chartCanvas');
+            if (!canvas || typeof Chart === 'undefined') return;
+            const valid = audit.filter(l => !['VOID', 'REVERTED'].includes(l.action));
+            const points = [];
+            let liquid = 0, profit = 0;
+            [...valid].sort((a, b) => a.ts - b.ts).forEach(e => {
+                if (e.action === 'INITIAL') liquid = e.price || 0;
+                else if (e.action === 'CURRENCY' || e.action === 'ADJUST') liquid += e.price || 0;
+                else if (e.action === 'PURCHASE') liquid -= (e.cost || 0) * (e.qty || 1);
+                else if (e.action === 'SELL') { liquid += (e.price || 0) * (e.qty || 1); profit += ((e.price || 0) - (e.cost || 0)) * (e.qty || 1); }
+                points.push({ ts: e.ts, liquid, profit });
+            });
+            const labels = points.map(p => new Date(p.ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }));
+            if (chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: 'Liquid', data: points.map(p => p.liquid), borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)', fill: true, tension: 0.3 },
+                        { label: 'Profit', data: points.map(p => p.profit), borderColor: '#10b981', fill: false, tension: 0.3 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } },
+                    scales: {
+                        x: { ticks: { color: '#64748b', maxTicksLimit: 10 }, grid: { color: '#1e2633' } },
+                        y: { ticks: { color: '#64748b' }, grid: { color: '#1e2633' } }
+                    }
+                }
+            });
+        }
+
+        function exportData() {
+            const blob = new Blob([JSON.stringify({ stock, audit, liquidSeeds, aliasMap })], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'arc-tracker-export.json';
+            a.click();
+        }
+        function importData(input) {
+            const f = input.files[0];
+            if (!f) return;
+            const r = new FileReader();
+            r.onload = e => {
+                const d = JSON.parse(e.target.result);
+                stock = d.stock || [];
+                audit = d.audit || [];
+                liquidSeeds = d.liquidSeeds ?? 0;
+                if (d.aliasMap) { aliasMap = d.aliasMap; localStorage.setItem(ALIAS_KEY, JSON.stringify(aliasMap)); }
+                render();
+            };
+            r.readAsText(f);
+        }
+
+        loadMetaforgeCache();
+        if (audit.length === 0) {
+            const seed = parseFloat(prompt('Enter initial Seed Capital:', '0')) || 0;
+            liquidSeeds = seed;
+            audit.push({ id: genId(), ts: Date.now(), action: 'INITIAL', name: 'Starting Capital', qty: 1, price: seed, cost: 0, source: 'SYS' });
+        }
+        render();
+    </script>
+</body>
+</html>
