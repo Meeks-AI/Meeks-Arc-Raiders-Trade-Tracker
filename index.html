@@ -318,7 +318,15 @@
                             <button class="btn btn-violet" onclick="mergeItems()">Execute Rewrite</button>
                         </div>
                         <div class="tool-block">
-                            <label>Testing</label>
+                            <label>Settings</label>
+                            <div style="display:flex;align-items:center;gap:0.75rem;">
+                                <input type="checkbox" id="allowCustomItemsToggle" onchange="toggleCustomItems(this)" style="width:16px;height:16px;padding:0;cursor:pointer;accent-color:var(--cyan);">
+                                <div>
+                                    <span style="font-size:0.8rem;font-weight:600;color:var(--text);">Allow Custom Named Items</span>
+                                    <p style="font-size:0.7rem;color:var(--muted);margin:2px 0 0;">When off, only Metaforge items are accepted. Prevents typos and mismatched names.</p>
+                                </div>
+                            </div>
+                        </div>
                             <button id="randomHistoryBtn" class="btn btn-slate" onclick="generateRandomHistory()" style="border-color:var(--amber);color:var(--amber)">Generate Random History</button>
                         </div>
                         <button class="btn" onclick="if(confirm('Wipe all data?')){localStorage.clear();location.reload()}" style="background:transparent;color:var(--rose);border:1px solid rgba(244,63,94,0.4)">Factory Reset</button>
