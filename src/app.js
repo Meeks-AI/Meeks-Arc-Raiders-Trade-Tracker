@@ -10,6 +10,7 @@ let liquidSeeds = readNumber(STORAGE_KEYS.liquidSeeds, 0);
 let priceCache = {};
 let apiItems = [];
 let aliasMap = readJson(STORAGE_KEYS.itemAliases, { 'Anvil BP': 'Anvil Blueprint', Seeds: 'Raw Seeds' });
+let allowCustomItems = localStorage.getItem(STORAGE_KEYS.allowCustomItems) === 'true';
 let chartInstance = null;
 let priceHistoryChart = null;
 
@@ -89,6 +90,28 @@ function normalizeItemName(input) {
   if (canon) return canon;
   const match = apiItems.find((i) => (i.name || '').toLowerCase() === lower);
   return match ? match.name : t;
+}
+
+// Returns true if the name is in the Metaforge list (or API not loaded yet)
+function isKnownItem(name) {
+  if (!name) return false;
+  if (apiItems.length === 0) return true; // no list loaded, allow anything
+  const lower = name.toLowerCase();
+  // Accept alias targets too
+  const aliasTarget = aliasMap[name] || Object.entries(aliasMap).find(([k]) => k.toLowerCase() === lower)?.[1];
+  const checkName = aliasTarget || name;
+  return apiItems.some((i) => (i.name || '').toLowerCase() === checkName.toLowerCase());
+}
+
+// Validates a name against the item list. Returns the normalized name or null if blocked.
+function validateItemName(raw) {
+  const name = normalizeItemName(raw);
+  if (allowCustomItems || apiItems.length === 0) return name;
+  if (!isKnownItem(name)) {
+    alert(`"${name}" is not in the Metaforge item list.\n\nCheck the spelling, or enable Custom Named Items in Tools → Settings if you need to add non-standard items.`);
+    return null;
+  }
+  return name;
 }
 
 function buildPriceCache() {
@@ -273,13 +296,16 @@ function massIngest() {
   if (!raw) return;
   raw.split('\n').forEach((line) => {
     const nums = line.match(/\d+/);
-    const text = normalizeItemName(line.replace(/\d+/, '').trim());
+    const raw_name = line.replace(/\d+/, '').trim();
+    if (!raw_name) return;
     const qty = nums ? parseInt(nums[0], 10) : 1;
-    if (!text) return;
-    if (text.toLowerCase() === 'raw seeds' || text.toLowerCase() === 'seeds') {
+    if (raw_name.toLowerCase() === 'raw seeds' || raw_name.toLowerCase() === 'seeds') {
       liquidSeeds += qty;
       audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.CURRENCY, name: 'Raw Seeds', qty: 1, price: qty, cost: 0, source: 'FIR', revertData: { deltaLiquid: -qty } });
-    } else {
+      return;
+    }
+    const text = validateItemName(raw_name);
+    if (!text) return;
       for (let i = 0; i < qty; i++) stock.push({ name: text, cost: 0, source: 'FIR' });
       audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.RECOVERY, name: text, qty, price: 0, cost: 0, source: 'FIR', revertData: { removeStock: [{ name: text, source: 'FIR', cost: 0, qty }] } });
     }
@@ -289,8 +315,8 @@ function massIngest() {
 }
 
 function buyItem() {
-  const name = normalizeItemName((document.getElementById('buyName').value || '').trim());
-  const qty = parseInt(document.getElementById('buyQty').value, 10) || 1;
+  const name = validateItemName((document.getElementById('buyName').value || '').trim());
+  if (!name) return;
   const costPer = parseFloat(document.getElementById('buyPrice').value) || 0;
   if (!name) return;
   const total = costPer * qty;
@@ -347,7 +373,8 @@ function executeBarter() {
     if (stock[i].name === oldName && stock[i].source === oldSrc && Math.floor(stock[i].cost) === Math.floor(oldCost)) { stock.splice(i, 1); removed++; }
   }
 
-  const toNorm = normalizeItemName(toName);
+  const toNorm = validateItemName(toName);
+  if (!toNorm) return;
   const costPer = Math.floor(totalVal / toQty);
   for (let i = 0; i < toQty; i++) stock.push({ name: toNorm, cost: costPer, source: 'TRD' });
 
@@ -809,13 +836,16 @@ function initTextareaAutocomplete() {
   });
 
   textarea.addEventListener('keydown', (e) => {
-    // Ctrl+Enter / Cmd+Enter → process loot without mouse
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); massIngest(); return; }
 
     if (dropdown.style.display === 'none') return;
     if (e.key === 'ArrowDown') { e.preventDefault(); selectedIndex = Math.min(selectedIndex + 1, currentMatches.length - 1); updateHighlight(); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); selectedIndex = Math.max(selectedIndex - 1, 0); updateHighlight(); }
-    else if (e.key === 'Enter' && selectedIndex >= 0) { e.preventDefault(); replaceCurrentLine(currentMatches[selectedIndex]); }
+    else if (e.key === 'Enter') {
+      // Auto-fill: if one match, always take it; if multiple, require arrow-key selection
+      const target = currentMatches.length === 1 ? currentMatches[0] : (selectedIndex >= 0 ? currentMatches[selectedIndex] : null);
+      if (target) { e.preventDefault(); replaceCurrentLine(target); }
+    }
     else if (e.key === 'Tab') { const t = selectedIndex >= 0 ? currentMatches[selectedIndex] : currentMatches[0]; if (t) { e.preventDefault(); replaceCurrentLine(t); } }
     else if (e.key === 'Escape') { hideDropdown(); }
   });
@@ -824,17 +854,25 @@ function initTextareaAutocomplete() {
   window.addEventListener('scroll', hideDropdown, true);
 }
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
+function toggleCustomItems(checkbox) {
+  allowCustomItems = checkbox.checked;
+  localStorage.setItem(STORAGE_KEYS.allowCustomItems, String(allowCustomItems));
+}
 function init() {
   Object.assign(window, {
     switchTab, massIngest, buyItem, executeBarter, mergeItems,
     generateRandomHistory, adjustBalance, resyncMetaforge,
     exportData, importData, voidEntry, revertEntry, sellX,
     sellAll, startNewSession, showPriceHistory, closePriceHistory, handleModalClick,
+    toggleCustomItems,
   });
 
   loadMetaforgeCache();
   initTextareaAutocomplete();
+
+  // Sync settings UI
+  const customToggle = document.getElementById('allowCustomItemsToggle');
+  if (customToggle) customToggle.checked = allowCustomItems;
 
   (async () => {
     try {

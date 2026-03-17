@@ -23,4 +23,5 @@ export const STORAGE_KEYS = Object.freeze({
   stock: `${STORAGE_PREFIX}_stock`,
   audit: `${STORAGE_PREFIX}_audit`,
   liquidSeeds: `${STORAGE_PREFIX}_liquid_seeds`,
+  allowCustomItems: `${STORAGE_PREFIX}_allow_custom_items`,
 });
