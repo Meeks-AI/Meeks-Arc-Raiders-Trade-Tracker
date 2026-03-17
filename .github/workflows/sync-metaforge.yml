@@ -1,0 +1,41 @@
+name: Sync Metaforge items
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    # Daily at 08:15 UTC
+    - cron: '15 8 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-metaforge
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Fetch items into data file
+        run: node ./scripts/sync-metaforge.mjs
+
+      - name: Commit updated data (if changed)
+        run: |
+          git status --porcelain
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No changes."
+            exit 0
+          fi
+          git add data/metaforge-items.json
+          git commit -m "chore: sync metaforge items"
+          git push
+
