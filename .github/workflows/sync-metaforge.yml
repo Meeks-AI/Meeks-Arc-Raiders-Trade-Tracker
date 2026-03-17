@@ -30,6 +30,8 @@ jobs:
 
       - name: Commit updated data (if changed)
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git status --porcelain
           if [ -z "$(git status --porcelain)" ]; then
             echo "No changes."
@@ -38,4 +40,3 @@ jobs:
           git add data/metaforge-items.json
           git commit -m "chore: sync metaforge items"
           git push
-
