@@ -448,7 +448,14 @@ function generateRandomHistory() {
   if (tradeItems.length === 0) return;
   if (!confirm('Replace all data with random test history?')) return;
 
-  function pick(arr, n) { return [...arr].sort(() => Math.random() - 0.5).slice(0, n); }
+  function pick(arr, n) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a.slice(0, n);
+  }
   function randInt(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
   // Price within ±25% of the item's real value
   function randPrice(item) {
