@@ -1,5 +1,4812 @@
 {
-  "updatedAt": null,
-  "count": 0,
-  "data": []
+  "updatedAt": "2026-03-17T21:56:14.238Z",
+  "count": 534,
+  "data": [
+    {
+      "id": "acoustic-guitar",
+      "name": "Acoustic Guitar",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/acoustic-guitar.webp",
+      "rarity": "Legendary",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 7000
+    },
+    {
+      "id": "adrenaline-shot",
+      "name": "Adrenaline Shot",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/adrenaline-shot.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 300
+    },
+    {
+      "id": "advanced-arc-powercell",
+      "name": "Advanced ARC Powercell",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/advanced-arc-powercell.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "advanced-electrical-components",
+      "name": "Advanced Electrical Components",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/advanced-electrical-components.webp",
+      "rarity": "Rare",
+      "item_type": "Refined Material",
+      "ammo_type": null,
+      "value": 1750
+    },
+    {
+      "id": "advanced-mechanical-components",
+      "name": "Advanced Mechanical Components",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/advanced-mechanical-components.webp",
+      "rarity": "Rare",
+      "item_type": "Advanced Material",
+      "ammo_type": null,
+      "value": 1750
+    },
+    {
+      "id": "agave",
+      "name": "Agave",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/agave.webp",
+      "rarity": "Uncommon",
+      "item_type": "Nature",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "agave-juice",
+      "name": "Agave Juice",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/agave-juice.webp",
+      "rarity": "Common",
+      "item_type": "Consumable",
+      "ammo_type": null,
+      "value": 1800
+    },
+    {
+      "id": "air-freshener",
+      "name": "Air Freshener",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/air-freshener.webp",
+      "rarity": "Uncommon",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "alarm-clock",
+      "name": "Alarm Clock",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/alarm-clock.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "alien-duck",
+      "name": "Alien Duck",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/alien-duck.webp",
+      "rarity": "Uncommon",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "ancient-fort-security-code",
+      "name": "Ancient Fort Security Code",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ancient-fort-security-code.webp",
+      "rarity": "Common",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "angled-grip-i",
+      "name": "Angled Grip I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/angled-grip-i.webp",
+      "rarity": "Common",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "angled-grip-ii",
+      "name": "Angled Grip II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/angled-grip-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "angled-grip-ii-recipe",
+      "name": "Angled Grip II Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/angled-grip-ii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "angled-grip-iii",
+      "name": "Angled Grip III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/angled-grip-iii.webp",
+      "rarity": "Rare",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "angled-grip-iii-recipe",
+      "name": "Angled Grip III Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/angled-grip-iii-recipe.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "antiseptic",
+      "name": "Antiseptic",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/antiseptic.webp",
+      "rarity": "Rare",
+      "item_type": "Refined Material",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "anvil-recipe",
+      "name": "Anvil Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/anvil.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "anvil-i",
+      "name": "Anvil I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/anvil-i.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "Heavy",
+      "value": 5000
+    },
+    {
+      "id": "anvil-ii",
+      "name": "Anvil II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/anvil-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "Heavy",
+      "value": 7000
+    },
+    {
+      "id": "anvil-iii",
+      "name": "Anvil III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/anvil-iii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "heavy",
+      "value": 10000
+    },
+    {
+      "id": "anvil-iv",
+      "name": "Anvil IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/anvil-iv.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "Heavy",
+      "value": 13000
+    },
+    {
+      "id": "anvil-splitter",
+      "name": "Anvil Splitter",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/anvil-splitter.webp",
+      "rarity": "Legendary",
+      "item_type": "Modification",
+      "ammo_type": "",
+      "value": 7000
+    },
+    {
+      "id": "aphelion-rifle",
+      "name": "Aphelion Rifle",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/aphelion-rifle.webp",
+      "rarity": "Legendary",
+      "item_type": "Weapon",
+      "ammo_type": "energy",
+      "value": 27500
+    },
+    {
+      "id": "aphelion-rifle-blueprint",
+      "name": "Aphelion Rifle Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/aphelion-rifle-blueprint.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "apricot",
+      "name": "Apricot",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/apricot.webp",
+      "rarity": "Uncommon",
+      "item_type": "Nature",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "arc-alloy",
+      "name": "ARC Alloy",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/arc-alloy.webp",
+      "rarity": "Uncommon",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 200
+    },
+    {
+      "id": "arc-circuitry",
+      "name": "ARC Circuitry",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/arc-circuitry.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "arc-coolant",
+      "name": "ARC Coolant",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/arc-coolant.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "arc-flex-rubber",
+      "name": "ARC Flex Rubber",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/arc-flex-rubber.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "arc-motion-core",
+      "name": "ARC Motion Core",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/arc-motion-core.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "arc-performance-steel",
+      "name": "ARC Performance Steel",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/arc-performance-steel.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "arc-powercell",
+      "name": "ARC Powercell",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/arc-powercell.webp",
+      "rarity": "Common",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 270
+    },
+    {
+      "id": "arc-synthetic-resin",
+      "name": "ARC Synthetic Resin",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/arc-synthetic-resin.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "arc-thermo-lining",
+      "name": "ARC Thermo Lining",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/arc-thermo-lining.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "arpeggio-i",
+      "name": "Arpeggio I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/arpeggio-i.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 5500
+    },
+    {
+      "id": "arpeggio-ii",
+      "name": "Arpeggio II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/arpeggio-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "Medium",
+      "value": 8000
+    },
+    {
+      "id": "arpeggio-iii",
+      "name": "Arpeggio III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/arpeggio-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 11500
+    },
+    {
+      "id": "arpeggio-iv",
+      "name": "Arpeggio IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/arpeggio-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 15000
+    },
+    {
+      "id": "assorted-seeds",
+      "name": "Assorted Seeds",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/assorted-seeds.webp",
+      "rarity": "Common",
+      "item_type": "Nature",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "aviator-outfit",
+      "name": "Aviator (Outfit)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/aviator-outfit.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "bag-radio-renegade-variant",
+      "name": "Bag (Radio Renegade Variant)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bag-radio-renegade-variant.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "banana-backpack-charm",
+      "name": "Banana (Backpack Charm)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/banana-backpack-charm.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "bandage",
+      "name": "Bandage",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bandage.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 250
+    },
+    {
+      "id": "barricade-kit",
+      "name": "Barricade Kit",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/barricade-kit.webp",
+      "rarity": "Uncommon",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "barricade-kit-recipe",
+      "name": "Barricade Kit Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/barricade-kit.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "bastion-part",
+      "name": "Bastion Cell",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bastion-part.webp",
+      "rarity": "Epic",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 3000
+    },
+    {
+      "id": "battery",
+      "name": "Battery",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/battery.webp",
+      "rarity": "Uncommon",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 250
+    },
+    {
+      "id": "bettina-blueprint",
+      "name": "Bettina Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bettina-blueprint.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "bettina-i",
+      "name": "Bettina I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bettina-i.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "Heavy",
+      "value": 8000
+    },
+    {
+      "id": "bettina-ii",
+      "name": "Bettina II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bettina-ii.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "heavy",
+      "value": 11000
+    },
+    {
+      "id": "bettina-iii",
+      "name": "Bettina III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bettina-iii.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "heavy",
+      "value": 14000
+    },
+    {
+      "id": "bettina-iv",
+      "name": "Bettina IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bettina-iv.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "heavy",
+      "value": 18000
+    },
+    {
+      "id": "bicycle-pump",
+      "name": "Bicycle Pump",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bicycle-pump.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "binoculars",
+      "name": "Binoculars",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/binoculars.webp",
+      "rarity": "Common",
+      "item_type": "Gadget",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "bison-driver",
+      "name": "Bison Driver",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bison-driver.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 2500
+    },
+    {
+      "id": "black-eye-face-style",
+      "name": "Black Eye (Face Style)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/black-eye-face-style.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "black-hiker-colour",
+      "name": "Black (Hiker Colour)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/black-hiker-colour.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "black-and-white-origin-color",
+      "name": "Black & White (Origin Color)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/black-and-white-origin-color.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "blaze-grenade",
+      "name": "Blaze Grenade",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/blaze-grenade.webp",
+      "rarity": "Rare",
+      "item_type": "Throwable",
+      "ammo_type": null,
+      "value": 1600
+    },
+    {
+      "id": "blaze-grenade-blueprint",
+      "name": "Blaze Grenade Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/blaze-grenade.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "blaze-grenade-trap",
+      "name": "Blaze Grenade Trap",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/blaze-grenade-trap.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "bloated-tuna-can",
+      "name": "Bloated Tuna Can",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bloated-tuna-can.webp",
+      "rarity": "Common",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "blue-gate-cellar-key",
+      "name": "Blue Gate Cellar Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/blue-gate-cellar-key.webp",
+      "rarity": "Rare",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "blue-gate-communication-tower-key",
+      "name": "Blue Gate Communication Tower Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/blue-gate-communication-tower-key.webp",
+      "rarity": "Rare",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "blue-gate-confiscation-room-key",
+      "name": "Blue Gate Confiscation Room Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/blue-gate-confiscation-room-key.webp",
+      "rarity": "Epic",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "blue-gate-village-key",
+      "name": "Blue Gate Village Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/blue-gate-village-key.webp",
+      "rarity": "Uncommon",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "blue-light-stick",
+      "name": "Blue Light Stick",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/blue-light-stick.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 150
+    },
+    {
+      "id": "blue-light-stick-blueprint",
+      "name": "Blue Light Stick Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/blue-light-stick.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "blue-radio-renegade-color",
+      "name": "Blue (Radio Renegade Color)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/blue-radio-renegade-color.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "blue-yellow-aviator-color",
+      "name": "Blue Yellow (Aviator Color)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/blue-yellow-aviator-color.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "bobcat-i-recipe",
+      "name": "Bobcat Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bobcat-i-recipe.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "bobcat-i",
+      "name": "Bobcat I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bobcat-ii.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 13000
+    },
+    {
+      "id": "bobcat-ii",
+      "name": "Bobcat II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bobcat-ii.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 17000
+    },
+    {
+      "id": "bobcat-iii",
+      "name": "Bobcat III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bobcat-iii.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 22000
+    },
+    {
+      "id": "bobcat-iv",
+      "name": "Bobcat IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bobcat-iv.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 27000
+    },
+    {
+      "id": "bombardier-cell",
+      "name": "Bombardier Cell",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bombardier-cell.webp",
+      "rarity": "Epic",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "bow-and-arrow-emote",
+      "name": "Bow and Arrow (Emote)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/bow-and-arrow-emote.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "breathtaking-snow-globe",
+      "name": "Breathtaking Snow Globe",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/breathtaking-snow-globe.webp",
+      "rarity": "Epic",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 7000
+    },
+    {
+      "id": "briefcase-backpack-attachment",
+      "name": "Briefcase (Backpack Attachment)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/briefcase-backpack-attachment.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "broken-flashlight",
+      "name": "Broken Flashlight",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/broken-flashlight.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "broken-guidance-system",
+      "name": "Broken Guidance System",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/broken-guidance-system.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "broken-handcuffs",
+      "name": "Broken Handcuffs",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/broken-handcuffs.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 270
+    },
+    {
+      "id": "broken-handheld-radio",
+      "name": "Broken Handheld Radio",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/broken-handheld-radio.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "broken-taser",
+      "name": "Broken Taser",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/broken-taser.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "burgerboy-backpack-charm",
+      "name": "Burgerboy (Backpack Charm)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/burgerboy-backpack-charm.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "buried-city-hospital-key",
+      "name": "Buried City Hospital Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/buried-city-hospital-key.webp",
+      "rarity": "Rare",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "buried-city-jkv-employee-access-card",
+      "name": "Buried City JKV Employee Access Card",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/buried-city-jkv-employee-access-card.webp",
+      "rarity": "Uncommon",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "buried-city-residential-master-key",
+      "name": "Buried City Residential Master Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/buried-city-residential-master-key.webp",
+      "rarity": "Uncommon",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "buried-city-town-hall-key",
+      "name": "Buried City Town Hall Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/buried-city-town-hall-key.webp",
+      "rarity": "Epic",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "burltetta-recipe",
+      "name": "Burletta Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/burltetta-recipe.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "burletta-i",
+      "name": "Burletta I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/burletta-i.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 2900
+    },
+    {
+      "id": "burletta-ii",
+      "name": "Burletta II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/burletta-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 5000
+    },
+    {
+      "id": "burletta-iiii",
+      "name": "Burletta III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/burletta-iiii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 7000
+    },
+    {
+      "id": "burletta-iv",
+      "name": "Burletta IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/burletta-iv.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 10000
+    },
+    {
+      "id": "burned-arc-circuitry",
+      "name": "Burned ARC Circuitry",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/burned-arc-circuitry.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "burnt-out-candles",
+      "name": "Burnt-Out Candles",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/burnt-out-candles.webp",
+      "rarity": "Common",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "camera-lens",
+      "name": "Camera Lens",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/camera-lens.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "candleberries",
+      "name": "Candleberries",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/candleberries.webp",
+      "rarity": "Rare",
+      "item_type": "Nature",
+      "ammo_type": "",
+      "value": 460
+    },
+    {
+      "id": "candle-holder",
+      "name": "Candle Holder",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/candle-holder.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "canister",
+      "name": "Canister",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/canister.webp",
+      "rarity": "Uncommon",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 300
+    },
+    {
+      "id": "cans-backpack-attachment",
+      "name": "Cans (Backpack Attachment)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/cans-backpack-attachment.webp",
+      "rarity": "Common",
+      "item_type": "Cosmetic",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "cat-bed",
+      "name": "Cat Bed",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/cat-bed.webp",
+      "rarity": "Uncommon",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "cheer-emote",
+      "name": "Cheer (Emote)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/cheer-emote.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "chemicals",
+      "name": "Chemicals",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/chemicals.webp",
+      "rarity": "Common",
+      "item_type": "Basic Material",
+      "ammo_type": null,
+      "value": 50
+    },
+    {
+      "id": "coffee-pot",
+      "name": "Coffee Pot",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/coffee-pot.webp",
+      "rarity": "Common",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "coins",
+      "name": "Coins",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/coins.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "combat-mk-1",
+      "name": "Combat Mk. 1",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/combat-mk-1.webp",
+      "rarity": "Uncommon",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "combat-mk-2",
+      "name": "Combat Mk. 2",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/combat-mk-2.webp",
+      "rarity": "Rare",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "combat-mk-3-aggressive",
+      "name": "Combat Mk. 3 (Aggressive)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/combat-mk-3-aggressive.webp",
+      "rarity": "Epic",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "combat-mk3-aggressive-blueprint",
+      "name": "Combat Mk.3 (Aggressive) Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/combat-mk3-aggressive-blueprint.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "combat-mk3-flanking",
+      "name": "Combat Mk.3 (Flanking) ",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/combat-mk3-flanking.webp",
+      "rarity": "Epic",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "combat-mk-3-flanking",
+      "name": "Combat Mk. 3 (Flanking) Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/combat-mk-3-flanking.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "comet-igniter",
+      "name": "Comet Igniter",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/comet-igniter.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "compensator-i",
+      "name": "Compensator I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/compensator-i.webp",
+      "rarity": "Common",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "compensator-ii",
+      "name": "Compensator II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/compensator-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "compensator-ii-recipe",
+      "name": "Compensator II Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/compensator-ii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "compensator-iii",
+      "name": "Compensator III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/compensator-iii.webp",
+      "rarity": "Rare",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "compensator-iii-recipe",
+      "name": "Compensator III Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/compensator-iii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "complex-gun-parts",
+      "name": "Complex Gun Parts",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/complex-gun-parts.webp",
+      "rarity": "Epic",
+      "item_type": "Topside Material",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "complex-gun-parts-blueprint",
+      "name": "Complex Gun Parts Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/complex-gun-parts.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "coolant",
+      "name": "Coolant",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/coolant.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "cooling-coil",
+      "name": "Cooling Coil",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/cooling-coil.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "cooling-fan",
+      "name": "Cooling Fan",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/cooling-fan.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "cracked-bioscanner",
+      "name": "Cracked Bioscanner",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/cracked-bioscanner.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "crimson-racer-aviator-colour",
+      "name": "Crimson Racer (Aviator Colour)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/crimson-racer-aviator-colour.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "crude-explosives",
+      "name": "Crude Explosives",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/crude-explosives.webp",
+      "rarity": "Uncommon",
+      "item_type": "Refined Material",
+      "ammo_type": "",
+      "value": 270
+    },
+    {
+      "id": "crumpled-plastic-bottle",
+      "name": "Crumpled Plastic Bottle",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/crumpled-plastic-bottle.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 270
+    },
+    {
+      "id": "damaged-arc-motion-core",
+      "name": "Damaged ARC Motion Core",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/damaged-arc-motion-core.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "damaged-arc-powercell",
+      "name": "Damaged ARC Powercell",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/damaged-arc-powercell.webp",
+      "rarity": "Common",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 293
+    },
+    {
+      "id": "damaged-fireball-burner",
+      "name": "Damaged Fireball Burner",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/damaged-fireball-burner.webp",
+      "rarity": "Common",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 270
+    },
+    {
+      "id": "damaged-heat-sink",
+      "name": "Damaged Heat Sink",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/damaged-heat-sink.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "danaged-hornet-driver",
+      "name": "Damaged Hornet Driver",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/danaged.webp",
+      "rarity": "Common",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "damaged-rocketeer-part",
+      "name": "Damaged Rocketeer Driver",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/damaged-rocketeer-part.webp",
+      "rarity": "Common",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "damaged-tick-pod",
+      "name": "Damaged Tick Pod",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/damaged-tick-pod.webp",
+      "rarity": "Common",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 270
+    },
+    {
+      "id": "damaged-wasp-driver",
+      "name": "Damaged Wasp Driver",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/damaged-wasp-driver.webp",
+      "rarity": "Common",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 270
+    },
+    {
+      "id": "dam-control-center-tower-key",
+      "name": "Dam Control Center Tower Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/dam-control-center-tower-key.webp",
+      "rarity": "Epic",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "dam-controlled-access-zone-key",
+      "name": "Dam Controlled Access Zone Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/dam-controlled-access-zone-key.webp",
+      "rarity": "Rare",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "dam-staff-room-key",
+      "name": "Dam Staff Room Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/dam-staff-room-key.webp",
+      "rarity": "Uncommon",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "dam-surveillance-key",
+      "name": "Dam Surveillance Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/dam-surveillance-key.webp",
+      "rarity": "Uncommon",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "dam-testing-annex-key",
+      "name": "Dam Testing Annex Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/dam-testing-annex-key.webp",
+      "rarity": "Rare",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "dam-utility-key",
+      "name": "Dam Utility Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/dam-utility-key.webp",
+      "rarity": "Uncommon",
+      "item_type": "Quest Item",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "dart-board",
+      "name": "Dart Board",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/dart-board.webp",
+      "rarity": "Uncommon",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "deadline",
+      "name": "Deadline",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/deadline.webp",
+      "rarity": "Epic",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 6000
+    },
+    {
+      "id": "deadline-blueprint",
+      "name": "Deadline Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/deadline.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "defibrillator",
+      "name": "Defibrillator",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/defibrillator.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "defibrillator-recipe",
+      "name": "Defibrillator Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/defibrillator.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "deflated-football",
+      "name": "Deflated Football",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/deflated-football.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "degraded-arc-rubber",
+      "name": "Degraded ARC Rubber",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/degraded-arc-rubber.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "diving-googles",
+      "name": "Diving Goggles",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/diving-googles.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "dog-collar",
+      "name": "Dog Collar",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/dog-collar.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "doodly-duck",
+      "name": "Doodly Duck",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/doodly-duck.webp",
+      "rarity": "Rare",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "door-blocker",
+      "name": "Door Blocker",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/door-blocker.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 270
+    },
+    {
+      "id": "dried-out-arc-resin",
+      "name": "Dried-Out ARC Resin",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/dried-out-arc-resin.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "duct-tape-recipe",
+      "name": "Duct Tape",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/duct-tape.webp",
+      "rarity": "Uncommon",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 300
+    },
+    {
+      "id": "durable-cloth",
+      "name": "Durable Cloth",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/durable-cloth.webp",
+      "rarity": "Uncommon",
+      "item_type": "Refined Material",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "electrical-components",
+      "name": "Electrical Components",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/electrical-components.webp",
+      "rarity": "Uncommon",
+      "item_type": "Refined Material",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "empty-wine-bottle",
+      "name": "Empty Wine Bottle",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/empty-wine-bottle.webp",
+      "rarity": "Common",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "energy-ammo",
+      "name": "Energy Clip",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/energy-ammo.webp",
+      "rarity": "Rare",
+      "item_type": "Ammunition",
+      "ammo_type": null,
+      "value": 200
+    },
+    {
+      "id": "equalizer-i",
+      "name": "Equalizer",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/equalizer-i.webp",
+      "rarity": "Legendary",
+      "item_type": "Weapon",
+      "ammo_type": "Energy",
+      "value": 27500
+    },
+    {
+      "id": "equalizer-recipe",
+      "name": "Equalizer Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/equalizer.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "esr-analyzer",
+      "name": "ESR Analyzer",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/esr-analyzer.webp",
+      "rarity": "Common",
+      "item_type": "Quest Item",
+      "ammo_type": null,
+      "value": 0
+    },
+    {
+      "id": "exodus-modules",
+      "name": "Exodus Modules",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/exodus-modules.webp",
+      "rarity": "Epic",
+      "item_type": "Topside Material",
+      "ammo_type": "",
+      "value": 2750
+    },
+    {
+      "id": "expired-pasta",
+      "name": "Expired Pasta",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/expired-pasta.webp",
+      "rarity": "Common",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "expired-respirator",
+      "name": "Expired Respirator",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/expired-respirator.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "explosive-compound",
+      "name": "Explosive Compound",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/explosive-compound.webp",
+      "rarity": "Rare",
+      "item_type": "Refined Material",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "explosive-mine",
+      "name": "Explosive Mine",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/explosive-mine.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 1500
+    },
+    {
+      "id": "explosive-mine-blueprint",
+      "name": "Explosive Mine Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/explosive-mine-blueprint.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "extended-barrel",
+      "name": "Extended Barrel",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-barrel.webp",
+      "rarity": "Epic",
+      "item_type": "Modification",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "extended-barrel-recipe",
+      "name": "Extended Barrel Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-barrel.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "extended-light-mag-i",
+      "name": "Extended Light Mag I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-light-mag-i.webp",
+      "rarity": "Common",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "extended-light-mag-ii",
+      "name": "Extended Light Mag II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-light-mag-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "extended-light-mag-ii-recipe",
+      "name": "Extended Light Mag II Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-light-mag-ii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "extended-light-mag-iii",
+      "name": "Extended Light Mag III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-light-mag-iii.webp",
+      "rarity": "Rare",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "extended-light-mag-iii-recipe",
+      "name": "Extended Light Mag III Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-light-mag-iii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "extended-medium-mag-i",
+      "name": "Extended Medium Mag I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-medium-mag-i.webp",
+      "rarity": "Common",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "extended-medium-mag-ii",
+      "name": "Extended Medium Mag II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-medium-mag-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "extended-medium-mag-ii-recipe",
+      "name": "Extended Medium Mag II Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-medium-mag-ii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "extended-medium-mag-iii",
+      "name": "Extended Medium Mag III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-medium-mag-iii.webp",
+      "rarity": "Rare",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "extended-medium-mag-iii-blueprint",
+      "name": "Extended Medium Mag III Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-medium-mag-iii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "extended-shotgun-mag-i",
+      "name": "Extended Shotgun Mag I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-shotgun-mag-i.webp",
+      "rarity": "Common",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "extended-shotgun-mag-ii",
+      "name": "Extended Shotgun Mag II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-shotgun-mag-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "extended-shotgun-mag-ii-recipe",
+      "name": "Extended Shotgun Mag II Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-shotgun-mag-ii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "extended-shotgun-mag-iii",
+      "name": "Extended Shotgun Mag III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-shotgun-mag-iii.webp",
+      "rarity": "Rare",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "extended-shotgun-mag-iii-recipe",
+      "name": "Extended Shotgun Mag III Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/extended-shotgun-mag-iii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "fabric",
+      "name": "Fabric",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/fabric.webp",
+      "rarity": "Common",
+      "item_type": "Basic Material",
+      "ammo_type": null,
+      "value": 50
+    },
+    {
+      "id": "faded-flush-aviator-color",
+      "name": "Faded Flush (Aviator Color)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "faded-photograph",
+      "name": "Faded Photograph",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/faded-photograph.webp",
+      "rarity": "Common",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "familiar-duck",
+      "name": "Familiar Duck",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/familiar-duck.webp",
+      "rarity": "Epic",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 7000
+    },
+    {
+      "id": "ferro-i",
+      "name": "Ferro I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ferro-i.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "heavy",
+      "value": 475
+    },
+    {
+      "id": "ferro-ii",
+      "name": "Ferro II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ferro-ii.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "Heavy",
+      "value": 1000
+    },
+    {
+      "id": "ferro-iii",
+      "name": "Ferro III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ferro-iii.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "heavy ",
+      "value": 2000
+    },
+    {
+      "id": "ferro-iv",
+      "name": "Ferro IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ferro-iv.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "Heavy",
+      "value": 2900
+    },
+    {
+      "id": "fertilizer",
+      "name": "Fertilizer",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/fertilizer.webp",
+      "rarity": "Common",
+      "item_type": "Nature",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "film-reel",
+      "name": "Film Reel",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/film-reel.webp",
+      "rarity": "Rare",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "fine-wristwatch",
+      "name": "Fine Wristwatch",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/fine-wristwatch.webp",
+      "rarity": "Rare",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "finger-gun-single-shot-emote",
+      "name": "Finger Gun Single Shot (Emote)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/finger-gun-single-shot-emote.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "fireball-burner",
+      "name": "Fireball Burner",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/fireball-burner.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "firecracker",
+      "name": "Firecracker",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/firecracker.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 270
+    },
+    {
+      "id": "firefly-burner",
+      "name": "Firefly Burner",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/firefly-bruner.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "fireworks-box",
+      "name": "Fireworks Box",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/fireworks-box.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "fireworks-box-blueprint",
+      "name": "Fireworks Box Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/fireworks-box-blueprint.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "flame-spray",
+      "name": "Flame Spray",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/flame-spray.webp",
+      "rarity": "Uncommon",
+      "item_type": "Quick use",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "flashy-duck",
+      "name": "Flashy Duck",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/flashy-duck.webp",
+      "rarity": "Rare",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "flow-controller",
+      "name": "Flow Controller",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/flow-controller.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "flushing-terminal-key",
+      "name": "Flushing Terminal Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/flushing-terminal-key.webp",
+      "rarity": "Common",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "fossilized-lightning",
+      "name": "Fossilized Lightning",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/fossilized-lightning.webp",
+      "rarity": "Epic",
+      "item_type": "Nature",
+      "ammo_type": "",
+      "value": 4000
+    },
+    {
+      "id": "free-loadout-augment",
+      "name": "Free Loadout Augment",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/free-loadout-augment.webp",
+      "rarity": "Common",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "frequency-modulation-box",
+      "name": "Frequency Modulation Box",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/frequency-modulation-box.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "fried-motherboard",
+      "name": "Fried Motherboard",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/fried-motherboard.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "fruit-mix",
+      "name": "Fruit Mix",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/fruit-mix.webp",
+      "rarity": "Uncommon",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 1800
+    },
+    {
+      "id": "frying-pan",
+      "name": "Frying Pan",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/frying-pan.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "garlic-press",
+      "name": "Garlic Press",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/garlic-press.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "gas-grenade",
+      "name": "Gas Grenade",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/gas-grenade.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 270
+    },
+    {
+      "id": "gas-grenade-trap",
+      "name": "Gas Grenade Trap",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/gas-grenade-trap.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 300
+    },
+    {
+      "id": "gas-mine",
+      "name": "Gas Mine",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/gas-mine.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 270
+    },
+    {
+      "id": "gas-mine-blueprint",
+      "name": "Gas Mine Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/gas-mine.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "geiger-counter",
+      "name": "Geiger Counter",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/geiger-counter.webp",
+      "rarity": "Epic",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 3500
+    },
+    {
+      "id": "gentle-duck",
+      "name": "Gentle Duck",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/gentle-duck.webp",
+      "rarity": "Uncommon",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "goggles-radio-renegade-variant",
+      "name": "Goggles (Radio Renegade Variant)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/goggles-radio-renegade-variant.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "great-muullein",
+      "name": "Great Mullein",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/great-muullein.webp",
+      "rarity": "Uncommon",
+      "item_type": "Topside Material",
+      "ammo_type": "",
+      "value": 300
+    },
+    {
+      "id": "green-light-stick",
+      "name": "Green Light Stick",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/green-light-stick.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 150
+    },
+    {
+      "id": "green-light-stick-blueprint",
+      "name": "Green Light Stick Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/green-light-stick.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "hairpin-i",
+      "name": "Hairpin I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/hairpin-i.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 450
+    },
+    {
+      "id": "hairpin-ii",
+      "name": "Hairpin II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/hairpin-ii.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 1000
+    },
+    {
+      "id": "hairpin-iii",
+      "name": "Hairpin III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/hairpin-iii.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 2000
+    },
+    {
+      "id": "hairpin-iv",
+      "name": "Hairpin IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/hairpin-iv.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 2900
+    },
+    {
+      "id": "happy-jig-emote",
+      "name": "Happy Jig (Emote)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/happy-jig-emote.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "headphones",
+      "name": "Headphones",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/headphones.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "heavy-ammo",
+      "name": "Heavy Ammo",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/heavy-ammo.webp",
+      "rarity": "Common",
+      "item_type": "Ammunition",
+      "ammo_type": null,
+      "value": 12
+    },
+    {
+      "id": "heavy-fuze-grenade",
+      "name": "Heavy Fuze Grenade",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/heavy-fuze-grenade.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 1600
+    },
+    {
+      "id": "heavy-gun-parts",
+      "name": "Heavy Gun Parts",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/heavy-gun-parts.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 700
+    },
+    {
+      "id": "heavy-gun-parts-recipe",
+      "name": "Heavy Gun Parts Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/heavy-gun-parts.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "heavy-shield",
+      "name": "Heavy Shield",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/heavy-shield.webp",
+      "rarity": "Epic",
+      "item_type": "Shield",
+      "ammo_type": null,
+      "value": 5500
+    },
+    {
+      "id": "helmet-radio-renegade-variant",
+      "name": "Helmet (Radio Renegade Variant)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/helmet-radio-renegade-variant.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "herbal-bandage",
+      "name": "Herbal Bandage",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/herbal-bandage.webp",
+      "rarity": "Uncommon",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "horizontal-grip",
+      "name": "Horizontal Grip",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/horizontal-grip.webp",
+      "rarity": "Epic",
+      "item_type": "Modification",
+      "ammo_type": "",
+      "value": 7000
+    },
+    {
+      "id": "hornet-driver",
+      "name": "Hornet Driver",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/hornet-driver.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "household-cleaner",
+      "name": "Household Cleaner",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/household-cleaner.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "hullcracker-blueprint",
+      "name": "Hullcracker Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/hullcracker.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "hullcracker-i",
+      "name": "Hullcracker I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/hullcracker.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "launcher",
+      "value": 10000
+    },
+    {
+      "id": "hullcracker-ii",
+      "name": "Hullcracker II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/hullcracker-ii.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "launcher",
+      "value": 13000
+    },
+    {
+      "id": "hullcracker-iii",
+      "name": "Hullcracker III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/hullcracker-iii.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "launcher",
+      "value": 17000
+    },
+    {
+      "id": "hullcracker-iv",
+      "name": "Hullcracker IV ",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/hullcracker-iv.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "launcher",
+      "value": 22000
+    },
+    {
+      "id": "humidifier",
+      "name": "Humidifier",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/humidifier.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "ice-cream-scooper",
+      "name": "Ice Cream Scooper",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ice-cream-scooper.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "il-toro-recipe",
+      "name": "Il Toro Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/il-toro-recipe.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "il-toro-i",
+      "name": "Il Toro I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/il%20Toro-i.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "shotgun",
+      "value": 5000
+    },
+    {
+      "id": "il-toro-ii",
+      "name": "Il Toro II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/il-toro-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "shotgun",
+      "value": 7000
+    },
+    {
+      "id": "il-toro-iiii",
+      "name": "Il Toro III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/il-toro-iiii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "shotgun",
+      "value": 10000
+    },
+    {
+      "id": "il-toro-iv",
+      "name": "Il Toro IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/il-toro-iv.webp",
+      "rarity": "Uncommon",
+      "item_type": "Weapon",
+      "ammo_type": "shotgun",
+      "value": 13000
+    },
+    {
+      "id": "impure-arc-coolant",
+      "name": "Impure ARC Coolant",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/impure-arc-coolant.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "industrial-battery",
+      "name": "Industrial Battery",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/industrial-battery.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "industrial-charger",
+      "name": "Industrial Charger",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/industrial-charger.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "industrial-magnet",
+      "name": "Industrial Magnet",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/industrial-magnet.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "ion-sputter",
+      "name": "Ion Sputter",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ion-sputter.webp",
+      "rarity": "Epic",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 6000
+    },
+    {
+      "id": "jolt-mine",
+      "name": "Jolt Mine",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/jolt-mine.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 850
+    },
+    {
+      "id": "jolt-mine-recipe",
+      "name": "Jolt Mine Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/jolt-mine.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "junior-outfit",
+      "name": "Junior (Outfit)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/junior-outfit.webp",
+      "rarity": "Common",
+      "item_type": "Cosmetic",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "jupiter-i",
+      "name": "Jupiter",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/jupiter-i.webp",
+      "rarity": "Legendary",
+      "item_type": "Weapon",
+      "ammo_type": "Heavy",
+      "value": 27500
+    },
+    {
+      "id": "jupiter-i-recipe",
+      "name": "Jupiter Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/jupiter-i-recipe.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "kettle-i",
+      "name": "Kettle I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/kettle-i.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "Light",
+      "value": 840
+    },
+    {
+      "id": "kettle-ii",
+      "name": "Kettle II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/kettle-ii.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "Light",
+      "value": 2000
+    },
+    {
+      "id": "kettle-iii",
+      "name": "Kettle III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/kettle-iii.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 3000
+    },
+    {
+      "id": "kettle-iv",
+      "name": "Kettle IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/kettle-iv.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 5000
+    },
+    {
+      "id": "kinetic-converter",
+      "name": "Kinetic Converter",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/kinetic-converter.webp",
+      "rarity": "Legendary",
+      "item_type": "Modification",
+      "ammo_type": "",
+      "value": 7000
+    },
+    {
+      "id": "laboratory-reagents",
+      "name": "Laboratory Reagents",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/laboratory-reagents.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "lances-mixtape-5th-edition",
+      "name": "Lance's Mixtape (5th Edition)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/lances-mixtape-5th-edition.webp",
+      "rarity": "Epic",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 10000
+    },
+    {
+      "id": "laser-trap-lure-recipe",
+      "name": "Laser Trap: Lure",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/laser-trap-lure.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "launcher-ammo",
+      "name": "Launcher Ammo",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/launcher-ammo.webp",
+      "rarity": "Rare",
+      "item_type": "Ammunition",
+      "ammo_type": "launcher",
+      "value": 250
+    },
+    {
+      "id": "leaper-pulse-unit",
+      "name": "Leaper Pulse Unit",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/leaper-pulse-unit.webp",
+      "rarity": "Epic",
+      "item_type": "Throwable",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "lemon",
+      "name": "Lemon",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/lemon.webp",
+      "rarity": "Uncommon",
+      "item_type": "Nature",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "lidar-scanner",
+      "name": "Lidar Scanner",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/lidar-scanner.webp",
+      "rarity": "Common",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "light-ammo",
+      "name": "Light Ammo",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/light-ammo.webp",
+      "rarity": "Common",
+      "item_type": "Ammunition",
+      "ammo_type": null,
+      "value": 4
+    },
+    {
+      "id": "light-bulb",
+      "name": "Light Bulb",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/light-bulb.webp",
+      "rarity": "Uncommon",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "light-gun-parts",
+      "name": "Light Gun Parts",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/light-gun-parts.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 700
+    },
+    {
+      "id": "light-gun-parts-recipe",
+      "name": "Light Gun Parts Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/light-gun-parts.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "light-impact-grenade",
+      "name": "Light Impact Grenade",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/light-impact-grenade.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 270
+    },
+    {
+      "id": "light-shield",
+      "name": "Light Shield",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/light-shield.webp",
+      "rarity": "Uncommon",
+      "item_type": "Shield",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "lightweight-stock",
+      "name": "Lightweight Stock",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/lightweight-stock.webp",
+      "rarity": "Epic",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "lightweight-stock-recipe",
+      "name": "Lightweight Stock Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/lightweight-stock.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "lil-smoke-grenade",
+      "name": "Li'l Smoke Grenade",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/lil-smoke-grenade.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 300
+    },
+    {
+      "id": "looting-mk-1",
+      "name": "Looting Mk. 1",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/looting-mk-1.webp",
+      "rarity": "Uncommon",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "looting-mk-2",
+      "name": "Looting Mk. 2",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/looting-mk-2.webp",
+      "rarity": "Rare",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "looting-mk-3-cautious",
+      "name": "Looting MK. 3 (Cautious)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/looting-mk-3-cautious.webp",
+      "rarity": "Epic",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "looting-mk-3-safekeeper",
+      "name": "Looting MK. 3 (Safekeeper)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/looting-mk-3-safekeeper.webp",
+      "rarity": "Epic",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "looting-mk-3-safekeeper-blueprint",
+      "name": "Looting MK. 3 (Safekeeper) Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/looting-mk-3-safekeeper-blueprint.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "looting-mk-3-survivor",
+      "name": "Looting MK. 3 (Survivor)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/looting-mk-3-survivor.webp",
+      "rarity": "Epic",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "looting-mk-3-survivor-blueprint",
+      "name": "Looting MK. 3 (Survivor) Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/looting-mk-3-survivor.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "lure-grenade",
+      "name": "Lure Grenade",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/lure-grenade.webp",
+      "rarity": "Uncommon",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "lure-grenade-recipe",
+      "name": "Lure Grenade Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/lure-grenade.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "lure-grenade-trap",
+      "name": "Lure Grenade Trap",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/lure-grenade-trap.webp",
+      "rarity": "Uncommon",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "magnet",
+      "name": "Magnet",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/magnet.webp",
+      "rarity": "Uncommon",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 300
+    },
+    {
+      "id": "magnetic-accelerator",
+      "name": "Magnetic Accelerator",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/magnetic-accelerator.webp",
+      "rarity": "Epic",
+      "item_type": "Refined Material",
+      "ammo_type": "",
+      "value": 5500
+    },
+    {
+      "id": "magnetron",
+      "name": "Magnetron",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/magnetron.webp",
+      "rarity": "Epic",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 6000
+    },
+    {
+      "id": "mastery-medal-backpack-charm",
+      "name": "Mastery Medal (Backpack Charm)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/mastery-medal-backpack-charm.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "matriarch-reactor",
+      "name": "Matriarch Reactor",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/matriarch-reactor.webp",
+      "rarity": "Legendary",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 13000
+    },
+    {
+      "id": "mechanical-components",
+      "name": "Mechanical Components",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/mechanical-components.webp",
+      "rarity": "Uncommon",
+      "item_type": "Refined Material",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "medium-ammo",
+      "name": "Medium Ammo",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/medium-ammo.webp",
+      "rarity": "Common",
+      "item_type": "Ammunition",
+      "ammo_type": null,
+      "value": 6
+    },
+    {
+      "id": "medium-gun-parts",
+      "name": "Medium Gun Parts",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/medium-gun-parts.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 700
+    },
+    {
+      "id": "medium-gun-parts-recipe",
+      "name": "Medium Gun Parts Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/medium-gun-parts.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "medium-shield",
+      "name": "Medium Shield",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/medium-shield.webp",
+      "rarity": "Rare",
+      "item_type": "Shield",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "metal-brackets",
+      "name": "Metal Brackets",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/metal-brackets.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "metal-parts",
+      "name": "Metal Parts",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/metal-parts.webp",
+      "rarity": "Common",
+      "item_type": "Basic Material",
+      "ammo_type": null,
+      "value": 75
+    },
+    {
+      "id": "microscope",
+      "name": "Microscope",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/microscope.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "mini-centrifuge",
+      "name": "Mini Centrifuge",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/mini-centrifuge.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "mod-components",
+      "name": "Mod Components",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/mod-components.webp",
+      "rarity": "Rare",
+      "item_type": "Refined Material",
+      "ammo_type": null,
+      "value": 1750
+    },
+    {
+      "id": "moss",
+      "name": "Moss",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/moss.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": "",
+      "value": 500
+    },
+    {
+      "id": "motor",
+      "name": "Motor",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/motor.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "mushroom",
+      "name": "Mushroom",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/mushroom.webp",
+      "rarity": "Uncommon",
+      "item_type": "Nature",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "music-album",
+      "name": "Music Album",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/music-album.webp",
+      "rarity": "Rare",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 3000
+    },
+    {
+      "id": "music-box",
+      "name": "Music Box",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/music-box.webp",
+      "rarity": "Rare",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "muzzle-brake-i",
+      "name": "Muzzle Brake I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/muzzle-brake-i.webp",
+      "rarity": "Common",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "muzzle-brake-ii",
+      "name": "Muzzle Brake II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/muzzle-brake-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "muzzle-brake-ii-recipe",
+      "name": "Muzzle Brake II Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/muzzle-brake-ii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "muzzle-brake-iii",
+      "name": "Muzzle Brake III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/muzzle-brake-iii.webp",
+      "rarity": "Rare",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "muzzle-brake-iii-recipe",
+      "name": "Muzzle Brake III Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/muzzle-brake-iii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "noisemaker",
+      "name": "Noisemaker",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/noisemaker.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "number-plate",
+      "name": "Number Plate",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/number-plate.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 270
+    },
+    {
+      "id": "oil",
+      "name": "Oil",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/oil.webp",
+      "rarity": "Uncommon",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 300
+    },
+    {
+      "id": "olives",
+      "name": "Olives",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/olives.webp",
+      "rarity": "Uncommon",
+      "item_type": "Nature",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "orange-camo-origin-outfit",
+      "name": "Orange Camo (Origin Outfit)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/orange-camo-origin-outfit.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "osprey-recipe",
+      "name": "Osprey Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/osprey.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "osprey-i",
+      "name": "Osprey I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/osprey-i.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 7000
+    },
+    {
+      "id": "osprey-ii",
+      "name": "Osprey II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/osprey-ii.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 10000
+    },
+    {
+      "id": "osprey-iii",
+      "name": "Osprey III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/osprey-iii.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 13000
+    },
+    {
+      "id": "osprey-iv",
+      "name": "Osprey IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/osprey-iv.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 17000
+    },
+    {
+      "id": "padded-stock",
+      "name": "Padded Stock",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/padded-stock.webp",
+      "rarity": "Epic",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "padded-stock-recipe",
+      "name": "Padded Stock Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/padded-stock.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "painted-box",
+      "name": "Painted Box",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/painted-box.webp",
+      "rarity": "Uncommon",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "patchwork-warden-color",
+      "name": "Patchwork (Warden Color)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/patchwork-warden-color.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "patrol-car-key",
+      "name": "Patrol Car Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/patrol-car-key.webp",
+      "rarity": "Uncommon",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "patrol-outfit",
+      "name": "Patrol (Outfit)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/patrol-outfit.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "photoelectric-cloak",
+      "name": "Photoelectric Cloak",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/photoelectric-cloak.webp",
+      "rarity": "Epic",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "pilgrims-peak-security-code",
+      "name": "Pilgrim's Peak Security Code",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/pilgrims-peak-security-code.webp",
+      "rarity": "Common",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "plastic-parts",
+      "name": "Plastic Parts",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/plastic-parts.webp",
+      "rarity": "Common",
+      "item_type": "Basic Material",
+      "ammo_type": null,
+      "value": 60
+    },
+    {
+      "id": "playing-cards",
+      "name": "Playing Cards",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/playing-cards.webp",
+      "rarity": "Rare",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "polluted-air-filter",
+      "name": "Polluted Air Filter",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/polluted-air-filter.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "pop-trigger",
+      "name": "Pop Trigger",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/pop-trigger.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "portable-television",
+      "name": "Portable TV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/portable-television.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "poster-natural-wonder",
+      "name": "Poster of Natural Wonder",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/poster-natural-wonder.webp",
+      "rarity": "Uncommon",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "pottery",
+      "name": "Pottery",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/pottery.webp",
+      "rarity": "Uncommon",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "power-bank",
+      "name": "Power Bank",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/power-bank.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "power-cable",
+      "name": "Power Cable",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/power-cable.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "power-rod",
+      "name": "Power Rod",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/power-rod.webp",
+      "rarity": "Epic",
+      "item_type": "Advanced Material",
+      "ammo_type": null,
+      "value": 5500
+    },
+    {
+      "id": "prickly-pear",
+      "name": "Prickly Pear",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/prickly-pear.webp",
+      "rarity": "Common",
+      "item_type": "Nature",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "processor",
+      "name": "Processor",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/processor.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 500
+    },
+    {
+      "id": "projector",
+      "name": "Projector",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/projector.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "pulse-mine",
+      "name": "Pulse Mine",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/pulse-mine.webp",
+      "rarity": "Uncommon",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 470
+    },
+    {
+      "id": "pulse-mine-blueprint",
+      "name": "Pulse Mine Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/pulse-mine.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "queen-reactor",
+      "name": "Queen Reactor",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/queen-reactor.webp",
+      "rarity": "Legendary",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 11000
+    },
+    {
+      "id": "radio",
+      "name": "Radio",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/radio.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "radio-relay",
+      "name": "Radio Relay",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/radio-relay.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "radio-renegade-outfit",
+      "name": "Radio Renegade (Outfit)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/radio-renegade-outfit.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "raider-hatch-key",
+      "name": "Raider Hatch Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/raider-hatch-key.webp",
+      "rarity": "Rare",
+      "item_type": "Key",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "raiders-refuge-security-code",
+      "name": "Raider's Refuge Security Code",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/raiders-refuge-security-code.webp",
+      "rarity": "Common",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "raider-tokens",
+      "name": "Raider Tokens",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/raider-tokens.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "rattler-i",
+      "name": "Rattler I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rattler-i.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 1750
+    },
+    {
+      "id": "rattler-ii",
+      "name": "Rattler II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rattler-ii.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 3000
+    },
+    {
+      "id": "rattler-iii",
+      "name": "Rattler III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rattler-iii.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 5000
+    },
+    {
+      "id": "rattler-iv",
+      "name": "Rattler IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rattler-iv.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 7000
+    },
+    {
+      "id": "recorder",
+      "name": "Recorder",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/recorded.webp",
+      "rarity": "Uncommon",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "red-coral-jewelry",
+      "name": "Red Coral Jewelry",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/red-coral-jewelry.webp",
+      "rarity": "Rare",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "red-light-stick",
+      "name": "Red Light Stick",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/red-light-stick.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 150
+    },
+    {
+      "id": "red-light-stick-blueprint",
+      "name": "Red Light Stick Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/red-light-stick.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "red-radio-renegade-color",
+      "name": "Red (Radio Renegade Color)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/red-radio-renegade-color.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "reinforced-reception-security-code",
+      "name": "Reinforced Reception Security Code",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/reinforced-reception-security-code.webp",
+      "rarity": "Common",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "remote-control",
+      "name": "Remote Control",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/remote-control.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "remote-raider-flare",
+      "name": "Remote Raider Flare",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/remote-raider-flare.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 270
+    },
+    {
+      "id": "remote-raider-flare-blueprint",
+      "name": "Remote Raider Flare Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/remote-raider-flare.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "renegade-i",
+      "name": "Renegade I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/renegade-i.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 7000
+    },
+    {
+      "id": "renegade-ii",
+      "name": "Renegade II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/renegade-ii.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 10000
+    },
+    {
+      "id": "renegade-iii",
+      "name": "Renegade III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/renegade-iii.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 13000
+    },
+    {
+      "id": "renegade-iv",
+      "name": "Renegade IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/renegade-iv.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "Medium",
+      "value": 17000
+    },
+    {
+      "id": "resin",
+      "name": "Resin",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/resin.webp",
+      "rarity": "Common",
+      "item_type": "Nature",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "ripped-safety-vest",
+      "name": "Ripped Safety Vest",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ripped-safety-vest.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "rocketeer-part",
+      "name": "Rocketeer Driver",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rocketeer-part.webp",
+      "rarity": "Epic",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "rocket-thruster",
+      "name": "Rocket Thruster",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rocket-thruster.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "roots",
+      "name": "Roots",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/roots.webp",
+      "rarity": "Uncommon",
+      "item_type": "Nature",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "rope",
+      "name": "Rope",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rope.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 500
+    },
+    {
+      "id": "rosary",
+      "name": "Rosary",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rosary.webp",
+      "rarity": "Rare",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "rotary-encoder",
+      "name": "Rotary Encoder",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rotary-encoder.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "rubber-duck",
+      "name": "Rubber Duck",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rubber-duck.webp",
+      "rarity": "Common",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "rubber-pad",
+      "name": "Rubber Pad",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rubber-pad.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "rubber-parts-recipe",
+      "name": "Rubber Parts",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rubber-parts-recipe.webp",
+      "rarity": "Common",
+      "item_type": "Basic Material",
+      "ammo_type": null,
+      "value": 50
+    },
+    {
+      "id": "ruined-accordion",
+      "name": "Ruined Accordion",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ruined-accordion.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "ruined-augment",
+      "name": "Ruined Augment",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ruined-augment.webp",
+      "rarity": "Common",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 270
+    },
+    {
+      "id": "ruined-baton",
+      "name": "Ruined Baton",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ruined-baton.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "ruined-handcuffs",
+      "name": "Ruined Handcuffs",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ruined-handcuffs.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "ruined-parachute",
+      "name": "Ruined Parachute",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ruined-parachute.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "ruined-riot-shield",
+      "name": "Ruined Riot Shield",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ruined-riot-shield.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "ruined-tactical-vest",
+      "name": "Ruined Tactical Vest",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/ruined-tactical-vest.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "rusted-bolts",
+      "name": "Rusted Bolts",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rusted-bolts.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "rusted-gear",
+      "name": "Rusted Gear",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rusted-gear.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "rusted-shut-medical-kit",
+      "name": "Rusted Shut Medical Kit",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rusted-shut-medical-kit.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "rusted-tools",
+      "name": "Rusted Tools",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rusted-tools.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "rusty-arc-steel",
+      "name": "Rusty ARC Steel",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/rusty-arc-steel.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "sample-cleaner",
+      "name": "Sample Cleaner",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/sample-cleaner.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "seeker-grenade",
+      "name": "Seeker Grenade",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/seeker-grenade.webp",
+      "rarity": "Uncommon",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "seeker-grenade-blueprint",
+      "name": "Seeker Grenade Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/seeker-grenade.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "sensors-recipe",
+      "name": "Sensors",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/sensors-recipe.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 500
+    },
+    {
+      "id": "sentinel-part",
+      "name": "Sentinel Firing Core",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/sentinel-part.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "shaker",
+      "name": "Shaker",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/shaker.webp",
+      "rarity": "Uncommon",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "shield-recharger",
+      "name": "Shield Recharger",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/shield-recharger.webp",
+      "rarity": "Uncommon",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 520
+    },
+    {
+      "id": "shotgun-ammo",
+      "name": "Shotgun ammo",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/shotgun-ammo.webp",
+      "rarity": "Common",
+      "item_type": "Ammunition",
+      "ammo_type": null,
+      "value": 20
+    },
+    {
+      "id": "shotgun-choke-i",
+      "name": "Shotgun Choke I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/shotgun-choke-i.webp",
+      "rarity": "Common",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "shotgun-choke-ii",
+      "name": "Shotgun Choke II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/shotgun-choke-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "shotgun-choke-ii-recipe",
+      "name": "Shotgun Choke II Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/shotgun-choke-ii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "shotgun-choke-iii",
+      "name": "Shotgun Choke III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/shotgun-choke-iii.webp",
+      "rarity": "Rare",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "shotgun-choke-iii-recipe",
+      "name": "Shotgun Choke III Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/shotgun-choke-iii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "shotgun-gun-parts",
+      "name": "Shotgun Parts",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/shotgun-gun-parts.webp",
+      "rarity": "Rare",
+      "item_type": "Material",
+      "ammo_type": null,
+      "value": 700
+    },
+    {
+      "id": "shotgun-silencer",
+      "name": "Shotgun Silencer",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/shotgun-silencer.webp",
+      "rarity": "Epic",
+      "item_type": "Mods",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "shotgun-silencer-blueprint",
+      "name": "Shotgun Silencer Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/shotgun-silencer.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "showstopper",
+      "name": "Showstopper",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/showstopper.webp",
+      "rarity": "Rare",
+      "item_type": "Throwable",
+      "ammo_type": null,
+      "value": 2100
+    },
+    {
+      "id": "showstopper-blueprint",
+      "name": "Showstopper Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/showstopper.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "shrapnel-grenade",
+      "name": "Shrapnel Grenade",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/shrapnel-grenade.webp",
+      "rarity": "Uncommon",
+      "item_type": "Throwable",
+      "ammo_type": "",
+      "value": 800
+    },
+    {
+      "id": "shredder-gyro",
+      "name": "Shredder Gyro",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/shredder-gyro.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "signal-amplifier",
+      "name": "Signal Amplifier",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/signal-amplifier.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "silencer-i",
+      "name": "Silencer I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/silencer-i.webp",
+      "rarity": "Uncommon",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "silencer-i-recipe",
+      "name": "Silencer I Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/silencer-i.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "silencer-ii",
+      "name": "Silencer II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/silencer-ii.webp",
+      "rarity": "Rare",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "silencer-ii-recipe",
+      "name": "Silencer II Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/silencer-ii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "silencer-iii",
+      "name": "Silencer III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/silencer-iii.webp",
+      "rarity": "Epic",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 7000
+    },
+    {
+      "id": "silver-teaspoon-set",
+      "name": "Silver Teaspoon Set",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/silver-teaspoon-set.webp",
+      "rarity": "Rare",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 3000
+    },
+    {
+      "id": "simple-gun-parts",
+      "name": "Simple Gun Parts",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/simple-gun-parts.webp",
+      "rarity": "Uncommon",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 330
+    },
+    {
+      "id": "smoke-grenade",
+      "name": "Smoke Grenade",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/smoke-grenade.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "smoke-grenade-blueprint",
+      "name": "Smoke Grenade Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/smoke-grenade.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "laser-trap-smoke-recipe",
+      "name": "Smoke Grenade Trap",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/laser-trap-smoke-recipe.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "snap-blast-grenade",
+      "name": "Snap Blast Grenade",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/snap-blast-grenade.webp",
+      "rarity": "Uncommon",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 800
+    },
+    {
+      "id": "snap-hook",
+      "name": "Snap Hook",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/snap-hook.webp",
+      "rarity": "Legendary",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 14000
+    },
+    {
+      "id": "snap-hook-recipe",
+      "name": "Snap Hook Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/snap-hook.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "snitch-scanner",
+      "name": "Snitch Scanner",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/snitch-scanner.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "snowball",
+      "name": "Snowball",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/snowball.webp",
+      "rarity": "Common",
+      "item_type": "Nature",
+      "ammo_type": "",
+      "value": 10
+    },
+    {
+      "id": "spaceport-container-storage-key",
+      "name": "Spaceport Container Storage Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/spaceport-container-storage-key.webp",
+      "rarity": "Rare",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "spaceport-ground-control-key",
+      "name": "Spaceport Control Tower Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/spaceport-ground-control-key.webp",
+      "rarity": "Rare",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "spaceport-trench-tower-key",
+      "name": "Spaceport Trench Tower Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/spaceport-trench-tower-key.webp",
+      "rarity": "Uncommon",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "spaceport-warehouse-key",
+      "name": "Spaceport Warehouse Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/spaceport-warehouse-key.webp",
+      "rarity": "Uncommon",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "speaker-component",
+      "name": "Speaker Component",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/speaker-component.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 500
+    },
+    {
+      "id": "spectrometer",
+      "name": "Spectrometer",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/spectrometer.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "spectrum-analyzer",
+      "name": "Spectrum Analyzer",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/spectrum-analyzer.webp",
+      "rarity": "Epic",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 3500
+    },
+    {
+      "id": "spotter-relay",
+      "name": "Spotter Relay",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/spotter-relay.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "spring-cushion",
+      "name": "Spring Cushion",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/spring-cushion.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "stable-stock-i",
+      "name": "Stable Stock I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stable-stock-i.webp",
+      "rarity": "Common",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "stable-stock-ii",
+      "name": "Stable Stock II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stable-stock-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "stable-stock-ii-recipe",
+      "name": "Stable Stock II Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stable-stock-ii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "stable-stock-iii",
+      "name": "Stable Stock III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stable-stock-iii.webp",
+      "rarity": "Rare",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "stable-stock-iii-recipe",
+      "name": "Stable Stock III Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stable-stock-iii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "stack-of-movie-tapes",
+      "name": "Stack of Movie Tapes",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stack-of-movie-tapes.webp",
+      "rarity": "Common",
+      "item_type": "Quest Item",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "statuette",
+      "name": "Statuette",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/statuette.webp",
+      "rarity": "Rare",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 3000
+    },
+    {
+      "id": "spring",
+      "name": "Steel Spring",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/spring.webp",
+      "rarity": "Uncommon",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 300
+    },
+    {
+      "id": "stella-montis-archives-key",
+      "name": "Stella Montis Archives Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stella-montis-archives-key.webp",
+      "rarity": "Epic",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "stella-montis-assembly-admin-key",
+      "name": "Stella Montis Assembly Admin Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stella-montis-assembly-admin-key.webp",
+      "rarity": "Uncommon",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "stella-montis-medical-storage-key",
+      "name": "Stella Montis Medical Storage Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stella-montis-medical-storage-key.webp",
+      "rarity": "Uncommon",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "stella-montis-security-checkpoint-key",
+      "name": "Stella Montis Security Checkpoint Key",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stella-montis-security-checkpoint-key.webp",
+      "rarity": "Rare",
+      "item_type": "Key",
+      "ammo_type": "",
+      "value": 100
+    },
+    {
+      "id": "sterilized-bandage",
+      "name": "Sterilized Bandage",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/sterilized-bandage.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "stitcher-i",
+      "name": "Stitcher I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stitcher-ii.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": null,
+      "value": 800
+    },
+    {
+      "id": "stitcher-ii",
+      "name": "Stitcher II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stitcher-ii.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 2000
+    },
+    {
+      "id": "stitcher-iii",
+      "name": "Stitcher III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stitcher-iii.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 3000
+    },
+    {
+      "id": "stitcher-iv",
+      "name": "Stitcher IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/stitcher-iv.webp",
+      "rarity": "Common",
+      "item_type": "Weapon",
+      "ammo_type": "light",
+      "value": 5000
+    },
+    {
+      "id": "succulent-backpack-charm",
+      "name": "Succulent (Backpack Charm)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/succulent-backpack-charm.webp",
+      "rarity": "",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "surge-shield-recharger",
+      "name": "Surge Shield Recharger",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/surge-shield-recharger.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 1200
+    },
+    {
+      "id": "surveyor-vault",
+      "name": "Surveyor Vault",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/surveyor-vault.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "synthesized-fuel",
+      "name": "Synthesized Fuel",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/synthesized-fuel.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 700
+    },
+    {
+      "id": "syringe",
+      "name": "Syringe",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/syringe.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 500
+    },
+    {
+      "id": "tactical-mk-1",
+      "name": "Tactical Mk. 1",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tactical-mk-1.webp",
+      "rarity": "Uncommon",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "tactical-mk-2",
+      "name": "Tactical Mk. 2",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tactical-mk-2.webp",
+      "rarity": "Rare",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "tactical-mk3-defensive",
+      "name": "Tactical Mk.3 (Defensive)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tactical-mk3-defensive.webp",
+      "rarity": "Epic",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "tactical-mk3-defensive-blueprint",
+      "name": "Tactical MK.3 (Defensive) Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tactical-mk3-defensive.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "tactical-mk-3-healing",
+      "name": "Tactical Mk. 3 (Healing)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tactical-mk-3-healing.webp",
+      "rarity": "Epic",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "tacical-mk3-healing-blueprint",
+      "name": "Tactical MK.3 (Healing) Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tacical-mk3-healing-blueprint.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "tactical-mk-3-revival",
+      "name": "Tactical MK. 3 (Revival)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tactical-mk-3-revival.webp",
+      "rarity": "Epic",
+      "item_type": "Augment",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "tactical-mk-3-revival-blueprint",
+      "name": "Tactical Mk. 3 (Revival) Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tactical-mk-3-revival.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "tagging-grenade",
+      "name": "Tagging Grenade",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tagging-grenade.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "tagging-grenade-recipe",
+      "name": "Tagging Grenade Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tagging-grenade.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "tangerine-warden-color",
+      "name": "Tangerine (Warden Color)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tangerine-warden-color.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "tattered-arc-lining",
+      "name": "Tattered ARC Lining",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tattered-arc-lining.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "tattered-clothes",
+      "name": "Tattered Clothes",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tattered-clothes.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 640
+    },
+    {
+      "id": "telemetry-transceiver",
+      "name": "Telemetry Transceiver",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/telemetry-transceiver.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 3000
+    },
+    {
+      "id": "tempest-i-recipe",
+      "name": "Tempest Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tempest-i.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "tempest-i",
+      "name": "Tempest I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tempest-i.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 13000
+    },
+    {
+      "id": "tempest-ii",
+      "name": "Tempest II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tempest-ii.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 17000
+    },
+    {
+      "id": "tempest-iii",
+      "name": "Tempest III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tempest-iii.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 22000
+    },
+    {
+      "id": "tempest-iv",
+      "name": "Tempest IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tempest-iv.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 27000
+    },
+    {
+      "id": "thermostat",
+      "name": "Thermostat",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/thermostat.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "tick-pod",
+      "name": "Tick Pod",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tick-pod.webp",
+      "rarity": "Uncommon",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "toaster",
+      "name": "Toaster",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/toaster.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "torch-ginger",
+      "name": "Torch Ginger",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/torch-ginger.webp",
+      "rarity": "Uncommon",
+      "item_type": "Material",
+      "ammo_type": null,
+      "value": 300
+    },
+    {
+      "id": "torn-blanket",
+      "name": "Torn Blanket",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/torn-blanket.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "torn-book",
+      "name": "Torn Book",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/torn-book.webp",
+      "rarity": "Common",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "torrent-i-recipe",
+      "name": "Torrente Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/torrent-i-recipe.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "torrente-i",
+      "name": "Torrente I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/torrente-i.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 7000
+    },
+    {
+      "id": "torrente-ii",
+      "name": "Torrente II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/torrente-ii.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 10000
+    },
+    {
+      "id": "torrente-iii",
+      "name": "Torrente III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/torrente-iii.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "Medium",
+      "value": 13000
+    },
+    {
+      "id": "torrente-iv",
+      "name": "Torrente IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/torrente-iv.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "Medium",
+      "value": 15000
+    },
+    {
+      "id": "trailblazer-grenade",
+      "name": "Trailblazer Grenade",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/trailblazer-grenade.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 2200
+    },
+    {
+      "id": "trailblazer-grenade-blueprint",
+      "name": "Trailblazer Grenade Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/trailblazer-grenade.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "trigger-nade",
+      "name": "Trigger Nade",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/trigger-nade.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "trigger-nade-recipe",
+      "name": "Trigger Nade Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/trigger-nade.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "tropical-duck",
+      "name": "Tropical Duck",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/tropical-duck.webp",
+      "rarity": "Uncommon",
+      "item_type": "Trinket",
+      "ammo_type": "",
+      "value": 1000
+    },
+    {
+      "id": "turbo-pump",
+      "name": "Turbo Pump",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/turbo-pump.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "unusable-weapon",
+      "name": "Unusable Weapon",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/unusable-weapon.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": "",
+      "value": 2000
+    },
+    {
+      "id": "vase",
+      "name": "Vase",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vase.webp",
+      "rarity": "Rare",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 3000
+    },
+    {
+      "id": "venator-recipe",
+      "name": "Venator Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/venator.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "venator-i",
+      "name": "Venator I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/venator-i.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 7000
+    },
+    {
+      "id": "venator-ii",
+      "name": "Venator II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/venator-ii.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 10000
+    },
+    {
+      "id": "venator-iii",
+      "name": "Venator III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/venator-iii.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 13000
+    },
+    {
+      "id": "venator-iv",
+      "name": "Venator IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/venator-iv.webp",
+      "rarity": "Rare",
+      "item_type": "Weapon",
+      "ammo_type": "medium",
+      "value": 17000
+    },
+    {
+      "id": "vertical-grip-i",
+      "name": "Vertical Grip I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vertical-grip-i.webp",
+      "rarity": "Common",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "vertical-grip-ii",
+      "name": "Vertical Grip II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vertical-grip-ii.webp",
+      "rarity": "Uncommon",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "vertical-grip-ii-recipe",
+      "name": "Vertical Grip II Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vertical-grip-ii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "vertical-grip-iii",
+      "name": "Vertical Grip III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vertical-grip-iii.webp",
+      "rarity": "Rare",
+      "item_type": "Modification",
+      "ammo_type": null,
+      "value": 5000
+    },
+    {
+      "id": "vertical-grip-iii-recipe",
+      "name": "Vertical Grip III Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vertical-grip-iii.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "very-comfortable-pillow",
+      "name": "Very Comfortable Pillow",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/very-comfortable-pillow.webp",
+      "rarity": "Uncommon",
+      "item_type": "Trinket",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "vita-shot",
+      "name": "Vita Shot",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vita-shot.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 2000
+    },
+    {
+      "id": "vita-shot-recipe",
+      "name": "Vita Shot Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vita-shot.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "vita-spray",
+      "name": "Vita Spray",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vita-spray.webp",
+      "rarity": "Epic",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 3400
+    },
+    {
+      "id": "vita-spray-recipe",
+      "name": "Vita Spray Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vita-spray.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "volcanic-rock",
+      "name": "Volcanic Rock",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/volcanic-rock.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 270
+    },
+    {
+      "id": "voltage-converter",
+      "name": "Voltage Converter",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/voltage-converter.webp",
+      "rarity": "Rare",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 500
+    },
+    {
+      "id": "vulcano-blueprint",
+      "name": "Vulcano Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vulcano.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "vulcano-i",
+      "name": "Vulcano I",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vulcano-i.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "Shotgun",
+      "value": 10000
+    },
+    {
+      "id": "vulcano-ii",
+      "name": "Vulcano II",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vulcano-ii.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "shotgun",
+      "value": 13000
+    },
+    {
+      "id": "vulcano-iii",
+      "name": "Vulcano III",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vulcano-iii.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "shotgun",
+      "value": 17000
+    },
+    {
+      "id": "vulcano-iv",
+      "name": "Vulcano IV",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/vulcano-iv.webp",
+      "rarity": "Epic",
+      "item_type": "Weapon",
+      "ammo_type": "shotgun",
+      "value": 22000
+    },
+    {
+      "id": "warden-outfit",
+      "name": "Warden (Outfit)",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/warden-outfit.webp",
+      "rarity": "Common",
+      "item_type": "Misc",
+      "ammo_type": "",
+      "value": 0
+    },
+    {
+      "id": "wasp-driver",
+      "name": "Wasp Driver",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/wasp-driver.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 640
+    },
+    {
+      "id": "water-filter",
+      "name": "Water Filter",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/water-filter.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "water-pump",
+      "name": "Water Pump",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/water-pump.webp",
+      "rarity": "Rare",
+      "item_type": "Recyclable",
+      "ammo_type": null,
+      "value": 1000
+    },
+    {
+      "id": "wires-recipe",
+      "name": "Wires",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/wires.webp",
+      "rarity": "Uncommon",
+      "item_type": "Topside Material",
+      "ammo_type": null,
+      "value": 200
+    },
+    {
+      "id": "wolfpack",
+      "name": "Wolfpack",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/wolfpack.webp",
+      "rarity": "Epic",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 6000
+    },
+    {
+      "id": "wolfpack-recipe",
+      "name": "Wolfpack Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/wolfpack.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "yellow-light-stick",
+      "name": "Yellow Light Stick",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/yellow-light-stick.webp",
+      "rarity": "Common",
+      "item_type": "Quick Use",
+      "ammo_type": "",
+      "value": 150
+    },
+    {
+      "id": "yellow-light-stick-blueprint",
+      "name": "Yellow Light Stick Blueprint",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/yellow-light-stick-blueprint.webp",
+      "rarity": "Legendary",
+      "item_type": "Blueprint",
+      "ammo_type": "",
+      "value": 5000
+    },
+    {
+      "id": "zipline",
+      "name": "Zipline",
+      "icon": "https://cdn.metaforge.app/arc-raiders/icons/zipline.webp",
+      "rarity": "Rare",
+      "item_type": "Quick Use",
+      "ammo_type": null,
+      "value": 1000
+    }
+  ]
 }
