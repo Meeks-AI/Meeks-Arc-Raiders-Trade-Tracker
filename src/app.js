@@ -247,6 +247,15 @@ function render() {
   document.getElementById('totalProfit').textContent = Math.floor(totalProfit).toLocaleString();
   document.getElementById('invCount').textContent = stock.length;
 
+  const randBtn = document.getElementById('randomHistoryBtn');
+  if (randBtn) {
+    const hasItems = apiItems.length > 0;
+    randBtn.disabled = !hasItems;
+    randBtn.title = hasItems ? '' : 'Requires Metaforge item list — run the Sync Action first';
+    randBtn.style.opacity = hasItems ? '' : '0.4';
+    randBtn.style.cursor = hasItems ? '' : 'not-allowed';
+  }
+
   writeJson(STORAGE_KEYS.stock, stock);
   writeJson(STORAGE_KEYS.audit, audit);
   localStorage.setItem(STORAGE_KEYS.liquidSeeds, String(liquidSeeds));
@@ -429,11 +438,26 @@ function mergeItems() {
   render();
 }
 
+
 function generateRandomHistory() {
+  if (apiItems.length === 0) return;
   if (!confirm('Replace all data with random test history?')) return;
+
+  function pick(arr, n) {
+    const shuffled = [...arr].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, n);
+  }
+  function randInt(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
+  function randPrice() { return randInt(500, 12000); }
+
   const now = Date.now();
   const day = 86400000;
   const ts = (d) => now - (7 - d) * day - Math.random() * day;
+
+  const allNames = apiItems.map((i) => i.name).filter(Boolean);
+  const firItems = pick(allNames, 6);
+  const buyItem = pick(allNames.filter((n) => !firItems.includes(n)), 1)[0];
+  const sellItem = firItems[Math.floor(Math.random() * firItems.length)];
 
   audit = [];
   stock = [];
@@ -441,57 +465,45 @@ function generateRandomHistory() {
 
   audit.push({ id: genId(), ts: ts(0), action: ACTIONS.INITIAL, name: 'Starting Capital', qty: 1, price: 50000, cost: 0, source: 'SYS' });
 
-  ['Iron Ore', 'Advanced Mechanical Components', 'Adrenaline Shot'].forEach((name, d) => {
-    const qty = 2 + Math.floor(Math.random() * 4);
+  firItems.forEach((name, d) => {
+    const qty = randInt(1, 5);
     for (let i = 0; i < qty; i++) stock.push({ name, cost: 0, source: 'FIR' });
     audit.push({
-      id: genId(),
-      ts: ts(d + 1),
-      action: ACTIONS.RECOVERY,
-      name,
-      qty,
-      price: 0,
-      cost: 0,
-      source: 'FIR',
+      id: genId(), ts: ts(d + 1), action: ACTIONS.RECOVERY,
+      name, qty, price: 0, cost: 0, source: 'FIR',
       revertData: { removeStock: [{ name, source: 'FIR', cost: 0, qty }] },
     });
   });
 
-  const sq = 1500 + Math.floor(Math.random() * 2000);
+  const sq = randInt(500, 4000);
   liquidSeeds += sq;
   audit.push({ id: genId(), ts: ts(2), action: ACTIONS.CURRENCY, name: 'Raw Seeds', qty: 1, price: sq, cost: 0, source: 'FIR', revertData: { deltaLiquid: -sq } });
 
-  const costPer = 4500;
-  const bq = 2;
+  const costPer = randPrice();
+  const bq = randInt(1, 3);
   liquidSeeds -= costPer * bq;
-  for (let i = 0; i < bq; i++) stock.push({ name: 'Anvil Blueprint', cost: costPer, source: 'BUY' });
+  for (let i = 0; i < bq; i++) stock.push({ name: buyItem, cost: costPer, source: 'BUY' });
   audit.push({
-    id: genId(),
-    ts: ts(3),
-    action: ACTIONS.PURCHASE,
-    name: 'Anvil Blueprint',
-    qty: bq,
-    price: costPer,
-    cost: costPer,
-    source: 'BUY',
-    revertData: { deltaLiquid: costPer * bq, removeStock: { name: 'Anvil Blueprint', source: 'BUY', cost: costPer, qty: bq } },
+    id: genId(), ts: ts(3), action: ACTIONS.PURCHASE,
+    name: buyItem, qty: bq, price: costPer, cost: costPer, source: 'BUY',
+    revertData: { deltaLiquid: costPer * bq, removeStock: { name: buyItem, source: 'BUY', cost: costPer, qty: bq } },
   });
 
-  const sellQty = Math.min(3, stock.filter((s) => s.name === 'Iron Ore').length) || 2;
+  const sellPrice = randPrice();
+  const sellQty = Math.min(randInt(1, 3), stock.filter((s) => s.name === sellItem).length) || 1;
   let removed = 0;
   for (let i = stock.length - 1; i >= 0 && removed < sellQty; i--) {
-    if (stock[i].name === 'Iron Ore' && stock[i].source === 'FIR') {
-      stock.splice(i, 1);
-      removed++;
-    }
+    if (stock[i].name === sellItem && stock[i].source === 'FIR') { stock.splice(i, 1); removed++; }
   }
-
-  liquidSeeds += 1200 * sellQty;
+  liquidSeeds += sellPrice * sellQty;
   const ab = [];
-  for (let i = 0; i < sellQty; i++) ab.push({ name: 'Iron Ore', source: 'FIR', cost: 0 });
-  audit.push({ id: genId(), ts: ts(4), action: ACTIONS.SELL, name: 'Iron Ore', qty: sellQty, price: 1200, cost: 0, source: 'FIR', revertData: { deltaLiquid: -1200 * sellQty, addStock: ab } });
-  audit.push({ id: genId(), ts: ts(5), action: ACTIONS.ADJUST, name: 'Manual Correction', qty: 1, price: -500, cost: 0, source: 'SYS', revertData: { deltaLiquid: 500 } });
-  liquidSeeds -= 500;
+  for (let i = 0; i < sellQty; i++) ab.push({ name: sellItem, source: 'FIR', cost: 0 });
+  audit.push({ id: genId(), ts: ts(5), action: ACTIONS.SELL, name: sellItem, qty: sellQty, price: sellPrice, cost: 0, source: 'FIR', revertData: { deltaLiquid: -(sellPrice * sellQty), addStock: ab } });
+
+  const adj = randInt(-1000, 1000);
+  liquidSeeds += adj;
+  audit.push({ id: genId(), ts: ts(6), action: ACTIONS.ADJUST, name: 'Manual Correction', qty: 1, price: adj, cost: 0, source: 'SYS', revertData: { deltaLiquid: -adj } });
+
   render();
 }
 
