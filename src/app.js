@@ -8,7 +8,8 @@ let stock = readJson(STORAGE_KEYS.stock, []);
 let audit = readJson(STORAGE_KEYS.audit, []);
 let liquidSeeds = readNumber(STORAGE_KEYS.liquidSeeds, 0);
 let priceCache = {};
-let apiItems = [];
+let apiItems = [];       // all items from Metaforge
+let tradeItems = [];     // filtered: value > 0 (excludes cosmetics)
 let allowCustomItems = localStorage.getItem(STORAGE_KEYS.allowCustomItems) === 'true';
 let chartInstance = null;
 let priceHistoryChart = null;
@@ -18,6 +19,11 @@ function genId() {
 }
 
 // ─── Metaforge ────────────────────────────────────────────────────────────────
+function buildTradeItems(items) {
+  // Items with value === 0 are cosmetics (outfits, charms, emotes, colours)
+  tradeItems = items.filter((i) => i.value > 0);
+}
+
 function loadMetaforgeCache() {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.metaforgeCache);
@@ -25,11 +31,13 @@ function loadMetaforgeCache() {
     if (raw) {
       const data = JSON.parse(raw);
       apiItems = Array.isArray(data) ? data : data.data || [];
+      buildTradeItems(apiItems);
       const el = document.getElementById('metaforgeStatus');
       if (el) el.textContent = ts ? `Synced ${new Date(+ts).toLocaleString()}` : 'Cached';
     }
   } catch {
     apiItems = [];
+    tradeItems = [];
   }
 }
 
@@ -68,6 +76,7 @@ async function resyncMetaforge() {
   if (btn) { btn.disabled = true; btn.textContent = 'Syncing...'; }
   try {
     apiItems = await fetchMetaforgeAll();
+    buildTradeItems(apiItems);
     writeJson(STORAGE_KEYS.metaforgeCache, apiItems);
     localStorage.setItem(STORAGE_KEYS.metaforgeCacheTs, String(Date.now()));
     const el = document.getElementById('metaforgeStatus');
@@ -81,7 +90,6 @@ async function resyncMetaforge() {
 }
 
 // ─── Item name helpers ────────────────────────────────────────────────────────
-// Resolves a typed name to the canonical Metaforge name (case-insensitive match)
 function normalizeItemName(input) {
   if (!input || typeof input !== 'string') return input;
   const t = input.trim();
@@ -89,19 +97,18 @@ function normalizeItemName(input) {
   return match ? match.name : t;
 }
 
-// Returns null and shows an alert if the name isn't in the Metaforge list and custom items are off
 function validateItemName(raw) {
   const name = normalizeItemName(raw);
   if (allowCustomItems || apiItems.length === 0) return name;
   const known = apiItems.some((i) => (i.name || '').toLowerCase() === name.toLowerCase());
   if (!known) {
-    alert(`"${name}" is not in the Metaforge item list.\n\nCheck the spelling, or enable Custom Named Items in Tools → Settings if you need to add non-standard items.`);
+    alert(`"${name}" is not in the Metaforge item list.\n\nCheck the spelling, or enable Custom Named Items in Tools → Settings.`);
     return null;
   }
   return name;
 }
 
-// ─── Price cache ──────────────────────────────────────────────────────────────
+// ─── Price cache (based on your own sell history) ─────────────────────────────
 function buildPriceCache() {
   priceCache = {};
   const sells = audit.filter((a) => a.action === ACTIONS.SELL);
@@ -158,28 +165,24 @@ function render() {
   Object.values(grouped)
     .sort((a, b) => a.name.localeCompare(b.name))
     .forEach((g, i) => {
-      const mp = priceCache[g.name] || null;
-      assetValuation += (mp ?? g.cost) * g.count;
+      const myMedian = priceCache[g.name] || null;
+      assetValuation += (myMedian ?? g.cost) * g.count;
       if (searchQuery && !g.name.toLowerCase().includes(searchQuery)) return;
 
       const safeId = `item-${i}`;
       const tag = g.source === 'FIR' ? 'tag-fir' : g.source === 'TRD' ? 'tag-trd' : 'tag-buy';
-      const fillBtn = mp
-        ? `<button class="btn btn-ghost" style="padding:6px 8px;font-size:0.8rem;color:var(--cyan);" title="Fill median price: ${Math.floor(mp).toLocaleString()}" onclick="document.getElementById('p-${safeId}').value=${Math.floor(mp)}">~</button>`
-        : '';
 
       invBody.innerHTML += `<tr>
         <td class="font-mono font-semibold">${g.name}</td>
         <td><span class="tag ${tag}">${g.source}</span></td>
         <td class="font-mono">×${g.count}</td>
-        <td class="font-mono text-[var(--muted)]">${Math.floor(g.cost).toLocaleString()}</td>
-        <td class="font-mono ${mp ? 'text-[var(--cyan)]' : 'text-[var(--muted)]'}">${mp ? Math.floor(mp).toLocaleString() : '—'}</td>
+        <td class="font-mono" style="color:var(--muted)">${Math.floor(g.cost).toLocaleString()}</td>
+        <td class="font-mono ${myMedian ? 'text-[var(--cyan)]' : 'text-[var(--muted)]'}">${myMedian ? Math.floor(myMedian).toLocaleString() : '—'}</td>
         <td style="text-align:right;white-space:nowrap;">
           <input type="number" id="q-${safeId}" value="1" min="1" max="${g.count}" style="width:52px;padding:6px;margin-right:2px;display:inline-block">
-          <input type="number" id="p-${safeId}" placeholder="Price" style="width:72px;padding:6px;margin-right:2px;display:inline-block">
-          ${fillBtn}
-          <button class="btn btn-ghost" style="padding:6px 10px;font-size:0.7rem" onclick="sellX('${g.name.replace(/'/g, "\\'")}', '${g.source}', ${g.cost}, '${safeId}')">Sell</button>
-          <button class="btn btn-ghost" style="padding:6px 10px;font-size:0.7rem;color:var(--amber)" title="Sell entire stack — auto-fills median price if available" onclick="sellAll('${g.name.replace(/'/g, "\\'")}', '${g.source}', ${g.cost}, '${safeId}')">All</button>
+          <input type="number" id="p-${safeId}" placeholder="Price" style="width:80px;padding:6px;margin-right:4px;display:inline-block">
+          <button class="btn btn-sell" onclick="sellX('${g.name.replace(/'/g, "\\'")}', '${g.source}', ${g.cost}, '${safeId}')">Sell</button>
+          <button class="btn btn-ghost" style="padding:6px 10px;font-size:0.7rem;color:var(--amber)" title="Sell entire stack — auto-fills your median price if available" onclick="sellAll('${g.name.replace(/'/g, "\\'")}', '${g.source}', ${g.cost}, '${safeId}')">All</button>
         </td>
       </tr>`;
       barterSelect.innerHTML += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${g.source}] ×${g.count}</option>`;
@@ -237,7 +240,6 @@ function render() {
     );
   }
 
-  // Datalist for input autocomplete
   const allNames = [...new Set([...stock.map((i) => i.name), ...audit.map((i) => i.name), ...apiItems.map((i) => i.name)])]
     .filter(Boolean).sort();
   allNames.forEach((n) => { dataList.innerHTML += `<option value="${n}">`; });
@@ -250,7 +252,7 @@ function render() {
 
   const randBtn = document.getElementById('randomHistoryBtn');
   if (randBtn) {
-    const hasItems = apiItems.length > 0;
+    const hasItems = tradeItems.length > 0;
     randBtn.disabled = !hasItems;
     randBtn.title = hasItems ? '' : 'Requires Metaforge item list — run the Sync Action first';
     randBtn.style.opacity = hasItems ? '' : '0.4';
@@ -341,15 +343,14 @@ function executeBarter() {
 
   const unitVal = parseFloat(oldCost) > 0 ? parseFloat(oldCost) : priceCache[oldName] || 0;
   const totalVal = unitVal * fromQty;
+  const costPer = Math.floor(totalVal / toQty);
 
   let removed = 0;
   for (let i = stock.length - 1; i >= 0 && removed < fromQty; i--) {
     if (stock[i].name === oldName && stock[i].source === oldSrc && Math.floor(stock[i].cost) === Math.floor(oldCost)) { stock.splice(i, 1); removed++; }
   }
 
-  const costPer = Math.floor(totalVal / toQty);
   for (let i = 0; i < toQty; i++) stock.push({ name: toNorm, cost: costPer, source: 'TRD' });
-
   const addBack = [];
   for (let i = 0; i < fromQty; i++) addBack.push({ name: oldName, source: oldSrc, cost: parseFloat(oldCost) });
 
@@ -418,70 +419,100 @@ function revertEntry(idx) {
 function toggleCustomItems(checkbox) {
   allowCustomItems = checkbox.checked;
   localStorage.setItem(STORAGE_KEYS.allowCustomItems, String(allowCustomItems));
+  // Show/hide the merge block
+  const mergeBlock = document.getElementById('customMergeBlock');
+  if (mergeBlock) mergeBlock.style.display = checkbox.checked ? '' : 'none';
+}
+
+function mergeCustomItems() {
+  const from = (document.getElementById('mergeFromInput').value || '').trim();
+  const to = (document.getElementById('mergeToInput').value || '').trim();
+  if (!from || !to || !confirm(`Rename all instances of "${from}" to "${to}"?`)) return;
+
+  stock = stock.map((i) => i.name === from ? { ...i, name: to } : i);
+  audit = audit.map((a) => {
+    if (a.name === from) return { ...a, name: to };
+    if (a.action === ACTIONS.BARTER && a.name && a.name.includes('→')) {
+      return { ...a, name: a.name.replace(new RegExp(`\\b${from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g'), to) };
+    }
+    return a;
+  });
+
+  document.getElementById('mergeFromInput').value = '';
+  document.getElementById('mergeToInput').value = '';
+  render();
 }
 
 // ─── Random history ───────────────────────────────────────────────────────────
 function generateRandomHistory() {
-  if (apiItems.length === 0) return;
+  if (tradeItems.length === 0) return;
   if (!confirm('Replace all data with random test history?')) return;
 
   function pick(arr, n) { return [...arr].sort(() => Math.random() - 0.5).slice(0, n); }
   function randInt(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
-  function randPrice() { return randInt(500, 12000); }
+  // Price within ±25% of the item's real value
+  function randPrice(item) {
+    const base = item.value || 100;
+    const lo = Math.max(1, Math.floor(base * 0.75));
+    const hi = Math.floor(base * 1.25);
+    return randInt(lo, hi);
+  }
 
   const now = Date.now(), day = 86400000;
   const ts = (d) => now - (7 - d) * day - Math.random() * day;
 
-  const allNames = apiItems.map((i) => i.name).filter(Boolean);
-  const firItems = pick(allNames, 6);
-  const buyItemName = pick(allNames.filter((n) => !firItems.includes(n)), 1)[0];
-  const sellItem = firItems[Math.floor(Math.random() * firItems.length)];
+  const firPool = pick(tradeItems, 6);
+  const buyPool = pick(tradeItems.filter((i) => !firPool.includes(i)), 1);
+  const buyItemObj = buyPool[0];
+  const sellItemObj = firPool[Math.floor(Math.random() * firPool.length)];
 
   audit = []; stock = []; liquidSeeds = 50000;
   audit.push({ id: genId(), ts: ts(0), action: ACTIONS.INITIAL, name: 'Starting Capital', qty: 1, price: 50000, cost: 0, source: 'SYS' });
   audit.push({ id: genId(), ts: ts(0) + 1000, action: ACTIONS.SESSION_START, name: 'Session Start', qty: 1, price: 0, cost: 0, source: 'SYS' });
 
-  firItems.slice(0, 3).forEach((name, d) => {
+  firPool.slice(0, 3).forEach((item, d) => {
     const qty = randInt(1, 4);
-    for (let i = 0; i < qty; i++) stock.push({ name, cost: 0, source: 'FIR' });
-    audit.push({ id: genId(), ts: ts(d + 1), action: ACTIONS.RECOVERY, name, qty, price: 0, cost: 0, source: 'FIR', revertData: { removeStock: [{ name, source: 'FIR', cost: 0, qty }] } });
+    for (let i = 0; i < qty; i++) stock.push({ name: item.name, cost: 0, source: 'FIR' });
+    audit.push({ id: genId(), ts: ts(d + 1), action: ACTIONS.RECOVERY, name: item.name, qty, price: 0, cost: 0, source: 'FIR', revertData: { removeStock: [{ name: item.name, source: 'FIR', cost: 0, qty }] } });
   });
 
   audit.push({ id: genId(), ts: ts(3), action: ACTIONS.SESSION_START, name: 'Session Start', qty: 1, price: 0, cost: 0, source: 'SYS' });
 
-  firItems.slice(3).forEach((name, d) => {
+  firPool.slice(3).forEach((item, d) => {
     const qty = randInt(1, 4);
-    for (let i = 0; i < qty; i++) stock.push({ name, cost: 0, source: 'FIR' });
-    audit.push({ id: genId(), ts: ts(d + 3), action: ACTIONS.RECOVERY, name, qty, price: 0, cost: 0, source: 'FIR', revertData: { removeStock: [{ name, source: 'FIR', cost: 0, qty }] } });
+    for (let i = 0; i < qty; i++) stock.push({ name: item.name, cost: 0, source: 'FIR' });
+    audit.push({ id: genId(), ts: ts(d + 3), action: ACTIONS.RECOVERY, name: item.name, qty, price: 0, cost: 0, source: 'FIR', revertData: { removeStock: [{ name: item.name, source: 'FIR', cost: 0, qty }] } });
   });
 
-  const costPer = randPrice(), bq = randInt(1, 3);
+  const costPer = randPrice(buyItemObj);
+  const bq = randInt(1, 3);
   liquidSeeds -= costPer * bq;
-  for (let i = 0; i < bq; i++) stock.push({ name: buyItemName, cost: costPer, source: 'BUY' });
-  audit.push({ id: genId(), ts: ts(4), action: ACTIONS.PURCHASE, name: buyItemName, qty: bq, price: costPer, cost: costPer, source: 'BUY', revertData: { deltaLiquid: costPer * bq, removeStock: { name: buyItemName, source: 'BUY', cost: costPer, qty: bq } } });
+  for (let i = 0; i < bq; i++) stock.push({ name: buyItemObj.name, cost: costPer, source: 'BUY' });
+  audit.push({ id: genId(), ts: ts(4), action: ACTIONS.PURCHASE, name: buyItemObj.name, qty: bq, price: costPer, cost: costPer, source: 'BUY', revertData: { deltaLiquid: costPer * bq, removeStock: { name: buyItemObj.name, source: 'BUY', cost: costPer, qty: bq } } });
 
-  const sellPrice = randPrice();
-  const sellQty = Math.min(randInt(1, 3), stock.filter((s) => s.name === sellItem).length) || 1;
+  const sellPrice = randPrice(sellItemObj);
+  const sellQty = Math.min(randInt(1, 3), stock.filter((s) => s.name === sellItemObj.name).length) || 1;
   let removed = 0;
   for (let i = stock.length - 1; i >= 0 && removed < sellQty; i--) {
-    if (stock[i].name === sellItem && stock[i].source === 'FIR') { stock.splice(i, 1); removed++; }
+    if (stock[i].name === sellItemObj.name && stock[i].source === 'FIR') { stock.splice(i, 1); removed++; }
   }
   liquidSeeds += sellPrice * sellQty;
   const ab = [];
-  for (let i = 0; i < sellQty; i++) ab.push({ name: sellItem, source: 'FIR', cost: 0 });
-  audit.push({ id: genId(), ts: ts(5), action: ACTIONS.SELL, name: sellItem, qty: sellQty, price: sellPrice, cost: 0, source: 'FIR', revertData: { deltaLiquid: -(sellPrice * sellQty), addStock: ab } });
+  for (let i = 0; i < sellQty; i++) ab.push({ name: sellItemObj.name, source: 'FIR', cost: 0 });
+  audit.push({ id: genId(), ts: ts(5), action: ACTIONS.SELL, name: sellItemObj.name, qty: sellQty, price: sellPrice, cost: 0, source: 'FIR', revertData: { deltaLiquid: -(sellPrice * sellQty), addStock: ab } });
 
-  if (stock.some((s) => s.name === sellItem && s.source === 'FIR')) {
-    const sellPrice2 = randPrice();
+  // Second sale of same item for price history chart interest
+  if (stock.some((s) => s.name === sellItemObj.name && s.source === 'FIR')) {
+    const sellPrice2 = randPrice(sellItemObj);
     let r2 = 0;
     for (let i = stock.length - 1; i >= 0 && r2 < 1; i--) {
-      if (stock[i].name === sellItem && stock[i].source === 'FIR') { stock.splice(i, 1); r2++; }
+      if (stock[i].name === sellItemObj.name && stock[i].source === 'FIR') { stock.splice(i, 1); r2++; }
     }
     liquidSeeds += sellPrice2;
-    audit.push({ id: genId(), ts: ts(6), action: ACTIONS.SELL, name: sellItem, qty: 1, price: sellPrice2, cost: 0, source: 'FIR', revertData: { deltaLiquid: -sellPrice2, addStock: [{ name: sellItem, source: 'FIR', cost: 0 }] } });
+    audit.push({ id: genId(), ts: ts(6), action: ACTIONS.SELL, name: sellItemObj.name, qty: 1, price: sellPrice2, cost: 0, source: 'FIR', revertData: { deltaLiquid: -sellPrice2, addStock: [{ name: sellItemObj.name, source: 'FIR', cost: 0 }] } });
   }
 
-  const adj = randInt(-1000, 1000);
+  const adj = randInt(-500, 500);
   liquidSeeds += adj;
   audit.push({ id: genId(), ts: ts(6) + 1000, action: ACTIONS.ADJUST, name: 'Manual Correction', qty: 1, price: adj, cost: 0, source: 'SYS', revertData: { deltaLiquid: -adj } });
 
@@ -534,17 +565,12 @@ function renderAnalytics() {
     </tr>`;
   });
 
-  // Session history
   const sorted = [...valid].sort((a, b) => a.ts - b.ts);
   const sessions = [];
   let current = null;
   sorted.forEach((e) => {
-    if (e.action === ACTIONS.SESSION_START) {
-      if (current) sessions.push(current);
-      current = { startTs: e.ts, entries: [] };
-    } else if (current) {
-      current.entries.push(e);
-    }
+    if (e.action === ACTIONS.SESSION_START) { if (current) sessions.push(current); current = { startTs: e.ts, entries: [] }; }
+    else if (current) { current.entries.push(e); }
   });
   if (current) sessions.push(current);
 
@@ -699,15 +725,13 @@ function initTextareaAutocomplete() {
   });
   document.body.appendChild(dropdown);
 
-  let selectedIndex = -1;
-  let currentMatches = [];
+  let selectedIndex = -1, currentMatches = [];
 
   function getCurrentLineText() {
     const val = textarea.value, pos = textarea.selectionStart;
     const lineStart = val.lastIndexOf('\n', pos - 1) + 1;
     const lineEnd = val.indexOf('\n', pos);
-    const line = val.slice(lineStart, lineEnd === -1 ? undefined : lineEnd);
-    return line.replace(/^\d+\s*/, '').trim();
+    return val.slice(lineStart, lineEnd === -1 ? undefined : lineEnd).replace(/^\d+\s*/, '').trim();
   }
 
   function replaceCurrentLine(name) {
@@ -715,8 +739,7 @@ function initTextareaAutocomplete() {
     const lineStart = val.lastIndexOf('\n', pos - 1) + 1;
     const lineEnd = val.indexOf('\n', pos);
     const line = val.slice(lineStart, lineEnd === -1 ? val.length : lineEnd);
-    const numMatch = line.match(/^(\d+\s*)/);
-    const prefix = numMatch ? numMatch[0] : '';
+    const prefix = (line.match(/^(\d+\s*)/) || [''])[0];
     textarea.value = val.slice(0, lineStart) + prefix + name + (lineEnd === -1 ? '' : val.slice(lineEnd));
     const newPos = lineStart + prefix.length + name.length;
     textarea.setSelectionRange(newPos, newPos);
@@ -753,7 +776,8 @@ function initTextareaAutocomplete() {
     const query = getCurrentLineText();
     if (query.length < 2) { hideDropdown(); return; }
     const lower = query.toLowerCase();
-    const matches = apiItems.map((i) => i.name).filter((n) => n && n.toLowerCase().includes(lower)).slice(0, 12);
+    // Only suggest tradeable items (value > 0) in the autocomplete
+    const matches = tradeItems.map((i) => i.name).filter((n) => n && n.toLowerCase().includes(lower)).slice(0, 12);
     if (matches.length === 0) { hideDropdown(); return; }
     showDropdown(matches);
   });
@@ -764,7 +788,6 @@ function initTextareaAutocomplete() {
     if (e.key === 'ArrowDown') { e.preventDefault(); selectedIndex = Math.min(selectedIndex + 1, currentMatches.length - 1); updateHighlight(); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); selectedIndex = Math.max(selectedIndex - 1, 0); updateHighlight(); }
     else if (e.key === 'Enter') {
-      // Single match → fill immediately; multiple → require selection first
       const target = currentMatches.length === 1 ? currentMatches[0] : (selectedIndex >= 0 ? currentMatches[selectedIndex] : null);
       if (target) { e.preventDefault(); replaceCurrentLine(target); }
     }
@@ -783,7 +806,7 @@ function init() {
     generateRandomHistory, adjustBalance, resyncMetaforge,
     exportData, importData, voidEntry, revertEntry, sellX,
     sellAll, startNewSession, showPriceHistory, closePriceHistory,
-    handleModalClick, toggleCustomItems,
+    handleModalClick, toggleCustomItems, mergeCustomItems,
   });
 
   loadMetaforgeCache();
@@ -791,12 +814,15 @@ function init() {
 
   const customToggle = document.getElementById('allowCustomItemsToggle');
   if (customToggle) customToggle.checked = allowCustomItems;
+  const mergeBlock = document.getElementById('customMergeBlock');
+  if (mergeBlock) mergeBlock.style.display = allowCustomItems ? '' : 'none';
 
   (async () => {
     try {
       if (!apiItems || apiItems.length === 0) {
         apiItems = await fetchMetaforgeFromLocalFile();
         if (apiItems.length) {
+          buildTradeItems(apiItems);
           writeJson(STORAGE_KEYS.metaforgeCache, apiItems);
           localStorage.setItem(STORAGE_KEYS.metaforgeCacheTs, String(Date.now()));
           const el = document.getElementById('metaforgeStatus');
