@@ -32,10 +32,7 @@
         }
         * { box-sizing: border-box; }
         body {
-            margin: 0;
-            min-height: 100vh;
-            background: var(--bg-0);
-            color: var(--text);
+            margin: 0; min-height: 100vh; background: var(--bg-0); color: var(--text);
             font-family: 'Outfit', system-ui, sans-serif;
             background-image:
                 radial-gradient(ellipse 80% 50% at 50% -20%, rgba(6,182,212,0.08), transparent),
@@ -44,17 +41,15 @@
         .font-mono { font-family: 'JetBrains Mono', monospace; }
         .app { display: flex; min-height: 100vh; }
         .sidebar {
-            width: 72px; flex-shrink: 0;
-            background: var(--bg-2);
+            width: 72px; flex-shrink: 0; background: var(--bg-2);
             border-right: 1px solid var(--border);
             display: flex; flex-direction: column; align-items: center;
             padding: 1rem 0; gap: 0.5rem;
         }
         .nav-btn {
-            position: relative; width: 44px; height: 44px;
-            border-radius: 10px; border: 1px solid transparent;
-            background: transparent; color: var(--muted); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+            position: relative; width: 44px; height: 44px; border-radius: 10px;
+            border: 1px solid transparent; background: transparent; color: var(--muted);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
             font-size: 18px; transition: all 0.2s;
         }
         .nav-btn:hover { background: var(--bg-3); color: var(--text); }
@@ -63,9 +58,8 @@
         .nav-btn:hover span { opacity: 1; }
         .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
         .top-bar {
-            padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
-            background: var(--bg-1); display: flex; align-items: center;
-            justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+            padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--bg-1);
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
         }
         .brand { display: flex; align-items: baseline; gap: 1rem; }
         .brand h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
@@ -83,11 +77,10 @@
         .card-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
         .card-title { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); }
         input, textarea, select {
-            font-family: 'JetBrains Mono', monospace;
-            background: var(--bg-0) !important;
-            border: 1px solid var(--border); color: var(--text);
-            padding: 10px 14px; border-radius: 8px; font-size: 0.85rem;
-            outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: 'JetBrains Mono', monospace; background: var(--bg-0) !important;
+            border: 1px solid var(--border); color: var(--text); padding: 10px 14px;
+            border-radius: 8px; font-size: 0.85rem; outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
         input:focus, textarea:focus, select:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px var(--cyan-dim); }
         .btn {
@@ -133,8 +126,6 @@
         .tool-block label { display: block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.5rem; }
         .version-tag { font-size: 0.6rem; padding: 2px 6px; border: 1px solid var(--amber); color: var(--amber); border-radius: 4px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em; }
         .session-divider td { background: rgba(139,92,246,0.08) !important; color: var(--violet); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 5px 16px; border-top: 1px solid rgba(139,92,246,0.3); border-bottom: 1px solid rgba(139,92,246,0.3); }
-        .item-link { cursor: pointer; color: inherit; }
-        .item-link:hover { color: var(--cyan); text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -168,26 +159,15 @@
                     <span class="badge">● CONNECTED</span>
                 </div>
                 <div class="stats-row">
-                    <div class="stat">
-                        <span class="stat-label">Liquid</span>
-                        <span id="liquidDisplay" class="stat-value liquid font-mono">0</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-label">Assets</span>
-                        <span id="assetValuation" class="stat-value assets font-mono">0</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-label">Net Worth</span>
-                        <span id="netWorth" class="stat-value net font-mono">0</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-label">Profit</span>
-                        <span id="totalProfit" class="stat-value profit font-mono">0</span>
-                    </div>
+                    <div class="stat"><span class="stat-label">Liquid</span><span id="liquidDisplay" class="stat-value liquid font-mono">0</span></div>
+                    <div class="stat"><span class="stat-label">Assets</span><span id="assetValuation" class="stat-value assets font-mono">0</span></div>
+                    <div class="stat"><span class="stat-label">Net Worth</span><span id="netWorth" class="stat-value net font-mono">0</span></div>
+                    <div class="stat"><span class="stat-label">Profit</span><span id="totalProfit" class="stat-value profit font-mono">0</span></div>
                 </div>
             </header>
             <div class="content">
-                <!-- OPERATIONS TAB -->
+
+                <!-- OPERATIONS -->
                 <div id="view-trade" class="tab-content active">
                     <div class="ops-grid">
                         <div class="ops-forms">
@@ -241,7 +221,7 @@
                     </div>
                 </div>
 
-                <!-- ANALYTICS TAB -->
+                <!-- ANALYTICS -->
                 <div id="view-analytics" class="tab-content">
                     <div class="analytics-grid">
                         <div class="card" style="padding:1.25rem">
@@ -262,8 +242,7 @@
                             <div class="card-header"><span class="card-title" style="color:var(--violet)">Session History</span></div>
                             <table>
                                 <thead><tr>
-                                    <th>Started</th>
-                                    <th>Session</th>
+                                    <th>Started</th><th>Session</th>
                                     <th style="text-align:right">Items Found</th>
                                     <th style="text-align:right">Seeds Found</th>
                                     <th style="text-align:right">Sell Profit</th>
@@ -276,12 +255,15 @@
                                 <span class="card-title" style="color:var(--emerald)">Per-Item Sales</span>
                                 <span style="font-size:0.7rem;color:var(--muted);">Click item name for price history</span>
                             </div>
-                            <table><thead><tr><th>Item</th><th style="text-align:right">Qty</th><th style="text-align:right">Revenue</th><th style="text-align:right">Avg</th><th style="text-align:right">Cost</th><th style="text-align:right">Profit</th><th style="text-align:right">ROI</th></tr></thead><tbody id="perItemStatsBody"></tbody></table>
+                            <table>
+                                <thead><tr><th>Item</th><th style="text-align:right">Qty</th><th style="text-align:right">Revenue</th><th style="text-align:right">Avg</th><th style="text-align:right">Cost</th><th style="text-align:right">Profit</th><th style="text-align:right">ROI</th></tr></thead>
+                                <tbody id="perItemStatsBody"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- LEDGER TAB -->
+                <!-- LEDGER -->
                 <div id="view-audit" class="tab-content">
                     <div class="card">
                         <div class="card-header">
@@ -296,7 +278,7 @@
                     </div>
                 </div>
 
-                <!-- TOOLS TAB -->
+                <!-- TOOLS -->
                 <div id="view-tools" class="tab-content">
                     <div class="tools-grid">
                         <div class="tool-block">
@@ -312,26 +294,23 @@
                             <button class="btn btn-cyan" id="resyncBtn" onclick="resyncMetaforge()">Resync API</button>
                         </div>
                         <div class="tool-block">
-                            <label>Merge / Rename Item</label>
-                            <select id="mergeFrom" style="margin-bottom:0.5rem"></select>
-                            <input type="text" id="mergeTo" placeholder="New name" style="margin-bottom:0.5rem">
-                            <button class="btn btn-violet" onclick="mergeItems()">Execute Rewrite</button>
-                        </div>
-                        <div class="tool-block">
                             <label>Settings</label>
-                            <div style="display:flex;align-items:center;gap:0.75rem;">
-                                <input type="checkbox" id="allowCustomItemsToggle" onchange="toggleCustomItems(this)" style="width:16px;height:16px;padding:0;cursor:pointer;accent-color:var(--cyan);">
+                            <div style="display:flex;align-items:flex-start;gap:0.75rem;">
+                                <input type="checkbox" id="allowCustomItemsToggle" onchange="toggleCustomItems(this)" style="width:16px;height:16px;margin-top:2px;padding:0;cursor:pointer;accent-color:var(--cyan);flex-shrink:0;">
                                 <div>
                                     <span style="font-size:0.8rem;font-weight:600;color:var(--text);">Allow Custom Named Items</span>
-                                    <p style="font-size:0.7rem;color:var(--muted);margin:2px 0 0;">When off, only Metaforge items are accepted. Prevents typos and mismatched names.</p>
+                                    <p style="font-size:0.7rem;color:var(--muted);margin:3px 0 0;">When off, only Metaforge items are accepted. Prevents typos and mismatched names.</p>
                                 </div>
                             </div>
                         </div>
+                        <div class="tool-block">
+                            <label>Testing</label>
                             <button id="randomHistoryBtn" class="btn btn-slate" onclick="generateRandomHistory()" style="border-color:var(--amber);color:var(--amber)">Generate Random History</button>
                         </div>
                         <button class="btn" onclick="if(confirm('Wipe all data?')){localStorage.clear();location.reload()}" style="background:transparent;color:var(--rose);border:1px solid rgba(244,63,94,0.4)">Factory Reset</button>
                     </div>
                 </div>
+
             </div>
         </main>
     </div>
