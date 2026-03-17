@@ -289,7 +289,8 @@ function massIngest() {
     }
   });
   document.getElementById('bulkText').value = '';
-  render();
+  // Defer render to avoid blocking the button click paint
+  setTimeout(() => render(), 0);
 }
 
 function buyItem() {
@@ -661,8 +662,141 @@ function importData(input) {
   r.readAsText(f);
 }
 
+// ─── Loot textarea autocomplete ───────────────────────────────────────────────
+function initTextareaAutocomplete() {
+  const textarea = document.getElementById('bulkText');
+  if (!textarea) return;
+
+  // Create floating dropdown and attach to body so it isn't clipped by any parent overflow
+  const dropdown = document.createElement('div');
+  dropdown.id = 'lootAutocomplete';
+  Object.assign(dropdown.style, {
+    position: 'fixed',
+    zIndex: '9999',
+    background: 'var(--bg-1)',
+    border: '1px solid var(--border-bright)',
+    borderRadius: '8px',
+    maxHeight: '220px',
+    overflowY: 'auto',
+    display: 'none',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+  });
+  document.body.appendChild(dropdown);
+
+  let selectedIndex = -1;
+  let currentMatches = [];
+
+  function getCurrentLineText() {
+    const val = textarea.value;
+    const pos = textarea.selectionStart;
+    const lineStart = val.lastIndexOf('\n', pos - 1) + 1;
+    const lineEnd = val.indexOf('\n', pos);
+    const line = val.slice(lineStart, lineEnd === -1 ? undefined : lineEnd);
+    // Strip any leading number + whitespace to get the item name portion
+    return line.replace(/^\d+\s*/, '').trim();
+  }
+
+  function replaceCurrentLine(name) {
+    const val = textarea.value;
+    const pos = textarea.selectionStart;
+    const lineStart = val.lastIndexOf('\n', pos - 1) + 1;
+    const lineEnd = val.indexOf('\n', pos);
+    const line = val.slice(lineStart, lineEnd === -1 ? val.length : lineEnd);
+    const numMatch = line.match(/^(\d+\s*)/);
+    const prefix = numMatch ? numMatch[0] : '';
+    const before = val.slice(0, lineStart);
+    const after = lineEnd === -1 ? '' : val.slice(lineEnd);
+    textarea.value = before + prefix + name + after;
+    const newPos = lineStart + prefix.length + name.length;
+    textarea.setSelectionRange(newPos, newPos);
+    hideDropdown();
+  }
+
+  function updateHighlight() {
+    Array.from(dropdown.children).forEach((el, i) => {
+      el.style.background = i === selectedIndex ? 'var(--bg-3)' : 'transparent';
+      el.style.color = i === selectedIndex ? 'var(--cyan)' : 'var(--text-dim)';
+    });
+  }
+
+  function showDropdown(matches) {
+    currentMatches = matches;
+    selectedIndex = -1;
+    dropdown.innerHTML = '';
+
+    matches.forEach((name, i) => {
+      const item = document.createElement('div');
+      item.textContent = name;
+      Object.assign(item.style, {
+        padding: '8px 14px',
+        cursor: 'pointer',
+        fontSize: '0.8rem',
+        fontFamily: "'JetBrains Mono', monospace",
+        color: 'var(--text-dim)',
+        borderBottom: '1px solid var(--border)',
+        transition: 'background 0.1s',
+      });
+      item.addEventListener('mouseenter', () => { selectedIndex = i; updateHighlight(); });
+      item.addEventListener('mousedown', (e) => { e.preventDefault(); replaceCurrentLine(name); });
+      dropdown.appendChild(item);
+    });
+
+    const rect = textarea.getBoundingClientRect();
+    dropdown.style.left = `${rect.left}px`;
+    dropdown.style.top = `${rect.bottom + 4}px`;
+    dropdown.style.width = `${rect.width}px`;
+    dropdown.style.display = 'block';
+  }
+
+  function hideDropdown() {
+    dropdown.style.display = 'none';
+    selectedIndex = -1;
+    currentMatches = [];
+  }
+
+  textarea.addEventListener('input', () => {
+    const query = getCurrentLineText();
+    if (query.length < 2) { hideDropdown(); return; }
+    const lower = query.toLowerCase();
+    const matches = apiItems
+      .map((i) => i.name)
+      .filter((n) => n && n.toLowerCase().includes(lower))
+      .slice(0, 12);
+    if (matches.length === 0) { hideDropdown(); return; }
+    showDropdown(matches);
+  });
+
+  textarea.addEventListener('keydown', (e) => {
+    if (dropdown.style.display === 'none') return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      selectedIndex = Math.min(selectedIndex + 1, currentMatches.length - 1);
+      updateHighlight();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      selectedIndex = Math.max(selectedIndex - 1, 0);
+      updateHighlight();
+    } else if (e.key === 'Enter') {
+      if (selectedIndex >= 0) {
+        e.preventDefault();
+        replaceCurrentLine(currentMatches[selectedIndex]);
+      }
+    } else if (e.key === 'Tab') {
+      const target = selectedIndex >= 0 ? currentMatches[selectedIndex] : currentMatches[0];
+      if (target) { e.preventDefault(); replaceCurrentLine(target); }
+    } else if (e.key === 'Escape') {
+      hideDropdown();
+    }
+  });
+
+  // Hide when focus leaves the textarea
+  textarea.addEventListener('blur', () => setTimeout(hideDropdown, 150));
+
+  // Hide on scroll so it doesn't float away from the textarea
+  window.addEventListener('scroll', hideDropdown, true);
+}
+
 function init() {
-  // Expose API for current inline handlers (we'll remove these in the next iteration).
   Object.assign(window, {
     switchTab,
     massIngest,
@@ -680,6 +814,7 @@ function init() {
   });
 
   loadMetaforgeCache();
+  initTextareaAutocomplete();
 
   // Same-origin fallback (GitHub Actions writes this file).
   (async () => {
