@@ -1033,12 +1033,12 @@ const P = {
     '⚡ Sitting in base — trades processed quickly.',
   ],
   acceptOffers: [
-    '🔄 Open to swaps if the value is right.',
-    '💱 May consider other items as part payment.',
-    '🤝 Got something to trade? Show me.',
-    '🔄 Barter welcome — make an offer.',
-    '💱 Flexible — seeds or item swap, talk to me.',
-    '🤝 Open to negotiation, items or seeds.',
+    '🔄 Open to offers — seeds or item swap.',
+    '💱 Prices flexible, item swaps welcome.',
+    '🤝 Open to negotiation — seeds or barter.',
+    '💬 Make an offer — open to discussion.',
+    '🔄 Flexible on price and open to swaps.',
+    '💱 Got something to trade? Show me — or make a price offer.',
   ],
   bulkDiscount: [
     '📦 Buy more, save more — {pct}% off on bulk.',
@@ -1117,7 +1117,6 @@ function generateListing() {
   const acceptOffers = document.getElementById('opt-acceptOffers')?.checked;
   const bulkDiscount = document.getElementById('opt-bulkDiscount')?.checked;
   const bulkPct = parseInt(document.getElementById('opt-bulkPct')?.value) || 10;
-  const negotiable = document.getElementById('opt-negotiable')?.checked;
   const notes = (document.getElementById('opt-notes')?.value || '').trim();
 
   // ── Build phrase list ──
@@ -1134,7 +1133,6 @@ function generateListing() {
   if (quickTrades) parts.push(rnd(P.quickTrades));
   if (acceptOffers) parts.push(rnd(P.acceptOffers));
   if (bulkDiscount && items.length > 1) parts.push(rnd(P.bulkDiscount).replace('{pct}', bulkPct));
-  if (negotiable) parts.push(rnd(P.negotiable));
   if (notes) parts.push(`📝 ${notes}`);
 
   // Closer — 50% chance connector+closer, 50% just closer
@@ -1144,14 +1142,19 @@ function generateListing() {
     parts.push(`${rnd(P.connectors)} ${rnd(P.closers)}`);
   }
 
-  // ── Metaforge listing — description only, no item table (Metaforge shows that separately) ──
-  const metaforge = parts.join('\n');
+  // Metaforge: single continuous string, add profile note for more listings
+  const profileNote = rnd([
+    'Check my profile for all active listings.',
+    'More items on my profile.',
+    'See my profile for full inventory.',
+    'Browse my profile for more.',
+  ]);
+  const metaforge = [...parts, profileNote].join(' ');
 
-  // ── Discord listing — AI prose up top, structured item table in code block ──
+  // Discord: structured item table, no source tags, make an offer if no price
   const discordItems = items.map((item) => {
-    const priceStr = item.price ? `${item.price.toLocaleString()} seeds` : 'TBD';
-    const srcLabel = item.source === SOURCES.LOOTED ? '[Looted]' : item.source === SOURCES.TRADE ? '[Trade]' : '[Bought]';
-    return `${item.name} ${srcLabel}  ×${item.count}  |  ${priceStr}`;
+    const priceStr = item.price ? `${item.price.toLocaleString()} seeds` : 'Make an offer';
+    return `${item.name}  ×${item.count}  |  ${priceStr}`;
   }).join('\n');
 
   const discord = `${metaforge}\n\`\`\`\n${discordItems}\n\`\`\`\n-# via Speranza Logistics Terminal`;
