@@ -1312,39 +1312,48 @@ function applyTheme(t) {
   updateThemeUI();
 }
 
-let _themeDebounce = null;
-function _scheduleTheme(t) {
-  if (_themeDebounce) clearTimeout(_themeDebounce);
-  _themeDebounce = setTimeout(() => { applyTheme(t); _themeDebounce = null; }, 80);
-}
+let pendingTheme = { ...currentTheme };
 
 function applyPreset(name) {
   const preset = PRESETS[name];
   if (!preset) return;
-  _scheduleTheme({ ...preset });
+  pendingTheme = { ...preset };
+  updateThemeUI();
 }
 
 function setThemeProp(prop, value) {
-  _scheduleTheme({ ...currentTheme, [prop]: value });
+  pendingTheme = { ...pendingTheme, [prop]: value };
+  updateThemeUI();
+}
+
+function applyPendingTheme() {
+  applyTheme(pendingTheme);
 }
 
 function updateThemeUI() {
-  // Preset buttons
+  // Preset buttons — active if pending matches preset exactly
   document.querySelectorAll('[data-preset]').forEach((btn) => {
     const match = PRESETS[btn.dataset.preset];
-    const active = match && Object.keys(match).every((k) => match[k] === currentTheme[k]);
+    const active = match && Object.keys(match).every((k) => match[k] === pendingTheme[k]);
     btn.style.borderColor = active ? 'var(--cyan)' : 'var(--border)';
     btn.style.color = active ? 'var(--cyan)' : 'var(--text-dim)';
   });
-  // Option buttons
+  // Option buttons — active if pending value matches
   ['palette', 'fonts', 'density', 'borders', 'nav'].forEach((prop) => {
     document.querySelectorAll(`[data-theme-prop="${prop}"]`).forEach((btn) => {
-      const active = btn.dataset.themeVal === currentTheme[prop];
+      const active = btn.dataset.themeVal === pendingTheme[prop];
       btn.style.background = active ? 'var(--cyan-dim)' : 'var(--bg-3)';
       btn.style.borderColor = active ? 'var(--cyan)' : 'var(--border)';
       btn.style.color = active ? 'var(--cyan)' : 'var(--text-dim)';
     });
   });
+  // Show/hide unsaved indicator on Apply button
+  const applyBtn = document.getElementById('themeApplyBtn');
+  if (applyBtn) {
+    const dirty = JSON.stringify(pendingTheme) !== JSON.stringify(currentTheme);
+    applyBtn.style.opacity = dirty ? '1' : '0.45';
+    applyBtn.textContent = dirty ? 'Apply Theme ✦' : 'Applied';
+  }
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
@@ -1356,10 +1365,11 @@ function init() {
     startNewSession, showPriceHistory, closePriceHistory, handleModalClick,
     toggleCustomItems, mergeCustomItems, addStartingStock, setStaleThreshold,
     generateListing, copyListing, commsSelectAll, commsSelectNone,
-    applyPreset, setThemeProp,
+    applyPreset, setThemeProp, applyPendingTheme,
   });
 
   applyTheme(currentTheme);
+  pendingTheme = { ...currentTheme };
 
   loadMetaforgeCache();
   initTextareaAutocomplete();
