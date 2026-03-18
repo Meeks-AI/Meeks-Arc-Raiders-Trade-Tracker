@@ -1349,7 +1349,9 @@ function updateThemeUI() {
 
   // Custom controls visibility
   const controls = document.getElementById('customThemeControls');
-  if (controls) controls.style.display = pendingPreset === 'custom' ? 'flex' : 'none';
+  if (controls) {
+    controls.style.display = pendingPreset === 'custom' ? 'block' : 'none';
+  }
 
   // Individual option buttons
   ['palette', 'fonts', 'density', 'borders', 'nav'].forEach((prop) => {
