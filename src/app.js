@@ -167,11 +167,13 @@ function staleColor(oldestAddedAt) {
 // ─── Tab switching ────────────────────────────────────────────────────────────
 function switchTab(t) {
   document.querySelectorAll('.tab-content').forEach((e) => e.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn, .topnav-btn').forEach((b) => b.classList.remove('active'));
   document.getElementById(`view-${t}`)?.classList.add('active');
   document.getElementById(`nav-${t}`)?.classList.add('active');
+  document.getElementById(`topnav-${t}`)?.classList.add('active');
   if (t === 'analytics') renderAnalytics();
   if (t === 'comms') renderCommsTab();
+  if (t === 'themes') updateThemeUI();
 }
 
 // ─── Icon helper ──────────────────────────────────────────────────────────────
@@ -1205,6 +1207,140 @@ function copyListing(format) {
   });
 }
 
+// ─── Theme engine ─────────────────────────────────────────────────────────────
+
+const PALETTES = {
+  'arc':       { bg0:'#06080a', bg1:'#0c0f14', bg2:'#12161d', bg3:'#181d26', border:'#1e2633', borderBright:'#2a3544', muted:'#64748b', text:'#e2e8f0', textDim:'#94a3b8', cyan:'#06b6d4', cyanDim:'rgba(6,182,212,0.15)', amber:'#f59e0b', amberDim:'rgba(245,158,11,0.15)', emerald:'#10b981', emeraldDim:'rgba(16,185,129,0.15)', violet:'#8b5cf6', violetDim:'rgba(139,92,246,0.15)', rose:'#f43f5e', glow:'rgba(6,182,212,0.08)' },
+  'tactical':  { bg0:'#080a05', bg1:'#0f1209', bg2:'#161a0e', bg3:'#1e2414', border:'#2a3018', borderBright:'#3a4222', muted:'#6b7a4a', text:'#d4dbb0', textDim:'#a0aa78', cyan:'#8db842', cyanDim:'rgba(141,184,66,0.15)', amber:'#e8a020', amberDim:'rgba(232,160,32,0.15)', emerald:'#4caf50', emeraldDim:'rgba(76,175,80,0.15)', violet:'#b8860b', violetDim:'rgba(184,134,11,0.15)', rose:'#e05050', glow:'rgba(141,184,66,0.06)' },
+  'slate':     { bg0:'#0a0a0b', bg1:'#111115', bg2:'#18181c', bg3:'#1e1e24', border:'#2a2a32', borderBright:'#3a3a45', muted:'#6b6b7a', text:'#dddde8', textDim:'#9898aa', cyan:'#818cf8', cyanDim:'rgba(129,140,248,0.15)', amber:'#a78bfa', amberDim:'rgba(167,139,250,0.15)', emerald:'#34d399', emeraldDim:'rgba(52,211,153,0.15)', violet:'#f472b6', violetDim:'rgba(244,114,182,0.15)', rose:'#fb7185', glow:'rgba(129,140,248,0.06)' },
+  'neon':      { bg0:'#000000', bg1:'#080808', bg2:'#0f0f0f', bg3:'#161616', border:'#222222', borderBright:'#333333', muted:'#555555', text:'#f0f0f0', textDim:'#aaaaaa', cyan:'#00ffcc', cyanDim:'rgba(0,255,204,0.12)', amber:'#ffcc00', amberDim:'rgba(255,204,0,0.12)', emerald:'#00ff88', emeraldDim:'rgba(0,255,136,0.12)', violet:'#cc44ff', violetDim:'rgba(204,68,255,0.12)', rose:'#ff4466', glow:'rgba(0,255,204,0.05)' },
+  'dusk':      { bg0:'#0d0810', bg1:'#130d18', bg2:'#1a1222', bg3:'#21182c', border:'#2e2040', borderBright:'#3d2c55', muted:'#7a6a90', text:'#e8ddf5', textDim:'#b8a8cc', cyan:'#c084fc', cyanDim:'rgba(192,132,252,0.15)', amber:'#fb923c', amberDim:'rgba(251,146,60,0.15)', emerald:'#4ade80', emeraldDim:'rgba(74,222,128,0.15)', violet:'#e879f9', violetDim:'rgba(232,121,249,0.15)', rose:'#f87171', glow:'rgba(192,132,252,0.07)' },
+  'ash':       { bg0:'#0c0c0c', bg1:'#141414', bg2:'#1c1c1c', bg3:'#242424', border:'#303030', borderBright:'#404040', muted:'#707070', text:'#e8e8e8', textDim:'#a0a0a0', cyan:'#d0d0d0', cyanDim:'rgba(208,208,208,0.12)', amber:'#c8c8c8', amberDim:'rgba(200,200,200,0.12)', emerald:'#b0b0b0', emeraldDim:'rgba(176,176,176,0.12)', violet:'#909090', violetDim:'rgba(144,144,144,0.12)', rose:'#e87070', glow:'rgba(200,200,200,0.04)' },
+};
+
+const FONT_PAIRS = {
+  'default':  { ui: "'Outfit', system-ui, sans-serif",        mono: "'JetBrains Mono', monospace" },
+  'allMono':  { ui: "'JetBrains Mono', monospace",            mono: "'JetBrains Mono', monospace" },
+  'modern':   { ui: "'Inter', 'Outfit', system-ui, sans-serif", mono: "'Fira Code', 'JetBrains Mono', monospace" },
+};
+
+const DENSITIES = {
+  comfortable: { tdPadding: '10px 16px', inputPadding: '10px 14px', btnPadding: '10px 18px', fontSize: '0.85rem' },
+  compact:     { tdPadding: '6px 12px',  inputPadding: '7px 10px',  btnPadding: '7px 14px',  fontSize: '0.8rem'  },
+};
+
+const BORDER_STYLES = {
+  rounded: { card: '12px', btn: '8px', input: '8px', tag: '6px' },
+  sharp:   { card: '0px',  btn: '2px', input: '2px', tag: '2px' },
+  pill:    { card: '16px', btn: '999px', input: '8px', tag: '999px' },
+};
+
+const PRESETS = {
+  terminal: { palette: 'arc',      fonts: 'default', density: 'comfortable', borders: 'rounded', nav: 'sidebar' },
+  tactical: { palette: 'tactical', fonts: 'allMono', density: 'compact',     borders: 'sharp',   nav: 'sidebar' },
+  clean:    { palette: 'dusk',     fonts: 'modern',  density: 'comfortable', borders: 'pill',    nav: 'topnav'  },
+  neon:     { palette: 'neon',     fonts: 'allMono', density: 'compact',     borders: 'sharp',   nav: 'sidebar' },
+};
+
+let currentTheme = JSON.parse(localStorage.getItem(STORAGE_KEYS.theme) || 'null') || { ...PRESETS.terminal };
+
+function applyTheme(t) {
+  currentTheme = t;
+  localStorage.setItem(STORAGE_KEYS.theme, JSON.stringify(t));
+
+  const p = PALETTES[t.palette] || PALETTES.arc;
+  const f = FONT_PAIRS[t.fonts] || FONT_PAIRS.default;
+  const d = DENSITIES[t.density] || DENSITIES.comfortable;
+  const b = BORDER_STYLES[t.borders] || BORDER_STYLES.rounded;
+
+  const root = document.documentElement;
+  root.style.setProperty('--bg-0', p.bg0);
+  root.style.setProperty('--bg-1', p.bg1);
+  root.style.setProperty('--bg-2', p.bg2);
+  root.style.setProperty('--bg-3', p.bg3);
+  root.style.setProperty('--border', p.border);
+  root.style.setProperty('--border-bright', p.borderBright);
+  root.style.setProperty('--muted', p.muted);
+  root.style.setProperty('--text', p.text);
+  root.style.setProperty('--text-dim', p.textDim);
+  root.style.setProperty('--cyan', p.cyan);
+  root.style.setProperty('--cyan-dim', p.cyanDim);
+  root.style.setProperty('--amber', p.amber);
+  root.style.setProperty('--amber-dim', p.amberDim);
+  root.style.setProperty('--emerald', p.emerald);
+  root.style.setProperty('--emerald-dim', p.emeraldDim);
+  root.style.setProperty('--violet', p.violet);
+  root.style.setProperty('--violet-dim', p.violetDim);
+  root.style.setProperty('--rose', p.rose);
+  root.style.setProperty('--theme-glow', p.glow);
+
+  // Fonts
+  root.style.setProperty('--font-ui', f.ui);
+  root.style.setProperty('--font-mono', f.mono);
+  document.body.style.fontFamily = f.ui;
+
+  // Density
+  root.style.setProperty('--td-padding', d.tdPadding);
+  root.style.setProperty('--input-padding', d.inputPadding);
+  root.style.setProperty('--btn-padding', d.btnPadding);
+  root.style.setProperty('--base-font-size', d.fontSize);
+
+  // Borders
+  root.style.setProperty('--radius-card', b.card);
+  root.style.setProperty('--radius-btn', b.btn);
+  root.style.setProperty('--radius-input', b.input);
+  root.style.setProperty('--radius-tag', b.tag);
+
+  // Nav layout
+  const sidebar = document.querySelector('.sidebar');
+  const topnav = document.getElementById('topnav');
+  const appEl = document.querySelector('.app');
+  if (t.nav === 'topnav') {
+    if (sidebar) sidebar.style.display = 'none';
+    if (topnav) topnav.style.display = 'flex';
+    if (appEl) appEl.style.flexDirection = 'column';
+  } else {
+    if (sidebar) sidebar.style.display = '';
+    if (topnav) topnav.style.display = 'none';
+    if (appEl) appEl.style.flexDirection = '';
+  }
+
+  // Background glow
+  document.body.style.backgroundImage = `radial-gradient(ellipse 80% 50% at 50% -20%, ${p.glow}, transparent), linear-gradient(180deg, ${p.bg0} 0%, ${p.bg1} 100%)`;
+
+  // Update active states in theme UI
+  updateThemeUI();
+}
+
+function applyPreset(name) {
+  const preset = PRESETS[name];
+  if (!preset) return;
+  applyTheme({ ...preset });
+}
+
+function setThemeProp(prop, value) {
+  applyTheme({ ...currentTheme, [prop]: value });
+}
+
+function updateThemeUI() {
+  // Preset buttons
+  document.querySelectorAll('[data-preset]').forEach((btn) => {
+    const match = PRESETS[btn.dataset.preset];
+    const active = match && Object.keys(match).every((k) => match[k] === currentTheme[k]);
+    btn.style.borderColor = active ? 'var(--cyan)' : 'var(--border)';
+    btn.style.color = active ? 'var(--cyan)' : 'var(--text-dim)';
+  });
+  // Option buttons
+  ['palette', 'fonts', 'density', 'borders', 'nav'].forEach((prop) => {
+    document.querySelectorAll(`[data-theme-prop="${prop}"]`).forEach((btn) => {
+      const active = btn.dataset.themeVal === currentTheme[prop];
+      btn.style.background = active ? 'var(--cyan-dim)' : 'var(--bg-3)';
+      btn.style.borderColor = active ? 'var(--cyan)' : 'var(--border)';
+      btn.style.color = active ? 'var(--cyan)' : 'var(--text-dim)';
+    });
+  });
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 function init() {
   Object.assign(window, {
@@ -1214,7 +1350,10 @@ function init() {
     startNewSession, showPriceHistory, closePriceHistory, handleModalClick,
     toggleCustomItems, mergeCustomItems, addStartingStock, setStaleThreshold,
     generateListing, copyListing, commsSelectAll, commsSelectNone,
+    applyPreset, setThemeProp,
   });
+
+  applyTheme(currentTheme);
 
   loadMetaforgeCache();
   initTextareaAutocomplete();
