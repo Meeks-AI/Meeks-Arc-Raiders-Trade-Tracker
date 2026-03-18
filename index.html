@@ -34,33 +34,18 @@
         body {
             margin: 0; min-height: 100vh; background: var(--bg-0); color: var(--text);
             font-family: 'Outfit', system-ui, sans-serif;
-            background-image:
-                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(6,182,212,0.08), transparent),
-                linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%);
+            background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(6,182,212,0.08), transparent), linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%);
         }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
         .app { display: flex; min-height: 100vh; }
-        .sidebar {
-            width: 72px; flex-shrink: 0; background: var(--bg-2);
-            border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; align-items: center;
-            padding: 1rem 0; gap: 0.5rem;
-        }
-        .nav-btn {
-            position: relative; width: 44px; height: 44px; border-radius: 10px;
-            border: 1px solid transparent; background: transparent; color: var(--muted);
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 18px; transition: all 0.2s;
-        }
+        .sidebar { width: 72px; flex-shrink: 0; background: var(--bg-2); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 1rem 0; gap: 0.5rem; }
+        .nav-btn { position: relative; width: 44px; height: 44px; border-radius: 10px; border: 1px solid transparent; background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.2s; }
         .nav-btn:hover { background: var(--bg-3); color: var(--text); }
         .nav-btn.active { background: var(--cyan-dim); color: var(--cyan); border-color: rgba(6,182,212,0.3); }
         .nav-btn span { font-size: 10px; position: absolute; left: 100%; margin-left: 12px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; background: var(--bg-2); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); }
         .nav-btn:hover span { opacity: 1; }
         .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-        .top-bar {
-            padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--bg-1);
-            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
-        }
+        .top-bar { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--bg-1); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
         .brand { display: flex; align-items: baseline; gap: 1rem; }
         .brand h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
         .brand .badge { font-size: 0.65rem; padding: 3px 8px; border-radius: 4px; background: var(--emerald-dim); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; }
@@ -76,18 +61,9 @@
         .card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
         .card-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
         .card-title { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); }
-        input, textarea, select {
-            font-family: 'JetBrains Mono', monospace; background: var(--bg-0) !important;
-            border: 1px solid var(--border); color: var(--text); padding: 10px 14px;
-            border-radius: 8px; font-size: 0.85rem; outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
+        input, textarea, select { font-family: 'JetBrains Mono', monospace; background: var(--bg-0) !important; border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
         input:focus, textarea:focus, select:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px var(--cyan-dim); }
-        .btn {
-            font-family: 'Outfit', sans-serif; padding: 10px 18px; border-radius: 8px;
-            font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
-            letter-spacing: 0.04em; cursor: pointer; border: none; transition: all 0.15s;
-        }
+        .btn { font-family: 'Outfit', sans-serif; padding: 10px 18px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; border: none; transition: all 0.15s; }
         .btn-cyan { background: var(--cyan); color: #000; }
         .btn-cyan:hover { filter: brightness(1.15); transform: translateY(-1px); }
         .btn-slate { background: var(--bg-3); color: var(--text); border: 1px solid var(--border); }
@@ -98,13 +74,13 @@
         .btn-amber:hover { filter: brightness(1.1); }
         .btn-ghost { background: transparent; color: var(--muted); }
         .btn-ghost:hover { color: var(--text); background: var(--bg-3); }
-        /* Green sell button */
         .btn-sell { background: rgba(16,185,129,0.15); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); padding: 6px 12px; font-size: 0.7rem; }
         .btn-sell:hover { background: rgba(16,185,129,0.25); border-color: var(--emerald); }
         .tag { font-size: 0.65rem; padding: 4px 8px; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
         .tag-fir { background: rgba(6,182,212,0.2); color: var(--cyan); }
         .tag-buy { background: rgba(100,116,139,0.25); color: var(--text-dim); }
         .tag-trd { background: rgba(139,92,246,0.2); color: #a78bfa; }
+        .quest-badge { font-size: 0.6rem; font-weight: 800; background: rgba(245,158,11,0.2); color: var(--amber); border: 1px solid rgba(245,158,11,0.4); border-radius: 3px; padding: 1px 5px; cursor: default; flex-shrink: 0; }
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; padding: 12px 16px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); border-bottom: 1px solid var(--border); }
         td { padding: 10px 16px; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
@@ -141,9 +117,9 @@
     <div id="priceHistoryModal" onclick="handleModalClick(event)" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
         <div style="background:var(--bg-2);border:1px solid var(--border-bright);border-radius:12px;padding:1.5rem;width:min(580px,90vw);">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-                <div>
-                    <span id="priceHistoryTitle" style="font-weight:700;font-size:1rem;color:var(--cyan);font-family:'JetBrains Mono',monospace;"></span>
-                    <span id="priceHistoryStats" style="font-size:0.75rem;color:var(--muted);margin-left:1rem;"></span>
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <span id="priceHistoryTitle" style="font-weight:700;font-size:1rem;color:var(--cyan);font-family:'JetBrains Mono',monospace;display:flex;align-items:center;"></span>
+                    <span id="priceHistoryStats" style="font-size:0.75rem;color:var(--muted);"></span>
                 </div>
                 <button onclick="closePriceHistory()" class="btn btn-ghost" style="padding:4px 12px;font-size:1.1rem;line-height:1;">×</button>
             </div>
@@ -181,7 +157,7 @@
                         <div class="ops-forms">
                             <div style="display:flex;align-items:center;justify-content:space-between;">
                                 <span style="font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);">Actions</span>
-                                <button class="btn btn-ghost" onclick="startNewSession()" style="font-size:0.7rem;padding:5px 12px;border:1px solid var(--border-bright);color:var(--violet);" title="Mark the start of a new raid session — groups entries for per-session analytics">⚑ New Session</button>
+                                <button class="btn btn-ghost" onclick="startNewSession()" style="font-size:0.7rem;padding:5px 12px;border:1px solid var(--border-bright);color:var(--violet);" title="Mark the start of a new raid session">⚑ New Session</button>
                             </div>
                             <div class="form-block">
                                 <h3>Raid Recovery (FIR)</h3>
@@ -272,6 +248,26 @@
                                 <tbody id="perItemStatsBody"></tbody>
                             </table>
                         </div>
+                        <!-- Quests panel -->
+                        <div class="card" style="overflow-x:auto">
+                            <div class="card-header">
+                                <span class="card-title" style="color:var(--amber)">Quests</span>
+                                <span style="font-size:0.7rem;color:var(--muted);">
+                                    <span style="color:var(--emerald)">Green</span> = enough in stock &nbsp;·&nbsp;
+                                    <span style="color:var(--amber)">Amber</span> = partially held &nbsp;·&nbsp;
+                                    <span style="color:var(--muted)">Grey</span> = not held
+                                </span>
+                            </div>
+                            <table>
+                                <thead><tr>
+                                    <th style="width:220px">Quest</th>
+                                    <th>Objective</th>
+                                    <th>Required Items</th>
+                                    <th>Rewards</th>
+                                </tr></thead>
+                                <tbody id="questsBody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -315,7 +311,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Shown only when custom items are enabled -->
                         <div class="tool-block" id="customMergeBlock" style="display:none;border-color:rgba(139,92,246,0.3);">
                             <label style="color:#a78bfa;">Rename Custom Item</label>
                             <div class="fields">
