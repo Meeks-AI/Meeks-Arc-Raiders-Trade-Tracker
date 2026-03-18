@@ -1312,14 +1312,20 @@ function applyTheme(t) {
   updateThemeUI();
 }
 
+let _themeDebounce = null;
+function _scheduleTheme(t) {
+  if (_themeDebounce) clearTimeout(_themeDebounce);
+  _themeDebounce = setTimeout(() => { applyTheme(t); _themeDebounce = null; }, 80);
+}
+
 function applyPreset(name) {
   const preset = PRESETS[name];
   if (!preset) return;
-  applyTheme({ ...preset });
+  _scheduleTheme({ ...preset });
 }
 
 function setThemeProp(prop, value) {
-  applyTheme({ ...currentTheme, [prop]: value });
+  _scheduleTheme({ ...currentTheme, [prop]: value });
 }
 
 function updateThemeUI() {
