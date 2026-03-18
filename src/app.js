@@ -1,19 +1,21 @@
 /* global Chart */
 'use strict';
 
-import { ACTIONS, LOCAL_METAFORGE_ITEMS_URL, LOCAL_METAFORGE_QUESTS_URL, METAFORGE_URL, STORAGE_KEYS } from './constants.js';
+import { ACTIONS, LOCAL_METAFORGE_ITEMS_URL, LOCAL_METAFORGE_QUESTS_URL, METAFORGE_URL, SOURCES, STORAGE_KEYS } from './constants.js';
 import { readJson, readNumber, writeJson } from './storage.js';
 
 let stock = readJson(STORAGE_KEYS.stock, []);
 let audit = readJson(STORAGE_KEYS.audit, []);
 let liquidSeeds = readNumber(STORAGE_KEYS.liquidSeeds, 0);
 let priceCache = {};
-let apiItems = [];       // all items from Metaforge
-let tradeItems = [];     // filtered: value > 0 (excludes cosmetics)
-let iconMap = {};        // name -> icon URL
-let quests = [];         // all quests
-let questDemandMap = {}; // item name -> [quest names that require it]
+let apiItems = [];
+let tradeItems = [];
+let iconMap = {};
+let quests = [];
+let questDemandMap = {};
 let allowCustomItems = localStorage.getItem(STORAGE_KEYS.allowCustomItems) === 'true';
+let staleThresholdDays = parseFloat(localStorage.getItem(STORAGE_KEYS.staleThresholdDays)) || 7;
+let listingOutput = { metaforge: '', discord: '' };
 let chartInstance = null;
 let priceHistoryChart = null;
 
@@ -21,7 +23,7 @@ function genId() {
   return `e${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 }
 
-// ─── Metaforge items ──────────────────────────────────────────────────────────
+// ─── Metaforge data ───────────────────────────────────────────────────────────
 function buildDerivedItemData(items) {
   tradeItems = items.filter((i) => i.value > 0);
   iconMap = {};
@@ -39,9 +41,7 @@ function loadMetaforgeCache() {
       const el = document.getElementById('metaforgeStatus');
       if (el) el.textContent = ts ? `Synced ${new Date(+ts).toLocaleString()}` : 'Cached';
     }
-  } catch {
-    apiItems = []; tradeItems = []; iconMap = {};
-  }
+  } catch { apiItems = []; tradeItems = []; iconMap = {}; }
 }
 
 async function fetchMetaforgeAll() {
@@ -63,16 +63,14 @@ async function fetchMetaforgeFromLocalFile() {
   const res = await fetch(LOCAL_METAFORGE_ITEMS_URL, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Local items file HTTP ${res.status}`);
   const json = await res.json();
-  const data = Array.isArray(json) ? json : json.data || [];
-  return Array.isArray(data) ? data : [];
+  return Array.isArray(json) ? json : json.data || [];
 }
 
 async function fetchQuestsFromLocalFile() {
   const res = await fetch(LOCAL_METAFORGE_QUESTS_URL, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Local quests file HTTP ${res.status}`);
   const json = await res.json();
-  const data = Array.isArray(json) ? json : json.data || [];
-  return Array.isArray(data) ? data : [];
+  return Array.isArray(json) ? json : json.data || [];
 }
 
 function buildQuestDemandMap(questList) {
@@ -89,8 +87,7 @@ function buildQuestDemandMap(questList) {
 
 function formatFetchErr(e) {
   const msg = (e && (e.message || String(e))) || 'Unknown error';
-  if (/failed to fetch/i.test(msg)) return `${msg} (likely CORS blocked)`;
-  return msg;
+  return /failed to fetch/i.test(msg) ? `${msg} (likely CORS blocked)` : msg;
 }
 
 async function resyncMetaforge() {
@@ -148,6 +145,16 @@ function buildPriceCache() {
   });
 }
 
+// ─── Age colour ───────────────────────────────────────────────────────────────
+function staleColor(oldestAddedAt) {
+  if (!oldestAddedAt || !staleThresholdDays) return null;
+  const ratio = (Date.now() - oldestAddedAt) / (staleThresholdDays * 86400000);
+  if (ratio < 0.5) return null;
+  if (ratio < 0.75) return '#f59e0b';
+  if (ratio < 1.0) return '#f97316';
+  return '#f43f5e';
+}
+
 // ─── Tab switching ────────────────────────────────────────────────────────────
 function switchTab(t) {
   document.querySelectorAll('.tab-content').forEach((e) => e.classList.remove('active'));
@@ -155,15 +162,17 @@ function switchTab(t) {
   document.getElementById(`view-${t}`)?.classList.add('active');
   document.getElementById(`nav-${t}`)?.classList.add('active');
   if (t === 'analytics') renderAnalytics();
+  if (t === 'comms') renderCommsTab();
 }
 
-// ─── Render ───────────────────────────────────────────────────────────────────
+// ─── Icon helper ──────────────────────────────────────────────────────────────
 function itemIcon(name, size = 28) {
   const url = iconMap[name];
   if (!url) return `<span style="display:inline-block;width:${size}px;height:${size}px;background:var(--bg-3);border-radius:4px;flex-shrink:0;"></span>`;
   return `<img src="${url}" width="${size}" height="${size}" style="border-radius:4px;object-fit:contain;background:var(--bg-3);flex-shrink:0;" loading="lazy" onerror="this.style.display='none'">`;
 }
 
+// ─── Render ───────────────────────────────────────────────────────────────────
 function render() {
   buildPriceCache();
 
@@ -185,7 +194,8 @@ function render() {
 
   const grouped = stock.reduce((acc, item) => {
     const k = `${item.name}-${item.source}-${Math.floor(item.cost)}`;
-    if (!acc[k]) acc[k] = { ...item, count: 0 };
+    if (!acc[k]) acc[k] = { ...item, count: 0, oldestAddedAt: item.addedAt || null };
+    else if (item.addedAt && (!acc[k].oldestAddedAt || item.addedAt < acc[k].oldestAddedAt)) acc[k].oldestAddedAt = item.addedAt;
     acc[k].count++;
     return acc;
   }, {});
@@ -198,26 +208,22 @@ function render() {
       if (searchQuery && !g.name.toLowerCase().includes(searchQuery)) return;
 
       const safeId = `item-${i}`;
-      const tag = g.source === 'FIR' ? 'tag-fir' : g.source === 'TRD' ? 'tag-trd' : 'tag-buy';
+      const tag = g.source === SOURCES.LOOTED ? 'tag-looted' : g.source === SOURCES.TRADE ? 'tag-trade' : 'tag-buy';
+      const tagLabel = g.source === SOURCES.LOOTED ? 'Looted' : g.source === SOURCES.TRADE ? 'Trade' : 'Bought';
 
-      // Quest demand badge
       const demandQuests = questDemandMap[g.name];
-      const questBadge = demandQuests
-        ? `<span class="quest-badge" title="Needed for: ${demandQuests.join(', ')}">Q</span>`
-        : '';
+      const questBadge = demandQuests ? `<span class="quest-badge" title="Needed for: ${demandQuests.join(', ')}">Q</span>` : '';
 
-      invBody.innerHTML += `<tr>
-        <td>
-          <div style="display:flex;align-items:center;gap:8px;">
-            ${itemIcon(g.name, 28)}
-            <span class="font-mono font-semibold">${g.name}</span>
-            ${questBadge}
-          </div>
-        </td>
-        <td><span class="tag ${tag}">${g.source}</span></td>
+      const ageCol = staleColor(g.oldestAddedAt);
+      const rowStyle = ageCol ? `border-left:3px solid ${ageCol};` : '';
+      const ageTitle = g.oldestAddedAt ? `Held for ${Math.floor((Date.now() - g.oldestAddedAt) / 86400000)}d (oldest unit)` : '';
+
+      invBody.innerHTML += `<tr style="${rowStyle}" ${ageTitle ? `title="${ageTitle}"` : ''}>
+        <td><div style="display:flex;align-items:center;gap:8px;">${itemIcon(g.name, 28)}<span class="font-mono font-semibold">${g.name}</span>${questBadge}</div></td>
+        <td><span class="tag ${tag}">${tagLabel}</span></td>
         <td class="font-mono">×${g.count}</td>
         <td class="font-mono" style="color:var(--muted)">${Math.floor(g.cost).toLocaleString()}</td>
-        <td class="font-mono ${myMedian ? 'text-[var(--cyan)]' : 'text-[var(--muted)]'}">${myMedian ? Math.floor(myMedian).toLocaleString() : '—'}</td>
+        <td class="font-mono ${myMedian ? '' : ''}" style="${myMedian ? 'color:var(--cyan)' : 'color:var(--muted)'}">${myMedian ? Math.floor(myMedian).toLocaleString() : '—'}</td>
         <td style="text-align:right;white-space:nowrap;">
           <input type="number" id="q-${safeId}" value="1" min="1" max="${g.count}" style="width:52px;padding:6px;margin-right:2px;display:inline-block">
           <input type="number" id="p-${safeId}" placeholder="Price" style="width:80px;padding:6px;margin-right:4px;display:inline-block">
@@ -225,10 +231,9 @@ function render() {
           <button class="btn btn-ghost" style="padding:6px 10px;font-size:0.7rem;color:var(--amber)" title="Sell entire stack — auto-fills your median price if available" onclick="sellAll('${g.name.replace(/'/g, "\\'")}', '${g.source}', ${g.cost}, '${safeId}')">All</button>
         </td>
       </tr>`;
-      barterSelect.innerHTML += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${g.source}] ×${g.count}</option>`;
+      barterSelect.innerHTML += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${tagLabel}] ×${g.count}</option>`;
     });
 
-  // Audit log
   const totalSessions = audit.filter((e) => e.action === ACTIONS.SESSION_START).length;
   let sessionCounter = totalSessions;
 
@@ -264,9 +269,7 @@ function render() {
       `<tr style="${isExcluded ? 'opacity:0.5' : ''}">
         <td class="font-mono" style="font-size:0.75rem;color:var(--muted)">${time}</td>
         <td style="font-weight:600;font-size:0.75rem;${actClr}">${entry.action}</td>
-        <td style="${isExcluded ? 'text-decoration:line-through' : ''}">
-          <div style="display:flex;align-items:center;gap:6px;">${itemIcon(entry.name, 18)}<span>${entry.name}</span></div>
-        </td>
+        <td style="${isExcluded ? 'text-decoration:line-through' : ''}"><div style="display:flex;align-items:center;gap:6px;">${itemIcon(entry.name, 18)}<span>${entry.name}</span></div></td>
         <td class="font-mono" style="color:var(--muted)">${isCurrency || isInitial ? '—' : '×' + entry.qty}</td>
         <td style="text-align:right;font-weight:600;${profitDelta >= 0 ? 'color:var(--amber)' : 'color:var(--rose)'}">${profitDelta !== 0 ? (profitDelta > 0 ? '+' : '') + Math.floor(profitDelta).toLocaleString() : isInitial || isBarter ? Math.floor(entry.price).toLocaleString() : '—'}</td>
         <td style="text-align:right">${!isExcluded && entry.action !== ACTIONS.INITIAL
@@ -302,7 +305,7 @@ function render() {
 
 // ─── Session tracking ─────────────────────────────────────────────────────────
 function startNewSession() {
-  audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.SESSION_START, name: 'Session Start', qty: 1, price: 0, cost: 0, source: 'SYS' });
+  audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.SESSION_START, name: 'Session Start', qty: 1, price: 0, cost: 0, source: SOURCES.SYS });
   render();
 }
 
@@ -317,8 +320,9 @@ function massIngest() {
     const qty = nums ? parseInt(nums[0], 10) : 1;
     const text = validateItemName(rawName);
     if (!text) return;
-    for (let i = 0; i < qty; i++) stock.push({ name: text, cost: 0, source: 'FIR' });
-    audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.RECOVERY, name: text, qty, price: 0, cost: 0, source: 'FIR', revertData: { removeStock: [{ name: text, source: 'FIR', cost: 0, qty }] } });
+    const now = Date.now();
+    for (let i = 0; i < qty; i++) stock.push({ name: text, cost: 0, source: SOURCES.LOOTED, addedAt: now });
+    audit.push({ id: genId(), ts: now, action: ACTIONS.RECOVERY, name: text, qty, price: 0, cost: 0, source: SOURCES.LOOTED, revertData: { removeStock: [{ name: text, source: SOURCES.LOOTED, cost: 0, qty }] } });
   });
   document.getElementById('bulkText').value = '';
   setTimeout(() => render(), 0);
@@ -331,8 +335,9 @@ function buyItem() {
   const costPer = parseFloat(document.getElementById('buyPrice').value) || 0;
   const total = costPer * qty;
   liquidSeeds -= total;
-  for (let i = 0; i < qty; i++) stock.push({ name, cost: costPer, source: 'BUY' });
-  audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.PURCHASE, name, qty, price: costPer, cost: costPer, source: 'BUY', revertData: { deltaLiquid: total, removeStock: { name, source: 'BUY', cost: costPer, qty } } });
+  const now = Date.now();
+  for (let i = 0; i < qty; i++) stock.push({ name, cost: costPer, source: SOURCES.BUY, addedAt: now });
+  audit.push({ id: genId(), ts: now, action: ACTIONS.PURCHASE, name, qty, price: costPer, cost: costPer, source: SOURCES.BUY, revertData: { deltaLiquid: total, removeStock: { name, source: SOURCES.BUY, cost: costPer, qty } } });
   document.getElementById('buyName').value = '';
   document.getElementById('buyPrice').value = '';
   render();
@@ -386,15 +391,16 @@ function executeBarter() {
     if (stock[i].name === oldName && stock[i].source === oldSrc && Math.floor(stock[i].cost) === Math.floor(oldCost)) { stock.splice(i, 1); removed++; }
   }
 
-  for (let i = 0; i < toQty; i++) stock.push({ name: toNorm, cost: costPer, source: 'TRD' });
+  const now = Date.now();
+  for (let i = 0; i < toQty; i++) stock.push({ name: toNorm, cost: costPer, source: SOURCES.TRADE, addedAt: now });
   const addBack = [];
   for (let i = 0; i < fromQty; i++) addBack.push({ name: oldName, source: oldSrc, cost: parseFloat(oldCost) });
 
   audit.push({
-    id: genId(), ts: Date.now(), action: ACTIONS.BARTER,
+    id: genId(), ts: now, action: ACTIONS.BARTER,
     name: `${fromQty}× ${oldName} → ${toQty}× ${toNorm}`,
-    qty: toQty, price: totalVal, cost: totalVal, source: 'TRD',
-    revertData: { removeStock: { name: toNorm, source: 'TRD', cost: costPer, qty: toQty }, addStock: addBack },
+    qty: toQty, price: totalVal, cost: totalVal, source: SOURCES.TRADE,
+    revertData: { removeStock: { name: toNorm, source: SOURCES.TRADE, cost: costPer, qty: toQty }, addStock: addBack },
     barterFrom: { name: oldName, source: oldSrc, cost: parseFloat(oldCost), qty: fromQty },
     barterTo: { name: toNorm, qty: toQty },
   });
@@ -409,7 +415,7 @@ function adjustBalance() {
   const amt = parseFloat(document.getElementById('adjAmount').value);
   if (Number.isNaN(amt)) return;
   liquidSeeds += amt;
-  audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.ADJUST, name: 'Manual Correction', qty: 1, price: amt, cost: 0, source: 'SYS', revertData: { deltaLiquid: -amt } });
+  audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.ADJUST, name: 'Manual Correction', qty: 1, price: amt, cost: 0, source: SOURCES.SYS, revertData: { deltaLiquid: -amt } });
   document.getElementById('adjAmount').value = '';
   render();
 }
@@ -434,7 +440,7 @@ function revertEntry(idx) {
         const count = qty || 1;
         let removed = 0;
         for (let i = stock.length - 1; i >= 0 && removed < count; i--) {
-          if (stock[i].name === name && stock[i].source === (source || 'TRD') && Math.floor(stock[i].cost) === Math.floor(cost || 0)) { stock.splice(i, 1); removed++; }
+          if (stock[i].name === name && stock[i].source === (source || SOURCES.TRADE) && Math.floor(stock[i].cost) === Math.floor(cost || 0)) { stock.splice(i, 1); removed++; }
         }
       });
     }
@@ -443,7 +449,7 @@ function revertEntry(idx) {
     const costPer = e.cost / to.qty;
     let removed = 0;
     for (let i = stock.length - 1; i >= 0 && removed < to.qty; i--) {
-      if (stock[i].name === to.name && stock[i].source === 'TRD' && Math.floor(stock[i].cost) === Math.floor(costPer)) { stock.splice(i, 1); removed++; }
+      if (stock[i].name === to.name && stock[i].source === SOURCES.TRADE && Math.floor(stock[i].cost) === Math.floor(costPer)) { stock.splice(i, 1); removed++; }
     }
     for (let i = 0; i < from.qty; i++) stock.push({ name: from.name, source: from.source, cost: from.cost });
   }
@@ -476,6 +482,33 @@ function mergeCustomItems() {
   render();
 }
 
+function addStartingStock() {
+  const raw = (document.getElementById('startingStockText').value || '').trim();
+  if (!raw) return;
+  let added = 0;
+  raw.split('\n').forEach((line) => {
+    const nums = line.match(/\d+/);
+    const rawName = line.replace(/\d+/, '').trim();
+    if (!rawName) return;
+    const qty = nums ? parseInt(nums[0], 10) : 1;
+    const text = validateItemName(rawName);
+    if (!text) return;
+    const now = Date.now();
+    for (let i = 0; i < qty; i++) stock.push({ name: text, cost: 0, source: SOURCES.LOOTED, addedAt: now });
+    audit.push({ id: genId(), ts: now, action: ACTIONS.STOCK_INIT, name: text, qty, price: 0, cost: 0, source: SOURCES.LOOTED, revertData: { removeStock: [{ name: text, source: SOURCES.LOOTED, cost: 0, qty }] } });
+    added += qty;
+  });
+  if (added > 0) { document.getElementById('startingStockText').value = ''; render(); }
+}
+
+function setStaleThreshold() {
+  const val = parseFloat(document.getElementById('staleThresholdInput').value);
+  if (isNaN(val) || val <= 0) return;
+  staleThresholdDays = val;
+  localStorage.setItem(STORAGE_KEYS.staleThresholdDays, String(val));
+  render();
+}
+
 // ─── Random history ───────────────────────────────────────────────────────────
 function generateRandomHistory() {
   if (tradeItems.length === 0) return;
@@ -483,10 +516,7 @@ function generateRandomHistory() {
 
   function pick(arr, n) {
     const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
     return a.slice(0, n);
   }
   function randInt(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
@@ -498,78 +528,77 @@ function generateRandomHistory() {
   const now = Date.now(), day = 86400000;
   const ts = (d) => now - (7 - d) * day - Math.random() * day;
 
-  const firPool = pick(tradeItems, 6);
-  const buyItemObj = pick(tradeItems.filter((i) => !firPool.includes(i)), 1)[0];
-  const sellItemObj = firPool[Math.floor(Math.random() * firPool.length)];
+  const lootPool = pick(tradeItems, 6);
+  const buyItemObj = pick(tradeItems.filter((i) => !lootPool.includes(i)), 1)[0];
+  const sellItemObj = lootPool[Math.floor(Math.random() * lootPool.length)];
 
   audit = []; stock = []; liquidSeeds = 50000;
-  audit.push({ id: genId(), ts: ts(0), action: ACTIONS.INITIAL, name: 'Starting Capital', qty: 1, price: 50000, cost: 0, source: 'SYS' });
-  audit.push({ id: genId(), ts: ts(0) + 1000, action: ACTIONS.SESSION_START, name: 'Session Start', qty: 1, price: 0, cost: 0, source: 'SYS' });
+  audit.push({ id: genId(), ts: ts(0), action: ACTIONS.INITIAL, name: 'Starting Capital', qty: 1, price: 50000, cost: 0, source: SOURCES.SYS });
+  audit.push({ id: genId(), ts: ts(0) + 1000, action: ACTIONS.SESSION_START, name: 'Session Start', qty: 1, price: 0, cost: 0, source: SOURCES.SYS });
 
-  firPool.slice(0, 3).forEach((item, d) => {
+  lootPool.slice(0, 3).forEach((item, d) => {
     const qty = randInt(1, 4);
-    for (let i = 0; i < qty; i++) stock.push({ name: item.name, cost: 0, source: 'FIR' });
-    audit.push({ id: genId(), ts: ts(d + 1), action: ACTIONS.RECOVERY, name: item.name, qty, price: 0, cost: 0, source: 'FIR', revertData: { removeStock: [{ name: item.name, source: 'FIR', cost: 0, qty }] } });
+    for (let i = 0; i < qty; i++) stock.push({ name: item.name, cost: 0, source: SOURCES.LOOTED, addedAt: ts(d + 1) });
+    audit.push({ id: genId(), ts: ts(d + 1), action: ACTIONS.RECOVERY, name: item.name, qty, price: 0, cost: 0, source: SOURCES.LOOTED, revertData: { removeStock: [{ name: item.name, source: SOURCES.LOOTED, cost: 0, qty }] } });
   });
 
-  audit.push({ id: genId(), ts: ts(3), action: ACTIONS.SESSION_START, name: 'Session Start', qty: 1, price: 0, cost: 0, source: 'SYS' });
+  audit.push({ id: genId(), ts: ts(3), action: ACTIONS.SESSION_START, name: 'Session Start', qty: 1, price: 0, cost: 0, source: SOURCES.SYS });
 
-  firPool.slice(3).forEach((item, d) => {
+  lootPool.slice(3).forEach((item, d) => {
     const qty = randInt(1, 4);
-    for (let i = 0; i < qty; i++) stock.push({ name: item.name, cost: 0, source: 'FIR' });
-    audit.push({ id: genId(), ts: ts(d + 3), action: ACTIONS.RECOVERY, name: item.name, qty, price: 0, cost: 0, source: 'FIR', revertData: { removeStock: [{ name: item.name, source: 'FIR', cost: 0, qty }] } });
+    for (let i = 0; i < qty; i++) stock.push({ name: item.name, cost: 0, source: SOURCES.LOOTED, addedAt: ts(d + 3) });
+    audit.push({ id: genId(), ts: ts(d + 3), action: ACTIONS.RECOVERY, name: item.name, qty, price: 0, cost: 0, source: SOURCES.LOOTED, revertData: { removeStock: [{ name: item.name, source: SOURCES.LOOTED, cost: 0, qty }] } });
   });
 
   const costPer = randPrice(buyItemObj), bq = randInt(1, 3);
   liquidSeeds -= costPer * bq;
-  for (let i = 0; i < bq; i++) stock.push({ name: buyItemObj.name, cost: costPer, source: 'BUY' });
-  audit.push({ id: genId(), ts: ts(4), action: ACTIONS.PURCHASE, name: buyItemObj.name, qty: bq, price: costPer, cost: costPer, source: 'BUY', revertData: { deltaLiquid: costPer * bq, removeStock: { name: buyItemObj.name, source: 'BUY', cost: costPer, qty: bq } } });
+  for (let i = 0; i < bq; i++) stock.push({ name: buyItemObj.name, cost: costPer, source: SOURCES.BUY, addedAt: ts(4) });
+  audit.push({ id: genId(), ts: ts(4), action: ACTIONS.PURCHASE, name: buyItemObj.name, qty: bq, price: costPer, cost: costPer, source: SOURCES.BUY, revertData: { deltaLiquid: costPer * bq, removeStock: { name: buyItemObj.name, source: SOURCES.BUY, cost: costPer, qty: bq } } });
 
   const sellPrice = randPrice(sellItemObj);
   const sellQty = Math.min(randInt(1, 3), stock.filter((s) => s.name === sellItemObj.name).length) || 1;
   let removed = 0;
   for (let i = stock.length - 1; i >= 0 && removed < sellQty; i--) {
-    if (stock[i].name === sellItemObj.name && stock[i].source === 'FIR') { stock.splice(i, 1); removed++; }
+    if (stock[i].name === sellItemObj.name && stock[i].source === SOURCES.LOOTED) { stock.splice(i, 1); removed++; }
   }
   liquidSeeds += sellPrice * sellQty;
   const ab = [];
-  for (let i = 0; i < sellQty; i++) ab.push({ name: sellItemObj.name, source: 'FIR', cost: 0 });
-  audit.push({ id: genId(), ts: ts(5), action: ACTIONS.SELL, name: sellItemObj.name, qty: sellQty, price: sellPrice, cost: 0, source: 'FIR', revertData: { deltaLiquid: -(sellPrice * sellQty), addStock: ab } });
+  for (let i = 0; i < sellQty; i++) ab.push({ name: sellItemObj.name, source: SOURCES.LOOTED, cost: 0 });
+  audit.push({ id: genId(), ts: ts(5), action: ACTIONS.SELL, name: sellItemObj.name, qty: sellQty, price: sellPrice, cost: 0, source: SOURCES.LOOTED, revertData: { deltaLiquid: -(sellPrice * sellQty), addStock: ab } });
 
-  if (stock.some((s) => s.name === sellItemObj.name && s.source === 'FIR')) {
+  if (stock.some((s) => s.name === sellItemObj.name && s.source === SOURCES.LOOTED)) {
     const sp2 = randPrice(sellItemObj);
     let r2 = 0;
     for (let i = stock.length - 1; i >= 0 && r2 < 1; i--) {
-      if (stock[i].name === sellItemObj.name && stock[i].source === 'FIR') { stock.splice(i, 1); r2++; }
+      if (stock[i].name === sellItemObj.name && stock[i].source === SOURCES.LOOTED) { stock.splice(i, 1); r2++; }
     }
     liquidSeeds += sp2;
-    audit.push({ id: genId(), ts: ts(6), action: ACTIONS.SELL, name: sellItemObj.name, qty: 1, price: sp2, cost: 0, source: 'FIR', revertData: { deltaLiquid: -sp2, addStock: [{ name: sellItemObj.name, source: 'FIR', cost: 0 }] } });
+    audit.push({ id: genId(), ts: ts(6), action: ACTIONS.SELL, name: sellItemObj.name, qty: 1, price: sp2, cost: 0, source: SOURCES.LOOTED, revertData: { deltaLiquid: -sp2, addStock: [{ name: sellItemObj.name, source: SOURCES.LOOTED, cost: 0 }] } });
   }
 
   const adj = randInt(-500, 500);
   liquidSeeds += adj;
-  audit.push({ id: genId(), ts: ts(6) + 1000, action: ACTIONS.ADJUST, name: 'Manual Correction', qty: 1, price: adj, cost: 0, source: 'SYS', revertData: { deltaLiquid: -adj } });
+  audit.push({ id: genId(), ts: ts(6) + 1000, action: ACTIONS.ADJUST, name: 'Manual Correction', qty: 1, price: adj, cost: 0, source: SOURCES.SYS, revertData: { deltaLiquid: -adj } });
   render();
 }
 
 // ─── Analytics ────────────────────────────────────────────────────────────────
 function renderAnalytics() {
   const flipBody = document.getElementById('topFlipBody');
-  const firBody = document.getElementById('topFirBody');
+  const lootBody = document.getElementById('topLootBody');
   const perBody = document.getElementById('perItemStatsBody');
   const sessionsBody = document.getElementById('sessionsBody');
   const questsBody = document.getElementById('questsBody');
-  if (!flipBody || !firBody || !perBody || !sessionsBody) return;
+  if (!flipBody || !lootBody || !perBody || !sessionsBody) return;
 
-  flipBody.innerHTML = ''; firBody.innerHTML = ''; perBody.innerHTML = ''; sessionsBody.innerHTML = '';
+  flipBody.innerHTML = ''; lootBody.innerHTML = ''; perBody.innerHTML = ''; sessionsBody.innerHTML = '';
 
   const valid = audit.filter((l) => ![ACTIONS.VOID, ACTIONS.REVERTED].includes(l.action));
   const heldNames = new Set(stock.map((s) => s.name));
 
-  // Per-item sell stats
   const stats = valid.reduce((acc, l) => {
     if (l.action !== ACTIONS.SELL) return acc;
-    if (!acc[l.name]) acc[l.name] = { profit: 0, qty: 0, revenue: 0, costBasis: 0, isFIR: l.source === 'FIR' };
+    if (!acc[l.name]) acc[l.name] = { profit: 0, qty: 0, revenue: 0, costBasis: 0, isLooted: l.source === SOURCES.LOOTED };
     acc[l.name].profit += (l.price - l.cost) * l.qty;
     acc[l.name].qty += l.qty;
     acc[l.name].revenue += l.price * l.qty;
@@ -580,7 +609,7 @@ function renderAnalytics() {
   Object.entries(stats).sort((a, b) => b[1].profit - a[1].profit).forEach(([name, s]) => {
     const icon = itemIcon(name, 20);
     const row = `<tr><td><div style="display:flex;align-items:center;gap:6px;">${icon}<span>${name}</span></div></td><td style="text-align:right;color:var(--emerald);font-weight:600">+${Math.floor(s.profit).toLocaleString()}</td></tr>`;
-    if (s.isFIR) firBody.innerHTML += row; else flipBody.innerHTML += row;
+    if (s.isLooted) lootBody.innerHTML += row; else flipBody.innerHTML += row;
   });
 
   Object.entries(stats).sort((a, b) => b[1].profit - a[1].profit).forEach(([name, s]) => {
@@ -590,12 +619,7 @@ function renderAnalytics() {
     const roiStyle = s.costBasis > 0 ? (s.profit >= 0 ? 'color:var(--emerald)' : 'color:var(--rose)') : 'color:var(--muted)';
     const safeName = name.replace(/'/g, "\\'");
     perBody.innerHTML += `<tr>
-      <td style="cursor:pointer" onclick="showPriceHistory('${safeName}')">
-        <div style="display:flex;align-items:center;gap:6px;">
-          ${itemIcon(name, 20)}
-          <span style="color:var(--cyan);text-decoration:underline dotted;">${name}</span>
-        </div>
-      </td>
+      <td style="cursor:pointer" onclick="showPriceHistory('${safeName}')"><div style="display:flex;align-items:center;gap:6px;">${itemIcon(name, 20)}<span style="color:var(--cyan);text-decoration:underline dotted;">${name}</span></div></td>
       <td style="text-align:right">${s.qty}</td>
       <td style="text-align:right" class="font-mono">${Math.floor(s.revenue).toLocaleString()}</td>
       <td style="text-align:right" class="font-mono">${Math.floor(avgP).toLocaleString()}</td>
@@ -605,11 +629,10 @@ function renderAnalytics() {
     </tr>`;
   });
 
-  // Session history
-  const sorted = [...valid].sort((a, b) => a.ts - b.ts);
+  const sortedAudit = [...valid].sort((a, b) => a.ts - b.ts);
   const sessions = [];
   let current = null;
-  sorted.forEach((e) => {
+  sortedAudit.forEach((e) => {
     if (e.action === ACTIONS.SESSION_START) { if (current) sessions.push(current); current = { startTs: e.ts, entries: [] }; }
     else if (current) current.entries.push(e);
   });
@@ -634,54 +657,32 @@ function renderAnalytics() {
     });
   }
 
-  // Quests panel
   if (questsBody) {
     questsBody.innerHTML = '';
     if (quests.length === 0) {
       questsBody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem;font-size:0.85rem;">Quest data not loaded — run the Sync Action to fetch quests</td></tr>`;
     } else {
-      // Group quests by trader
-      const byTrader = quests.reduce((acc, q) => {
-        const t = q.trader_name || 'Unknown';
-        if (!acc[t]) acc[t] = [];
-        acc[t].push(q);
-        return acc;
-      }, {});
-
+      const byTrader = quests.reduce((acc, q) => { const t = q.trader_name || 'Unknown'; if (!acc[t]) acc[t] = []; acc[t].push(q); return acc; }, {});
       Object.entries(byTrader).sort((a, b) => a[0].localeCompare(b[0])).forEach(([trader, qs]) => {
         questsBody.innerHTML += `<tr><td colspan="4" style="background:rgba(6,182,212,0.08);color:var(--cyan);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:5px 16px;border-top:1px solid rgba(6,182,212,0.2);">${trader}</td></tr>`;
         qs.forEach((q) => {
           const reqItems = q.required_items || [];
           const rewardItems = q.rewards || [];
-
-          const reqHtml = reqItems.length === 0
-            ? '<span style="color:var(--muted);font-size:0.75rem;">—</span>'
-            : reqItems.map((ri) => {
-                const held = heldNames.has(ri.item?.name);
-                const heldCount = stock.filter((s) => s.name === ri.item?.name).length;
-                const qty = ri.quantity || 1;
-                const enough = heldCount >= qty;
-                const color = held ? (enough ? 'var(--emerald)' : 'var(--amber)') : 'var(--muted)';
-                const icon = ri.item?.icon ? `<img src="${ri.item.icon}" width="16" height="16" style="border-radius:3px;object-fit:contain;background:var(--bg-3);vertical-align:middle;margin-right:3px;" loading="lazy">` : '';
-                return `<span style="display:inline-flex;align-items:center;margin-right:6px;color:${color};font-size:0.75rem;">${icon}${ri.item?.name || '?'} ×${qty}${held ? ` <span style="font-size:0.65rem;margin-left:2px;">(${heldCount})</span>` : ''}</span>`;
-              }).join('');
-
-          const rewardHtml = rewardItems.length === 0
-            ? '<span style="color:var(--muted);font-size:0.75rem;">—</span>'
-            : rewardItems.slice(0, 4).map((ri) => {
-                const icon = ri.item?.icon ? `<img src="${ri.item.icon}" width="16" height="16" style="border-radius:3px;object-fit:contain;background:var(--bg-3);vertical-align:middle;margin-right:3px;" loading="lazy">` : '';
-                return `<span style="display:inline-flex;align-items:center;margin-right:6px;color:var(--text-dim);font-size:0.75rem;">${icon}${ri.item?.name || '?'} ×${ri.quantity || 1}</span>`;
-              }).join('') + (rewardItems.length > 4 ? `<span style="color:var(--muted);font-size:0.7rem;">+${rewardItems.length - 4} more</span>` : '');
-
+          const reqHtml = reqItems.length === 0 ? '<span style="color:var(--muted);font-size:0.75rem;">—</span>' : reqItems.map((ri) => {
+            const held = heldNames.has(ri.item?.name);
+            const heldCount = stock.filter((s) => s.name === ri.item?.name).length;
+            const qty = ri.quantity || 1;
+            const enough = heldCount >= qty;
+            const color = held ? (enough ? 'var(--emerald)' : 'var(--amber)') : 'var(--muted)';
+            const icon = ri.item?.icon ? `<img src="${ri.item.icon}" width="16" height="16" style="border-radius:3px;object-fit:contain;background:var(--bg-3);vertical-align:middle;margin-right:3px;" loading="lazy">` : '';
+            return `<span style="display:inline-flex;align-items:center;margin-right:6px;color:${color};font-size:0.75rem;">${icon}${ri.item?.name || '?'} ×${qty}${held ? ` <span style="font-size:0.65rem;margin-left:2px;">(${heldCount})</span>` : ''}</span>`;
+          }).join('');
+          const rewardHtml = rewardItems.length === 0 ? '<span style="color:var(--muted);font-size:0.75rem;">—</span>' : rewardItems.slice(0, 4).map((ri) => {
+            const icon = ri.item?.icon ? `<img src="${ri.item.icon}" width="16" height="16" style="border-radius:3px;object-fit:contain;background:var(--bg-3);vertical-align:middle;margin-right:3px;" loading="lazy">` : '';
+            return `<span style="display:inline-flex;align-items:center;margin-right:6px;color:var(--text-dim);font-size:0.75rem;">${icon}${ri.item?.name || '?'} ×${ri.quantity || 1}</span>`;
+          }).join('') + (rewardItems.length > 4 ? `<span style="color:var(--muted);font-size:0.7rem;">+${rewardItems.length - 4} more</span>` : '');
           questsBody.innerHTML += `<tr>
-            <td>
-              <div style="display:flex;align-items:center;gap:8px;">
-                ${q.image ? `<img src="${q.image}" width="32" height="32" style="border-radius:6px;object-fit:cover;flex-shrink:0;" loading="lazy" onerror="this.style.display='none'">` : ''}
-                <div>
-                  <div style="font-weight:600;font-size:0.85rem;">${q.name}</div>
-                </div>
-              </div>
-            </td>
+            <td><div style="display:flex;align-items:center;gap:8px;">${q.image ? `<img src="${q.image}" width="32" height="32" style="border-radius:6px;object-fit:cover;flex-shrink:0;" loading="lazy" onerror="this.style.display='none'">` : ''}<span style="font-weight:600;font-size:0.85rem;">${q.name}</span></div></td>
             <td style="font-size:0.75rem;color:var(--muted);max-width:220px;">${(q.objectives || []).slice(0, 2).join(' · ')}</td>
             <td>${reqHtml}</td>
             <td>${rewardHtml}</td>
@@ -701,10 +702,7 @@ function showPriceHistory(name) {
   const statsEl = document.getElementById('priceHistoryStats');
   if (!modal || !title) return;
 
-  const sells = audit
-    .filter((e) => e.action === ACTIONS.SELL && e.name === name && ![ACTIONS.VOID, ACTIONS.REVERTED].includes(e.action))
-    .sort((a, b) => a.ts - b.ts).slice(-50);
-
+  const sells = audit.filter((e) => e.action === ACTIONS.SELL && e.name === name && ![ACTIONS.VOID, ACTIONS.REVERTED].includes(e.action)).sort((a, b) => a.ts - b.ts).slice(-50);
   if (sells.length === 0) return;
 
   const prices = sells.map((s) => s.price);
@@ -712,7 +710,6 @@ function showPriceHistory(name) {
   const sortedP = [...prices].sort((a, b) => a - b);
   const med = sortedP.length % 2 ? sortedP[Math.floor(sortedP.length / 2)] : (sortedP[sortedP.length / 2 - 1] + sortedP[sortedP.length / 2]) / 2;
 
-  // Show icon in modal title
   const iconHtml = iconMap[name] ? `<img src="${iconMap[name]}" width="28" height="28" style="border-radius:4px;object-fit:contain;background:var(--bg-3);margin-right:8px;vertical-align:middle;" loading="lazy">` : '';
   title.innerHTML = `${iconHtml}${name}`;
   statsEl.textContent = `${sells.length} sales · avg ${Math.floor(avg).toLocaleString()} · median ${Math.floor(med).toLocaleString()}`;
@@ -730,14 +727,7 @@ function showPriceHistory(name) {
         { label: 'Median', data: Array(prices.length).fill(med), borderColor: 'rgba(245,158,11,0.5)', borderDash: [4, 4], pointRadius: 0, fill: false },
       ],
     },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } },
-      scales: {
-        x: { ticks: { color: '#64748b', maxTicksLimit: 10 }, grid: { color: '#1e2633' } },
-        y: { ticks: { color: '#64748b' }, grid: { color: '#1e2633' } },
-      },
-    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } }, scales: { x: { ticks: { color: '#64748b', maxTicksLimit: 10 }, grid: { color: '#1e2633' } }, y: { ticks: { color: '#64748b' }, grid: { color: '#1e2633' } } } },
   });
 }
 
@@ -769,21 +759,8 @@ function buildNetWorthChart() {
   if (chartInstance) chartInstance.destroy();
   chartInstance = new Chart(canvas, {
     type: 'line',
-    data: {
-      labels,
-      datasets: [
-        { label: 'Liquid', data: points.map((p) => p.liquid), borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)', fill: true, tension: 0.3 },
-        { label: 'Profit', data: points.map((p) => p.profit), borderColor: '#10b981', fill: false, tension: 0.3 },
-      ],
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } },
-      scales: {
-        x: { ticks: { color: '#64748b', maxTicksLimit: 10 }, grid: { color: '#1e2633' } },
-        y: { ticks: { color: '#64748b' }, grid: { color: '#1e2633' } },
-      },
-    },
+    data: { labels, datasets: [{ label: 'Liquid', data: points.map((p) => p.liquid), borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)', fill: true, tension: 0.3 }, { label: 'Profit', data: points.map((p) => p.profit), borderColor: '#10b981', fill: false, tension: 0.3 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } }, scales: { x: { ticks: { color: '#64748b', maxTicksLimit: 10 }, grid: { color: '#1e2633' } }, y: { ticks: { color: '#64748b' }, grid: { color: '#1e2633' } } } },
   });
 }
 
@@ -810,10 +787,10 @@ function importData(input) {
   r.readAsText(f);
 }
 
-// ─── Loot textarea autocomplete ───────────────────────────────────────────────
-function initTextareaAutocomplete() {
-  const textarea = document.getElementById('bulkText');
-  if (!textarea) return;
+// ─── Shared autocomplete for regular text inputs (buyName, tradeTo) ───────────
+function initInputAutocomplete(inputId) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
 
   const dropdown = document.createElement('div');
   Object.assign(dropdown.style, {
@@ -822,6 +799,84 @@ function initTextareaAutocomplete() {
     borderRadius: '8px', maxHeight: '260px', overflowY: 'auto',
     display: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
   });
+  document.body.appendChild(dropdown);
+
+  let selectedIndex = -1, currentMatches = [];
+
+  function updateHighlight() {
+    Array.from(dropdown.children).forEach((el, i) => { el.style.background = i === selectedIndex ? 'var(--bg-3)' : 'transparent'; });
+  }
+
+  function showDropdown(matches) {
+    currentMatches = matches; selectedIndex = -1; dropdown.innerHTML = '';
+    matches.forEach((item, i) => {
+      const el = document.createElement('div');
+      Object.assign(el.style, { padding: '7px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid var(--border)', transition: 'background 0.1s' });
+
+      if (iconMap[item.name]) {
+        const img = document.createElement('img');
+        img.src = iconMap[item.name]; img.width = 22; img.height = 22;
+        Object.assign(img.style, { borderRadius: '3px', objectFit: 'contain', background: 'var(--bg-3)', flexShrink: '0' });
+        img.loading = 'lazy';
+        el.appendChild(img);
+      }
+
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = item.name;
+      Object.assign(nameSpan.style, { fontSize: '0.8rem', fontFamily: "'JetBrains Mono', monospace", color: 'var(--text-dim)', flex: '1' });
+      el.appendChild(nameSpan);
+
+      if (questDemandMap[item.name]) {
+        const qBadge = document.createElement('span');
+        qBadge.textContent = 'Q';
+        Object.assign(qBadge.style, { fontSize: '0.6rem', fontWeight: '700', background: 'rgba(245,158,11,0.2)', color: 'var(--amber)', border: '1px solid rgba(245,158,11,0.4)', borderRadius: '3px', padding: '1px 4px' });
+        el.appendChild(qBadge);
+      }
+
+      el.addEventListener('mouseenter', () => { selectedIndex = i; updateHighlight(); });
+      el.addEventListener('mousedown', (e) => { e.preventDefault(); input.value = item.name; hideDropdown(); });
+      dropdown.appendChild(el);
+    });
+
+    const rect = input.getBoundingClientRect();
+    dropdown.style.left = `${rect.left}px`;
+    dropdown.style.top = `${rect.bottom + 4}px`;
+    dropdown.style.width = `${rect.width}px`;
+    dropdown.style.display = 'block';
+  }
+
+  function hideDropdown() { dropdown.style.display = 'none'; selectedIndex = -1; currentMatches = []; }
+
+  input.addEventListener('input', () => {
+    const query = (input.value || '').trim();
+    if (query.length < 2) { hideDropdown(); return; }
+    const lower = query.toLowerCase();
+    const matches = tradeItems.filter((i) => i.name && i.name.toLowerCase().includes(lower)).slice(0, 12);
+    if (matches.length === 0) { hideDropdown(); return; }
+    showDropdown(matches);
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (dropdown.style.display === 'none') return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); selectedIndex = Math.min(selectedIndex + 1, currentMatches.length - 1); updateHighlight(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); selectedIndex = Math.max(selectedIndex - 1, 0); updateHighlight(); }
+    else if (e.key === 'Enter') {
+      const t = currentMatches.length === 1 ? currentMatches[0] : (selectedIndex >= 0 ? currentMatches[selectedIndex] : null);
+      if (t) { e.preventDefault(); input.value = t.name; hideDropdown(); }
+    }
+    else if (e.key === 'Tab') { const t = selectedIndex >= 0 ? currentMatches[selectedIndex] : currentMatches[0]; if (t) { e.preventDefault(); input.value = t.name; hideDropdown(); } }
+    else if (e.key === 'Escape') { hideDropdown(); }
+  });
+
+  input.addEventListener('blur', () => setTimeout(hideDropdown, 150));
+  window.addEventListener('scroll', hideDropdown, true);
+}
+function initTextareaAutocomplete() {
+  const textarea = document.getElementById('bulkText');
+  if (!textarea) return;
+
+  const dropdown = document.createElement('div');
+  Object.assign(dropdown.style, { position: 'fixed', zIndex: '9999', background: 'var(--bg-1)', border: '1px solid var(--border-bright)', borderRadius: '8px', maxHeight: '260px', overflowY: 'auto', display: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' });
   document.body.appendChild(dropdown);
 
   let selectedIndex = -1, currentMatches = [];
@@ -846,9 +901,7 @@ function initTextareaAutocomplete() {
   }
 
   function updateHighlight() {
-    Array.from(dropdown.children).forEach((el, i) => {
-      el.style.background = i === selectedIndex ? 'var(--bg-3)' : 'transparent';
-    });
+    Array.from(dropdown.children).forEach((el, i) => { el.style.background = i === selectedIndex ? 'var(--bg-3)' : 'transparent'; });
   }
 
   function showDropdown(matches) {
@@ -856,30 +909,23 @@ function initTextareaAutocomplete() {
     matches.forEach((item, i) => {
       const el = document.createElement('div');
       Object.assign(el.style, { padding: '7px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid var(--border)', transition: 'background 0.1s' });
-
-      // Icon
       if (iconMap[item.name]) {
         const img = document.createElement('img');
-        img.src = iconMap[item.name];
-        img.width = 22; img.height = 22;
+        img.src = iconMap[item.name]; img.width = 22; img.height = 22;
         Object.assign(img.style, { borderRadius: '3px', objectFit: 'contain', background: 'var(--bg-3)', flexShrink: '0' });
         img.loading = 'lazy';
         el.appendChild(img);
       }
-
       const nameSpan = document.createElement('span');
       nameSpan.textContent = item.name;
       Object.assign(nameSpan.style, { fontSize: '0.8rem', fontFamily: "'JetBrains Mono', monospace", color: 'var(--text-dim)', flex: '1' });
       el.appendChild(nameSpan);
-
-      // Quest demand indicator
       if (questDemandMap[item.name]) {
         const qBadge = document.createElement('span');
         qBadge.textContent = 'Q';
         Object.assign(qBadge.style, { fontSize: '0.6rem', fontWeight: '700', background: 'rgba(245,158,11,0.2)', color: 'var(--amber)', border: '1px solid rgba(245,158,11,0.4)', borderRadius: '3px', padding: '1px 4px' });
         el.appendChild(qBadge);
       }
-
       el.addEventListener('mouseenter', () => { selectedIndex = i; updateHighlight(); });
       el.addEventListener('mousedown', (e) => { e.preventDefault(); replaceCurrentLine(item.name); });
       dropdown.appendChild(el);
@@ -907,14 +953,8 @@ function initTextareaAutocomplete() {
     if (dropdown.style.display === 'none') return;
     if (e.key === 'ArrowDown') { e.preventDefault(); selectedIndex = Math.min(selectedIndex + 1, currentMatches.length - 1); updateHighlight(); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); selectedIndex = Math.max(selectedIndex - 1, 0); updateHighlight(); }
-    else if (e.key === 'Enter') {
-      const target = currentMatches.length === 1 ? currentMatches[0] : (selectedIndex >= 0 ? currentMatches[selectedIndex] : null);
-      if (target) { e.preventDefault(); replaceCurrentLine(target.name); }
-    }
-    else if (e.key === 'Tab') {
-      const t = selectedIndex >= 0 ? currentMatches[selectedIndex] : currentMatches[0];
-      if (t) { e.preventDefault(); replaceCurrentLine(t.name); }
-    }
+    else if (e.key === 'Enter') { const t = currentMatches.length === 1 ? currentMatches[0] : (selectedIndex >= 0 ? currentMatches[selectedIndex] : null); if (t) { e.preventDefault(); replaceCurrentLine(t.name); } }
+    else if (e.key === 'Tab') { const t = selectedIndex >= 0 ? currentMatches[selectedIndex] : currentMatches[0]; if (t) { e.preventDefault(); replaceCurrentLine(t.name); } }
     else if (e.key === 'Escape') { hideDropdown(); }
   });
 
@@ -922,23 +962,240 @@ function initTextareaAutocomplete() {
   window.addEventListener('scroll', hideDropdown, true);
 }
 
+// ─── Comms / Listing generator ────────────────────────────────────────────────
+const P = {
+  openers: [
+    '📦 Clearing out some stock — first come, first served',
+    '🛒 Got gear up for grabs, check it out',
+    '💼 Moving inventory, looking for buyers',
+    '📡 Broadcast open — items available',
+    '⚡ Hot stock, ready to move',
+    '🗃️ Stash cleanout — making room',
+    '🎯 Got what you need',
+    '📻 Uplink open — selling the following',
+    '🧹 Inventory clearance in progress',
+    '💰 Offloading some loot — make it worth your while',
+    '🔔 Selling up — decent stuff available',
+    '🪙 Seeds accepted, in-raid drop arranged',
+    '📬 Open for trades — gear ready to move',
+    '🎒 Post-raid surplus — up for grabs',
+    '🌐 Speranza logistics broadcast: items available',
+  ],
+  singleOpeners: [
+    '📦 Got a {item} up for trade',
+    '🎯 Selling: {item} — decent price',
+    '💼 {item} available, hit the trade button',
+    '⚡ {item} ready to move, serious offers only',
+    '📡 Offering up a {item}',
+    '🔔 {item} for sale — arrange in-raid',
+    '🪙 {item} — seeds only, in-raid drop',
+    '🎒 Fresh loot: {item} up for grabs',
+  ],
+  connectors: [
+    'Use the trade button to arrange.',
+    'Arrange via trade UI.',
+    'Hit me up through the trade system.',
+    'In-raid meetup, your zone or mine.',
+    'Ready to drop when you are.',
+    'Fast and clean, no fuss.',
+    'Serious buyers only.',
+    'First to respond gets priority.',
+    'Drop in-raid, seeds up front.',
+    'Message via trade UI to lock it in.',
+    'Contact through Metaforge, sort it quick.',
+    'Trade request in the app.',
+  ],
+  closers: [
+    '🤙 Reach out via the trade interface.',
+    '📩 Trade button for contact.',
+    '🔗 Contact through Metaforge trade UI.',
+    '✌️ Trade request in the app, let\'s deal.',
+    '📬 Message via trade system to arrange.',
+    '🤝 Trade UI, sort it out.',
+    '⚡ Quick to respond, quicker to trade.',
+    '🎯 Use trade button — let\'s get this done.',
+  ],
+  quickTrades: [
+    '⚡ Trading only right now — not raiding, so no long wait.',
+    '🟢 Available to trade now — not in a match, quick turnaround.',
+    '⏱️ Online and trading only — won\'t keep you waiting.',
+    '🎯 Not raiding right now — trades get sorted fast.',
+    '✅ Available immediately — just pending trades ahead of you.',
+    '⚡ Sitting in base — trades processed quickly.',
+  ],
+  acceptOffers: [
+    '🔄 Open to swaps if the value is right.',
+    '💱 May consider other items as part payment.',
+    '🤝 Got something to trade? Show me.',
+    '🔄 Barter welcome — make an offer.',
+    '💱 Flexible — seeds or item swap, talk to me.',
+    '🤝 Open to negotiation, items or seeds.',
+  ],
+  bulkDiscount: [
+    '📦 Buy more, save more — {pct}% off on bulk.',
+    '🛒 {pct}% discount for bulk orders.',
+    '💰 Bundle deal: {pct}% off when buying multiple.',
+    '📉 Take more, pay less — {pct}% bulk discount.',
+    '🛍️ Stacking? {pct}% off the total for bulk buyers.',
+    '💸 Bulk deal: {pct}% off if you\'re buying multiple items.',
+  ],
+  lootedNote: [
+    '✅ All items freshly looted.',
+    '🎒 Everything listed is straight from raids.',
+    '✅ Looted personally — no market sourced stock.',
+    '🏆 All items looted, verified fresh.',
+  ],
+  negotiable: [
+    '💬 Prices are open to discussion.',
+    '🤝 Willing to negotiate — make an offer.',
+    '💬 Flexible on price, talk to me.',
+    '📊 Numbers aren\'t set in stone.',
+    '💬 Open to reasonable offers.',
+    '🤝 Price is a starting point, not a ceiling.',
+  ],
+};
+
+function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function renderCommsTab() {
+  const tbody = document.getElementById('commsItemTable');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  const grouped = stock.reduce((acc, item) => {
+    const k = `${item.name}-${item.source}-${Math.floor(item.cost)}`;
+    if (!acc[k]) acc[k] = { ...item, count: 0 };
+    acc[k].count++;
+    return acc;
+  }, {});
+
+  Object.values(grouped).sort((a, b) => a.name.localeCompare(b.name)).forEach((g, i) => {
+    const safeId = `comms-${i}`;
+    const median = priceCache[g.name] ? Math.floor(priceCache[g.name]) : '';
+    const icon = iconMap[g.name] ? `<img src="${iconMap[g.name]}" width="20" height="20" style="border-radius:3px;object-fit:contain;background:var(--bg-3);vertical-align:middle;margin-right:6px;" loading="lazy">` : '';
+    const tagLabel = g.source === SOURCES.LOOTED ? 'Looted' : g.source === SOURCES.TRADE ? 'Trade' : 'Bought';
+    const tagClass = g.source === SOURCES.LOOTED ? 'tag-looted' : g.source === SOURCES.TRADE ? 'tag-trade' : 'tag-buy';
+    tbody.innerHTML += `<tr>
+      <td style="padding:8px 12px;"><input type="checkbox" class="comms-check" data-name="${g.name.replace(/"/g, '&quot;')}" data-source="${g.source}" data-count="${g.count}" data-id="${safeId}" style="width:16px;height:16px;accent-color:var(--cyan);cursor:pointer;"></td>
+      <td style="padding:8px 12px;"><div style="display:flex;align-items:center;">${icon}<span style="font-size:0.82rem;">${g.name}</span></div></td>
+      <td style="padding:8px 6px;"><span class="tag ${tagClass}">${tagLabel}</span></td>
+      <td style="text-align:right;padding:8px 12px;font-size:0.82rem;color:var(--muted);">×${g.count}</td>
+      <td style="text-align:right;padding:8px 8px;">
+        <input type="number" id="price-${safeId}" placeholder="${median || 'Price'}" value="${median}" style="width:100%;padding:5px 8px;font-size:0.78rem;text-align:right;">
+      </td>
+    </tr>`;
+  });
+}
+
+function commsSelectAll() { document.querySelectorAll('.comms-check').forEach((c) => c.checked = true); }
+function commsSelectNone() { document.querySelectorAll('.comms-check').forEach((c) => c.checked = false); }
+
+function generateListing() {
+  const checks = [...document.querySelectorAll('.comms-check:checked')];
+  if (checks.length === 0) {
+    document.getElementById('metaforgePreview').textContent = 'Select at least one item first.';
+    return;
+  }
+
+  const items = checks.map((c) => ({
+    name: c.dataset.name,
+    source: c.dataset.source,
+    count: parseInt(c.dataset.count),
+    price: parseInt(document.getElementById(`price-${c.dataset.id}`)?.value) || null,
+  }));
+
+  const quickTrades = document.getElementById('opt-quickTrades')?.checked;
+  const acceptOffers = document.getElementById('opt-acceptOffers')?.checked;
+  const bulkDiscount = document.getElementById('opt-bulkDiscount')?.checked;
+  const bulkPct = parseInt(document.getElementById('opt-bulkPct')?.value) || 10;
+  const negotiable = document.getElementById('opt-negotiable')?.checked;
+  const notes = (document.getElementById('opt-notes')?.value || '').trim();
+
+  // ── Build phrase list ──
+  const parts = [];
+
+  // Opener
+  if (items.length === 1) {
+    parts.push(rnd(P.singleOpeners).replace('{item}', items[0].name));
+  } else {
+    parts.push(rnd(P.openers));
+  }
+
+  // Conditions (interspersed naturally before items for Metaforge)
+  if (quickTrades) parts.push(rnd(P.quickTrades));
+  if (acceptOffers) parts.push(rnd(P.acceptOffers));
+  if (bulkDiscount && items.length > 1) parts.push(rnd(P.bulkDiscount).replace('{pct}', bulkPct));
+  if (negotiable) parts.push(rnd(P.negotiable));
+  if (notes) parts.push(`📝 ${notes}`);
+
+  // Closer — 50% chance connector+closer, 50% just closer
+  if (Math.random() > 0.5) {
+    parts.push(rnd(P.closers));
+  } else {
+    parts.push(`${rnd(P.connectors)} ${rnd(P.closers)}`);
+  }
+
+  // ── Metaforge listing — description only, no item table (Metaforge shows that separately) ──
+  const metaforge = parts.join('\n');
+
+  // ── Discord listing — AI prose up top, structured item table in code block ──
+  const discordItems = items.map((item) => {
+    const priceStr = item.price ? `${item.price.toLocaleString()} seeds` : 'TBD';
+    const srcLabel = item.source === SOURCES.LOOTED ? '[Looted]' : item.source === SOURCES.TRADE ? '[Trade]' : '[Bought]';
+    return `${item.name} ${srcLabel}  ×${item.count}  |  ${priceStr}`;
+  }).join('\n');
+
+  const discord = `${metaforge}\n\`\`\`\n${discordItems}\n\`\`\`\n-# via Speranza Logistics Terminal`;
+
+  listingOutput = { metaforge, discord };
+  document.getElementById('metaforgePreview').textContent = metaforge;
+  renderDiscordPreview(discord);
+}
+
+function renderDiscordPreview(text) {
+  const el = document.getElementById('discordPreview');
+  if (!el) return;
+  let html = text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`{3}([\s\S]*?)`{3}/g, '<code style="display:block;background:#1e1f22;padding:8px 10px;border-radius:4px;font-family:monospace;font-size:0.8rem;white-space:pre;">$1</code>')
+    .replace(/^> (.+)$/gm, '<span style="border-left:3px solid #4e5058;padding-left:8px;color:#b5bac1;">$1</span>')
+    .replace(/^-# (.+)$/gm, '<span style="font-size:0.72rem;color:#80848e;">$1</span>')
+    .replace(/\n/g, '<br>');
+  el.innerHTML = html;
+}
+
+function copyListing(format) {
+  const text = format === 'discord' ? listingOutput?.discord : listingOutput?.metaforge;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector(format === 'discord' ? '[onclick="copyListing(\'discord\')"]' : '[onclick="copyListing(\'metaforge\')"]');
+    if (btn) { const orig = btn.textContent; btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = orig, 1500); }
+  });
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 function init() {
   Object.assign(window, {
     switchTab, massIngest, buyItem, executeBarter,
     generateRandomHistory, adjustBalance, resyncMetaforge,
-    exportData, importData, voidEntry, revertEntry, sellX,
-    sellAll, startNewSession, showPriceHistory, closePriceHistory,
-    handleModalClick, toggleCustomItems, mergeCustomItems,
+    exportData, importData, voidEntry, revertEntry, sellX, sellAll,
+    startNewSession, showPriceHistory, closePriceHistory, handleModalClick,
+    toggleCustomItems, mergeCustomItems, addStartingStock, setStaleThreshold,
+    generateListing, copyListing, commsSelectAll, commsSelectNone,
   });
 
   loadMetaforgeCache();
   initTextareaAutocomplete();
+  initInputAutocomplete('buyName');
+  initInputAutocomplete('tradeTo');
 
   const customToggle = document.getElementById('allowCustomItemsToggle');
   if (customToggle) customToggle.checked = allowCustomItems;
   const mergeBlock = document.getElementById('customMergeBlock');
   if (mergeBlock) mergeBlock.style.display = allowCustomItems ? '' : 'none';
+  const staleInput = document.getElementById('staleThresholdInput');
+  if (staleInput) staleInput.value = staleThresholdDays;
 
   (async () => {
     try {
@@ -953,20 +1210,14 @@ function init() {
         }
       }
     } catch { /* ignore */ }
-
-    // Load quests (non-fatal if file doesn't exist yet)
-    try {
-      quests = await fetchQuestsFromLocalFile();
-      buildQuestDemandMap(quests);
-    } catch { quests = []; }
-
+    try { quests = await fetchQuestsFromLocalFile(); buildQuestDemandMap(quests); } catch { quests = []; }
     render();
   })();
 
   if (audit.length === 0) {
     const seed = parseFloat(prompt('Enter initial Seed Capital:', '0')) || 0;
     liquidSeeds = seed;
-    audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.INITIAL, name: 'Starting Capital', qty: 1, price: seed, cost: 0, source: 'SYS' });
+    audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.INITIAL, name: 'Starting Capital', qty: 1, price: seed, cost: 0, source: SOURCES.SYS });
   }
   render();
 }
