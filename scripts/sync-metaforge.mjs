@@ -1,31 +1,24 @@
 const METAFORGE_URL = 'https://metaforge.app/api/arc-raiders';
 
-async function fetchMetaforgeAll() {
+async function fetchAllPages(url, limitParam = 100, maxPages = 200) {
   const out = [];
   let page = 1;
   let hasMore = true;
-  const limit = 100;
-  const maxPages = 200;
 
   while (hasMore) {
-    if (page > maxPages) {
-      throw new Error(`Safety stop: exceeded maxPages (${maxPages}).`);
-    }
+    if (page > maxPages) throw new Error(`Safety stop: exceeded maxPages (${maxPages}).`);
 
-    const url = `${METAFORGE_URL}/items?page=${page}&limit=${limit}&minimal=true`;
-    const res = await fetch(url, {
+    const res = await fetch(`${url}${url.includes('?') ? '&' : '?'}page=${page}&limit=${limitParam}`, {
       headers: { accept: 'application/json' },
     });
 
     if (!res.ok) {
       const text = await res.text().catch(() => '');
-      throw new Error(`Metaforge HTTP ${res.status} ${res.statusText}: ${text.slice(0, 300)}`);
+      throw new Error(`HTTP ${res.status} ${res.statusText}: ${text.slice(0, 300)}`);
     }
 
     const json = await res.json();
-    const data = Array.isArray(json?.data) ? json.data : [];
-    out.push(...data);
-
+    out.push(...(json.data || []));
     hasMore = Boolean(json?.pagination?.hasNextPage);
     page++;
   }
@@ -35,19 +28,32 @@ async function fetchMetaforgeAll() {
 
 async function main() {
   const { writeFile, mkdir } = await import('node:fs/promises');
-  const outPath = new URL('../data/metaforge-items.json', import.meta.url);
   const outDir = new URL('../data/', import.meta.url);
-
   await mkdir(outDir, { recursive: true });
 
-  const items = await fetchMetaforgeAll();
-  const payload = {
-    updatedAt: new Date().toISOString(),
-    count: items.length,
-    data: items,
-  };
-  await writeFile(outPath, JSON.stringify(payload, null, 2), 'utf8');
+  // Items
+  console.log('Fetching items...');
+  const items = await fetchAllPages(`${METAFORGE_URL}/items?minimal=true`);
+  await writeFile(
+    new URL('../data/metaforge-items.json', import.meta.url),
+    JSON.stringify({ updatedAt: new Date().toISOString(), count: items.length, data: items }, null, 2),
+    'utf8',
+  );
+  console.log(`  ${items.length} items saved.`);
+
+  // Quests
+  console.log('Fetching quests...');
+  try {
+    const quests = await fetchAllPages(`${METAFORGE_URL}/quests`);
+    await writeFile(
+      new URL('../data/metaforge-quests.json', import.meta.url),
+      JSON.stringify({ updatedAt: new Date().toISOString(), count: quests.length, data: quests }, null, 2),
+      'utf8',
+    );
+    console.log(`  ${quests.length} quests saved.`);
+  } catch (e) {
+    console.warn(`  Quests fetch failed (non-fatal): ${e.message}`);
+  }
 }
 
 await main();
-
