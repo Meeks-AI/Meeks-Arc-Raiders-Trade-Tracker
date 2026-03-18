@@ -150,7 +150,7 @@
                             <div class="form-block buy">
                                 <h3>Market Acquisition</h3>
                                 <div class="fields">
-                                    <input type="text" id="buyName" list="itemOptions" placeholder="Item name">
+                                    <input type="text" id="buyName" placeholder="Item name" autocomplete="off">
                                     <div class="row">
                                         <div><label class="stat-label" style="margin-bottom:4px">Qty</label><input type="number" id="buyQty" value="1" style="width:100%"></div>
                                         <div><label class="stat-label" style="margin-bottom:4px">Cost/ea</label><input type="number" id="buyPrice" placeholder="Seeds"></div>
@@ -165,7 +165,7 @@
                                     <select id="tradeFrom"></select>
                                     <input type="number" id="tradeFromQty" value="1" min="1" placeholder="Qty">
                                     <label class="stat-label">Receiving</label>
-                                    <input type="text" id="tradeTo" list="itemOptions" placeholder="Item name">
+                                    <input type="text" id="tradeTo" placeholder="Item name" autocomplete="off">
                                     <input type="number" id="tradeQty" value="1" min="1" placeholder="Qty">
                                     <button class="btn btn-violet" onclick="executeBarter()">Swap Assets</button>
                                 </div>
@@ -262,7 +262,7 @@
                                 <div style="display:flex;flex-direction:column;gap:0.1rem;">
                                     <div class="setting-row">
                                         <input type="checkbox" id="opt-quickTrades">
-                                        <div><div class="setting-label">Quick trades only</div><div class="setting-desc">Fast, no-haggle deals — be ready to meet in-raid</div></div>
+                                        <div><div class="setting-label">Trading only right now</div><div class="setting-desc">Not raiding — buyers won't wait long, just any pending trades ahead of them</div></div>
                                     </div>
                                     <div class="setting-row">
                                         <input type="checkbox" id="opt-acceptOffers">
@@ -279,10 +279,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="setting-row">
-                                        <input type="checkbox" id="opt-lootedOnly">
-                                        <div><div class="setting-label">All items looted</div><div class="setting-desc">Explicitly note all items are from raids</div></div>
                                     </div>
                                     <div class="setting-row">
                                         <input type="checkbox" id="opt-negotiable">
