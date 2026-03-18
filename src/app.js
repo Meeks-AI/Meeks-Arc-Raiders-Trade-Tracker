@@ -1,8 +1,17 @@
 /* global Chart */
 'use strict';
 
-import { ACTIONS, LOCAL_METAFORGE_ITEMS_URL, LOCAL_METAFORGE_QUESTS_URL, METAFORGE_URL, SOURCES, STORAGE_KEYS } from './constants.js';
+import { ACTIONS, LOCAL_METAFORGE_ITEMS_URL, METAFORGE_URL, STORAGE_KEYS } from './constants.js';
 import { readJson, readNumber, writeJson } from './storage.js';
+
+const SOURCES = Object.freeze({
+  LOOTED: 'LOOTED',
+  BUY: 'BUY',
+  TRADE: 'TRADE',
+  SYS: 'SYS',
+});
+
+const LOCAL_METAFORGE_QUESTS_URL = './data/metaforge-quests.json';
 
 let stock = readJson(STORAGE_KEYS.stock, []);
 let audit = readJson(STORAGE_KEYS.audit, []);

@@ -1,6 +1,5 @@
 export const METAFORGE_URL = 'https://metaforge.app/api/arc-raiders';
 export const LOCAL_METAFORGE_ITEMS_URL = './data/metaforge-items.json';
-export const LOCAL_METAFORGE_QUESTS_URL = './data/metaforge-quests.json';
 
 export const ACTIONS = Object.freeze({
   INITIAL: 'INITIAL',
@@ -14,13 +13,6 @@ export const ACTIONS = Object.freeze({
   VOID: 'VOID',
   REVERTED: 'REVERTED',
   SESSION_START: 'SESSION_START',
-});
-
-export const SOURCES = Object.freeze({
-  LOOTED: 'LOOTED',
-  BUY: 'BUY',
-  TRADE: 'TRADE',
-  SYS: 'SYS',
 });
 
 export const STORAGE_PREFIX = 'arc_trade_tracker_v1';
