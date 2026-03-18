@@ -6,7 +6,7 @@
     <title>Arc Trade Tracker v0.19</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -18,11 +18,22 @@
             --amber: #f59e0b; --amber-dim: rgba(245,158,11,0.15);
             --emerald: #10b981; --emerald-dim: rgba(16,185,129,0.15);
             --violet: #8b5cf6; --violet-dim: rgba(139,92,246,0.15);
-            --rose: #f43f5e;
+            --rose: #f43f5e; --theme-glow: rgba(6,182,212,0.08);
+            /* Theme-controlled layout vars */
+            --font-ui: 'Outfit', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --td-padding: 10px 16px;
+            --input-padding: 10px 14px;
+            --btn-padding: 10px 18px;
+            --base-font-size: 0.85rem;
+            --radius-card: 12px;
+            --radius-btn: 8px;
+            --radius-input: 8px;
+            --radius-tag: 6px;
         }
         * { box-sizing: border-box; }
-        body { margin:0; min-height:100vh; background:var(--bg-0); color:var(--text); font-family:'Outfit',system-ui,sans-serif; background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(6,182,212,0.08), transparent), linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%); }
-        .font-mono { font-family:'JetBrains Mono',monospace; }
+        body { margin:0; min-height:100vh; background:var(--bg-0); color:var(--text); font-family:var(--font-ui); background-image: radial-gradient(ellipse 80% 50% at 50% -20%, var(--theme-glow), transparent), linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%); }
+        .font-mono { font-family:var(--font-mono); }
         .app { display:flex; min-height:100vh; }
         .sidebar { width:72px; flex-shrink:0; background:var(--bg-2); border-right:1px solid var(--border); display:flex; flex-direction:column; align-items:center; padding:1rem 0; gap:0.5rem; }
         .nav-btn { position:relative; width:44px; height:44px; border-radius:10px; border:1px solid transparent; background:transparent; color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; transition:all 0.2s; }
@@ -41,27 +52,27 @@
         .stat-value { font-size:1.25rem; font-weight:700; font-family:'JetBrains Mono',monospace; }
         .stat-value.liquid { color:var(--amber); } .stat-value.assets { color:var(--cyan); } .stat-value.net { color:var(--text); } .stat-value.profit { color:var(--emerald); }
         .content { flex:1; padding:1.5rem; overflow:auto; }
-        .card { background:var(--bg-2); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+        .card { background:var(--bg-2); border:1px solid var(--border); border-radius:var(--radius-card); overflow:hidden; }
         .card-header { padding:1rem 1.25rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
         .card-title { font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); }
-        input, textarea, select { font-family:'JetBrains Mono',monospace; background:var(--bg-0) !important; border:1px solid var(--border); color:var(--text); padding:10px 14px; border-radius:8px; font-size:0.85rem; outline:none; transition:border-color 0.2s, box-shadow 0.2s; }
+        input, textarea, select { font-family:var(--font-mono); background:var(--bg-0) !important; border:1px solid var(--border); color:var(--text); padding:var(--input-padding); border-radius:var(--radius-input); font-size:var(--base-font-size); outline:none; transition:border-color 0.2s, box-shadow 0.2s; }
         input:focus, textarea:focus, select:focus { border-color:var(--cyan); box-shadow:0 0 0 3px var(--cyan-dim); }
-        .btn { font-family:'Outfit',sans-serif; padding:10px 18px; border-radius:8px; font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; cursor:pointer; border:none; transition:all 0.15s; }
+        .btn { font-family:var(--font-ui); padding:var(--btn-padding); border-radius:var(--radius-btn); font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; cursor:pointer; border:none; transition:all 0.15s; }
         .btn-cyan { background:var(--cyan); color:#000; } .btn-cyan:hover { filter:brightness(1.15); transform:translateY(-1px); }
         .btn-slate { background:var(--bg-3); color:var(--text); border:1px solid var(--border); } .btn-slate:hover { background:var(--border-bright); }
         .btn-violet { background:var(--violet); color:white; } .btn-violet:hover { filter:brightness(1.1); }
         .btn-amber { background:var(--amber); color:#000; } .btn-amber:hover { filter:brightness(1.1); }
         .btn-ghost { background:transparent; color:var(--muted); } .btn-ghost:hover { color:var(--text); background:var(--bg-3); }
-        .btn-sell { background:rgba(16,185,129,0.15); color:var(--emerald); border:1px solid rgba(16,185,129,0.3); padding:6px 12px; font-size:0.7rem; }
+        .btn-sell { background:rgba(16,185,129,0.15); color:var(--emerald); border:1px solid rgba(16,185,129,0.3); padding:6px 12px; font-size:0.7rem; border-radius:var(--radius-btn); }
         .btn-sell:hover { background:rgba(16,185,129,0.25); border-color:var(--emerald); }
-        .tag { font-size:0.65rem; padding:4px 8px; border-radius:6px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; }
+        .tag { font-size:0.65rem; padding:4px 8px; border-radius:var(--radius-tag); font-weight:600; text-transform:uppercase; letter-spacing:0.04em; }
         .tag-looted { background:rgba(6,182,212,0.2); color:var(--cyan); }
         .tag-buy { background:rgba(100,116,139,0.25); color:var(--text-dim); }
         .tag-trade { background:rgba(139,92,246,0.2); color:#a78bfa; }
-        .quest-badge { font-size:0.6rem; font-weight:800; background:rgba(245,158,11,0.2); color:var(--amber); border:1px solid rgba(245,158,11,0.4); border-radius:3px; padding:1px 5px; cursor:default; flex-shrink:0; }
+        .quest-badge { font-size:0.6rem; font-weight:800; background:rgba(245,158,11,0.2); color:var(--amber); border:1px solid rgba(245,158,11,0.4); border-radius:var(--radius-tag); padding:1px 5px; cursor:default; flex-shrink:0; }
         table { width:100%; border-collapse:collapse; }
         th { text-align:left; padding:12px 16px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); border-bottom:1px solid var(--border); }
-        td { padding:10px 16px; font-size:0.85rem; border-bottom:1px solid var(--border); }
+        td { padding:var(--td-padding); font-size:var(--base-font-size); border-bottom:1px solid var(--border); }
         tbody tr:hover { background:var(--bg-3); }
         .tab-content { display:none; }
         .tab-content.active { display:block; animation:fadeIn 0.2s ease; }
@@ -81,7 +92,7 @@
         .tools-grid { max-width:420px; margin:0 auto; display:flex; flex-direction:column; gap:1rem; }
         .tool-block { padding:1.25rem; border-radius:10px; border:1px solid var(--border); background:var(--bg-1); }
         .tool-block label { display:block; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:0.75rem; }
-        .version-tag { font-size:0.6rem; padding:2px 6px; border:1px solid var(--amber); color:var(--amber); border-radius:4px; font-family:'JetBrains Mono',monospace; letter-spacing:0.08em; }
+        .version-tag { font-size:0.6rem; padding:2px 6px; border:1px solid var(--amber); color:var(--amber); border-radius:4px; font-family:var(--font-mono); letter-spacing:0.08em; }
         .session-divider td { background:rgba(139,92,246,0.08) !important; color:var(--violet); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; padding:5px 16px; border-top:1px solid rgba(139,92,246,0.3); border-bottom:1px solid rgba(139,92,246,0.3); }
         .warehouse-section-header td { background:var(--bg-3) !important; color:var(--text-dim); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; padding:6px 16px; border-top:1px solid var(--border-bright); border-bottom:1px solid var(--border-bright); }
         .setting-row { display:flex; align-items:flex-start; gap:0.75rem; padding:0.75rem 0; border-bottom:1px solid var(--border); }
@@ -89,8 +100,19 @@
         .setting-row input[type=checkbox] { width:16px; height:16px; margin-top:2px; padding:0; cursor:pointer; accent-color:var(--cyan); flex-shrink:0; }
         .setting-label { font-size:0.8rem; font-weight:600; color:var(--text); }
         .setting-desc { font-size:0.7rem; color:var(--muted); margin:3px 0 0; }
-        .listing-output { min-height:160px; background:var(--bg-0); border:1px solid var(--border); border-radius:8px; padding:1rem; font-family:'JetBrains Mono',monospace; font-size:0.8rem; line-height:1.7; color:var(--text-dim); white-space:pre-wrap; word-break:break-word; }
-        .discord-preview { min-height:120px; background:#313338; border-radius:8px; padding:1rem; font-family:'gg sans','Noto Sans',sans-serif; font-size:0.85rem; line-height:1.6; color:#dbdee1; white-space:pre-wrap; word-break:break-word; }
+        .listing-output { min-height:160px; background:var(--bg-0); border:1px solid var(--border); border-radius:var(--radius-input); padding:1rem; font-family:var(--font-mono); font-size:0.8rem; line-height:1.7; color:var(--text-dim); white-space:pre-wrap; word-break:break-word; }
+        .discord-preview { min-height:120px; background:#313338; border-radius:var(--radius-input); padding:1rem; font-family:'gg sans','Noto Sans',sans-serif; font-size:0.85rem; line-height:1.6; color:#dbdee1; white-space:pre-wrap; word-break:break-word; }
+        /* Top nav layout */
+        #topnav { display:none; background:var(--bg-2); border-bottom:1px solid var(--border); padding:0 1.5rem; align-items:stretch; gap:0; flex-shrink:0; }
+        .topnav-btn { padding:0.85rem 1.1rem; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; border:none; background:transparent; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; white-space:nowrap; }
+        .topnav-btn:hover { color:var(--text); }
+        .topnav-btn.active { color:var(--cyan); border-bottom-color:var(--cyan); }
+        /* Theme picker */
+        .theme-opt { padding:6px 12px; font-size:0.72rem; font-weight:600; border-radius:var(--radius-btn); border:1px solid var(--border); background:var(--bg-3); color:var(--text-dim); cursor:pointer; transition:all 0.15s; font-family:var(--font-ui); }
+        .theme-opt:hover { border-color:var(--border-bright); color:var(--text); }
+        .theme-section { margin-bottom:1.25rem; }
+        .theme-section-label { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:0.5rem; display:block; }
+        .theme-row { display:flex; flex-wrap:wrap; gap:0.5rem; }
     </style>
 </head>
 <body>
@@ -110,6 +132,15 @@
     </div>
 
     <div class="app">
+        <!-- Top nav (shown when nav=topnav theme) -->
+        <nav id="topnav">
+            <button class="topnav-btn active" id="topnav-trade" onclick="switchTab('trade')">📦 Operations</button>
+            <button class="topnav-btn" id="topnav-analytics" onclick="switchTab('analytics')">📊 Analytics</button>
+            <button class="topnav-btn" id="topnav-audit" onclick="switchTab('audit')">📋 Ledger</button>
+            <button class="topnav-btn" id="topnav-comms" onclick="switchTab('comms')">📢 Listings</button>
+            <button class="topnav-btn" id="topnav-tools" onclick="switchTab('tools')">⚙ Tools</button>
+            <button class="topnav-btn" id="topnav-themes" onclick="switchTab('themes')">🎨 Themes</button>
+        </nav>
         <aside class="sidebar">
             <div class="version-tag" style="margin-bottom:0.5rem;">v4.20.69b</div>
             <button class="nav-btn active" id="nav-trade" onclick="switchTab('trade')" title="Operations">📦<span>Operations</span></button>
@@ -117,6 +148,7 @@
             <button class="nav-btn" id="nav-audit" onclick="switchTab('audit')" title="Ledger">📋<span>Ledger</span></button>
             <button class="nav-btn" id="nav-comms" onclick="switchTab('comms')" title="Listings">📢<span>Listings</span></button>
             <button class="nav-btn" id="nav-tools" onclick="switchTab('tools')" title="Tools">⚙<span>Tools</span></button>
+            <button class="nav-btn" id="nav-themes" onclick="switchTab('themes')" title="Themes">🎨<span>Themes</span></button>
         </aside>
         <main class="main">
             <header class="top-bar">
@@ -383,6 +415,119 @@
                             </p>
                         </div>
                         <button class="btn" onclick="if(confirm('Wipe all data?')){localStorage.clear();location.reload()}" style="background:transparent;color:var(--rose);border:1px solid rgba(244,63,94,0.4)">Factory Reset</button>
+                    </div>
+                </div>
+
+                </div>
+
+                <!-- THEMES -->
+                <div id="view-themes" class="tab-content">
+                    <div style="max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:1.5rem;">
+
+                        <!-- Presets -->
+                        <div class="card" style="padding:1.25rem;">
+                            <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Full Presets</h3>
+                            <div class="theme-row">
+                                <button class="theme-opt" data-preset="terminal" onclick="applyPreset('terminal')" style="flex:1;">
+                                    <div style="font-size:0.8rem;font-weight:700;margin-bottom:2px;">Terminal</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Dark blue · Sidebar · Default fonts</div>
+                                </button>
+                                <button class="theme-opt" data-preset="tactical" onclick="applyPreset('tactical')" style="flex:1;">
+                                    <div style="font-size:0.8rem;font-weight:700;margin-bottom:2px;">Tactical</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Military green · Sharp · All mono</div>
+                                </button>
+                                <button class="theme-opt" data-preset="clean" onclick="applyPreset('clean')" style="flex:1;">
+                                    <div style="font-size:0.8rem;font-weight:700;margin-bottom:2px;">Clean</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Purple dusk · Top nav · Pill corners</div>
+                                </button>
+                                <button class="theme-opt" data-preset="neon" onclick="applyPreset('neon')" style="flex:1;">
+                                    <div style="font-size:0.8rem;font-weight:700;margin-bottom:2px;">Neon</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Pure black · High contrast · Mono</div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Colour palette -->
+                        <div class="card" style="padding:1.25rem;">
+                            <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Colour Palette</h3>
+                            <div class="theme-row">
+                                <button class="theme-opt" data-theme-prop="palette" data-theme-val="arc" onclick="setThemeProp('palette','arc')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#06b6d4;"></span>Arc Blue</span></button>
+                                <button class="theme-opt" data-theme-prop="palette" data-theme-val="tactical" onclick="setThemeProp('palette','tactical')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#8db842;"></span>Tactical</span></button>
+                                <button class="theme-opt" data-theme-prop="palette" data-theme-val="slate" onclick="setThemeProp('palette','slate')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#818cf8;"></span>Slate</span></button>
+                                <button class="theme-opt" data-theme-prop="palette" data-theme-val="neon" onclick="setThemeProp('palette','neon')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#00ffcc;"></span>Neon</span></button>
+                                <button class="theme-opt" data-theme-prop="palette" data-theme-val="dusk" onclick="setThemeProp('palette','dusk')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#c084fc;"></span>Dusk</span></button>
+                                <button class="theme-opt" data-theme-prop="palette" data-theme-val="ash" onclick="setThemeProp('palette','ash')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#d0d0d0;"></span>Ash</span></button>
+                            </div>
+                        </div>
+
+                        <!-- Fonts -->
+                        <div class="card" style="padding:1.25rem;">
+                            <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Font Pair</h3>
+                            <div class="theme-row">
+                                <button class="theme-opt" data-theme-prop="fonts" data-theme-val="default" onclick="setThemeProp('fonts','default')" style="flex:1;">
+                                    <div style="font-size:0.8rem;font-weight:700;">Outfit + JetBrains</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">UI sans + mono data</div>
+                                </button>
+                                <button class="theme-opt" data-theme-prop="fonts" data-theme-val="allMono" onclick="setThemeProp('fonts','allMono')" style="flex:1;">
+                                    <div style="font-size:0.8rem;font-weight:700;font-family:'JetBrains Mono',monospace;">All Monospace</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">JetBrains Mono throughout</div>
+                                </button>
+                                <button class="theme-opt" data-theme-prop="fonts" data-theme-val="modern" onclick="setThemeProp('fonts','modern')" style="flex:1;">
+                                    <div style="font-size:0.8rem;font-weight:700;font-family:'Inter',sans-serif;">Inter + Fira Code</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Clean UI + code font</div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Density -->
+                        <div class="card" style="padding:1.25rem;">
+                            <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Density</h3>
+                            <div class="theme-row">
+                                <button class="theme-opt" data-theme-prop="density" data-theme-val="comfortable" onclick="setThemeProp('density','comfortable')" style="flex:1;">
+                                    <div style="font-size:0.8rem;font-weight:700;">Comfortable</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">More padding, easier to read</div>
+                                </button>
+                                <button class="theme-opt" data-theme-prop="density" data-theme-val="compact" onclick="setThemeProp('density','compact')" style="flex:1;">
+                                    <div style="font-size:0.8rem;font-weight:700;">Compact</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Tighter rows, more on screen</div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Border style -->
+                        <div class="card" style="padding:1.25rem;">
+                            <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Border Style</h3>
+                            <div class="theme-row">
+                                <button class="theme-opt" data-theme-prop="borders" data-theme-val="rounded" onclick="setThemeProp('borders','rounded')" style="flex:1;border-radius:8px;">
+                                    <div style="font-size:0.8rem;font-weight:700;">Rounded</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Soft corners</div>
+                                </button>
+                                <button class="theme-opt" data-theme-prop="borders" data-theme-val="sharp" onclick="setThemeProp('borders','sharp')" style="flex:1;border-radius:2px;">
+                                    <div style="font-size:0.8rem;font-weight:700;">Sharp</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Square edges</div>
+                                </button>
+                                <button class="theme-opt" data-theme-prop="borders" data-theme-val="pill" onclick="setThemeProp('borders','pill')" style="flex:1;border-radius:999px;">
+                                    <div style="font-size:0.8rem;font-weight:700;">Pill</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Fully rounded buttons</div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="card" style="padding:1.25rem;">
+                            <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Navigation</h3>
+                            <div class="theme-row">
+                                <button class="theme-opt" data-theme-prop="nav" data-theme-val="sidebar" onclick="setThemeProp('nav','sidebar')" style="flex:1;">
+                                    <div style="font-size:0.8rem;font-weight:700;">Sidebar</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Icon nav on the left</div>
+                                </button>
+                                <button class="theme-opt" data-theme-prop="nav" data-theme-val="topnav" onclick="setThemeProp('nav','topnav')" style="flex:1;">
+                                    <div style="font-size:0.8rem;font-weight:700;">Top Bar</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Horizontal tab bar</div>
+                                </button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
