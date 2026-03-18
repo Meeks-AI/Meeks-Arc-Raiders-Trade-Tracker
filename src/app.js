@@ -335,24 +335,44 @@ function startNewSession() {
 function massIngest() {
   const raw = (document.getElementById('bulkText').value || '').trim();
   if (!raw) return;
-  raw.split('\n').forEach((line) => {
+
+  const lines = raw.split('\n').filter((l) => l.trim());
+  const parsed = [];
+
+  for (const line of lines) {
     const nums = line.match(/\d+/);
     const rawName = line.replace(/\d+/, '').trim();
-    if (!rawName) return;
+    if (!rawName) continue;
     const qty = nums ? parseInt(nums[0], 10) : 1;
     const lower = rawName.toLowerCase();
-    // Treat any seeds item as liquid currency
+
+    // Seeds variants — always valid
     if (lower === 'assorted seeds' || lower === 'raw seeds' || lower === 'seeds') {
-      liquidSeeds += qty;
-      audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.CURRENCY, name: rawName, qty: 1, price: qty, cost: 0, source: SOURCES.LOOTED, revertData: { deltaLiquid: -qty } });
+      parsed.push({ type: 'currency', rawName, qty });
+      continue;
+    }
+
+    // Validate against API list if custom items are off
+    const text = validateItemName(rawName);
+    if (!text) {
+      // validateItemName already showed an alert with the item name — stop here
       return;
     }
-    const text = validateItemName(rawName);
-    if (!text) return;
-    const now = Date.now();
-    for (let i = 0; i < qty; i++) stock.push({ name: text, cost: 0, source: SOURCES.LOOTED, addedAt: now });
-    audit.push({ id: genId(), ts: now, action: ACTIONS.RECOVERY, name: text, qty, price: 0, cost: 0, source: SOURCES.LOOTED, revertData: { removeStock: [{ name: text, source: SOURCES.LOOTED, cost: 0, qty }] } });
-  });
+    parsed.push({ type: 'item', text, qty });
+  }
+
+  // All lines passed — commit everything
+  const now = Date.now();
+  for (const entry of parsed) {
+    if (entry.type === 'currency') {
+      liquidSeeds += entry.qty;
+      audit.push({ id: genId(), ts: now, action: ACTIONS.CURRENCY, name: entry.rawName, qty: 1, price: entry.qty, cost: 0, source: SOURCES.LOOTED, revertData: { deltaLiquid: -entry.qty } });
+    } else {
+      for (let i = 0; i < entry.qty; i++) stock.push({ name: entry.text, cost: 0, source: SOURCES.LOOTED, addedAt: now });
+      audit.push({ id: genId(), ts: now, action: ACTIONS.RECOVERY, name: entry.text, qty: entry.qty, price: 0, cost: 0, source: SOURCES.LOOTED, revertData: { removeStock: [{ name: entry.text, source: SOURCES.LOOTED, cost: 0, qty: entry.qty }] } });
+    }
+  }
+
   document.getElementById('bulkText').value = '';
   setTimeout(() => render(), 0);
 }
