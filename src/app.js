@@ -1313,16 +1313,24 @@ function applyTheme(t) {
 }
 
 let pendingTheme = { ...currentTheme };
+let pendingPreset = Object.keys(PRESETS).find((k) => Object.keys(PRESETS[k]).every((p) => PRESETS[k][p] === currentTheme[p])) || 'custom';
 
 function applyPreset(name) {
-  const preset = PRESETS[name];
-  if (!preset) return;
-  pendingTheme = { ...preset };
+  if (name === 'custom') {
+    // Keep current pending values, just switch to custom mode
+    pendingPreset = 'custom';
+  } else {
+    const preset = PRESETS[name];
+    if (!preset) return;
+    pendingTheme = { ...preset };
+    pendingPreset = name;
+  }
   updateThemeUI();
 }
 
 function setThemeProp(prop, value) {
   pendingTheme = { ...pendingTheme, [prop]: value };
+  pendingPreset = 'custom';
   updateThemeUI();
 }
 
@@ -1331,14 +1339,19 @@ function applyPendingTheme() {
 }
 
 function updateThemeUI() {
-  // Preset buttons — active if pending matches preset exactly
+  // Preset buttons — only one ever highlighted (including Custom)
   document.querySelectorAll('[data-preset]').forEach((btn) => {
-    const match = PRESETS[btn.dataset.preset];
-    const active = match && Object.keys(match).every((k) => match[k] === pendingTheme[k]);
+    const active = btn.dataset.preset === pendingPreset;
     btn.style.borderColor = active ? 'var(--cyan)' : 'var(--border)';
     btn.style.color = active ? 'var(--cyan)' : 'var(--text-dim)';
+    btn.style.background = active ? 'var(--cyan-dim)' : '';
   });
-  // Option buttons — active if pending value matches
+
+  // Custom controls visibility
+  const controls = document.getElementById('customThemeControls');
+  if (controls) controls.style.display = pendingPreset === 'custom' ? 'flex' : 'none';
+
+  // Individual option buttons
   ['palette', 'fonts', 'density', 'borders', 'nav'].forEach((prop) => {
     document.querySelectorAll(`[data-theme-prop="${prop}"]`).forEach((btn) => {
       const active = btn.dataset.themeVal === pendingTheme[prop];
@@ -1347,7 +1360,8 @@ function updateThemeUI() {
       btn.style.color = active ? 'var(--cyan)' : 'var(--text-dim)';
     });
   });
-  // Show/hide unsaved indicator on Apply button
+
+  // Apply button state
   const applyBtn = document.getElementById('themeApplyBtn');
   if (applyBtn) {
     const dirty = JSON.stringify(pendingTheme) !== JSON.stringify(currentTheme);
@@ -1370,6 +1384,7 @@ function init() {
 
   applyTheme(currentTheme);
   pendingTheme = { ...currentTheme };
+  pendingPreset = Object.keys(PRESETS).find((k) => Object.keys(PRESETS[k]).every((p) => PRESETS[k][p] === currentTheme[p])) || 'custom';
 
   loadMetaforgeCache();
   initTextareaAutocomplete();
