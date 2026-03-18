@@ -1,5 +1,6 @@
 export const METAFORGE_URL = 'https://metaforge.app/api/arc-raiders';
 export const LOCAL_METAFORGE_ITEMS_URL = './data/metaforge-items.json';
+export const LOCAL_METAFORGE_QUESTS_URL = './data/metaforge-quests.json';
 
 export const ACTIONS = Object.freeze({
   INITIAL: 'INITIAL',

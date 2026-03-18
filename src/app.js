@@ -1,7 +1,7 @@
 /* global Chart */
 'use strict';
 
-import { ACTIONS, LOCAL_METAFORGE_ITEMS_URL, METAFORGE_URL, STORAGE_KEYS } from './constants.js';
+import { ACTIONS, LOCAL_METAFORGE_ITEMS_URL, LOCAL_METAFORGE_QUESTS_URL, METAFORGE_URL, STORAGE_KEYS } from './constants.js';
 import { readJson, readNumber, writeJson } from './storage.js';
 
 let stock = readJson(STORAGE_KEYS.stock, []);
@@ -10,6 +10,9 @@ let liquidSeeds = readNumber(STORAGE_KEYS.liquidSeeds, 0);
 let priceCache = {};
 let apiItems = [];       // all items from Metaforge
 let tradeItems = [];     // filtered: value > 0 (excludes cosmetics)
+let iconMap = {};        // name -> icon URL
+let quests = [];         // all quests
+let questDemandMap = {}; // item name -> [quest names that require it]
 let allowCustomItems = localStorage.getItem(STORAGE_KEYS.allowCustomItems) === 'true';
 let chartInstance = null;
 let priceHistoryChart = null;
@@ -18,10 +21,11 @@ function genId() {
   return `e${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 }
 
-// ─── Metaforge ────────────────────────────────────────────────────────────────
-function buildTradeItems(items) {
-  // Items with value === 0 are cosmetics (outfits, charms, emotes, colours)
+// ─── Metaforge items ──────────────────────────────────────────────────────────
+function buildDerivedItemData(items) {
   tradeItems = items.filter((i) => i.value > 0);
+  iconMap = {};
+  items.forEach((i) => { if (i.name && i.icon) iconMap[i.name] = i.icon; });
 }
 
 function loadMetaforgeCache() {
@@ -31,22 +35,20 @@ function loadMetaforgeCache() {
     if (raw) {
       const data = JSON.parse(raw);
       apiItems = Array.isArray(data) ? data : data.data || [];
-      buildTradeItems(apiItems);
+      buildDerivedItemData(apiItems);
       const el = document.getElementById('metaforgeStatus');
       if (el) el.textContent = ts ? `Synced ${new Date(+ts).toLocaleString()}` : 'Cached';
     }
   } catch {
-    apiItems = [];
-    tradeItems = [];
+    apiItems = []; tradeItems = []; iconMap = {};
   }
 }
 
 async function fetchMetaforgeAll() {
   const out = [];
   let page = 1, hasMore = true;
-  const maxPages = 200;
   while (hasMore) {
-    if (page > maxPages) throw new Error(`Safety stop: exceeded maxPages (${maxPages}).`);
+    if (page > 200) throw new Error('Safety stop: exceeded maxPages.');
     const res = await fetch(`${METAFORGE_URL}/items?page=${page}&limit=100&minimal=true`);
     if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
     const json = await res.json();
@@ -59,15 +61,35 @@ async function fetchMetaforgeAll() {
 
 async function fetchMetaforgeFromLocalFile() {
   const res = await fetch(LOCAL_METAFORGE_ITEMS_URL, { cache: 'no-store' });
-  if (!res.ok) throw new Error(`Local metaforge file HTTP ${res.status}`);
+  if (!res.ok) throw new Error(`Local items file HTTP ${res.status}`);
   const json = await res.json();
   const data = Array.isArray(json) ? json : json.data || [];
   return Array.isArray(data) ? data : [];
 }
 
+async function fetchQuestsFromLocalFile() {
+  const res = await fetch(LOCAL_METAFORGE_QUESTS_URL, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Local quests file HTTP ${res.status}`);
+  const json = await res.json();
+  const data = Array.isArray(json) ? json : json.data || [];
+  return Array.isArray(data) ? data : [];
+}
+
+function buildQuestDemandMap(questList) {
+  questDemandMap = {};
+  questList.forEach((q) => {
+    (q.required_items || []).forEach((ri) => {
+      const name = ri.item?.name;
+      if (!name) return;
+      if (!questDemandMap[name]) questDemandMap[name] = [];
+      questDemandMap[name].push(q.name);
+    });
+  });
+}
+
 function formatFetchErr(e) {
   const msg = (e && (e.message || String(e))) || 'Unknown error';
-  if (/failed to fetch/i.test(msg)) return `${msg} (likely CORS blocked by the API)`;
+  if (/failed to fetch/i.test(msg)) return `${msg} (likely CORS blocked)`;
   return msg;
 }
 
@@ -76,14 +98,14 @@ async function resyncMetaforge() {
   if (btn) { btn.disabled = true; btn.textContent = 'Syncing...'; }
   try {
     apiItems = await fetchMetaforgeAll();
-    buildTradeItems(apiItems);
+    buildDerivedItemData(apiItems);
     writeJson(STORAGE_KEYS.metaforgeCache, apiItems);
     localStorage.setItem(STORAGE_KEYS.metaforgeCacheTs, String(Date.now()));
     const el = document.getElementById('metaforgeStatus');
-    if (el) el.textContent = `Synced ${new Date().toLocaleString()} (${apiItems.length})`;
+    if (el) el.textContent = `Synced ${new Date().toLocaleString()} (${apiItems.length} items)`;
   } catch (e) {
     const el = document.getElementById('metaforgeStatus');
-    if (el) el.textContent = `Sync failed: ${formatFetchErr(e)}. Tip: on GitHub Pages, use the scheduled GitHub Action to sync into ${LOCAL_METAFORGE_ITEMS_URL}`;
+    if (el) el.textContent = `Sync failed: ${formatFetchErr(e)}. Use the GitHub Action on GitHub Pages.`;
   }
   if (btn) { btn.disabled = false; btn.textContent = 'Resync API'; }
   render();
@@ -108,7 +130,7 @@ function validateItemName(raw) {
   return name;
 }
 
-// ─── Price cache (based on your own sell history) ─────────────────────────────
+// ─── Price cache ──────────────────────────────────────────────────────────────
 function buildPriceCache() {
   priceCache = {};
   const sells = audit.filter((a) => a.action === ACTIONS.SELL);
@@ -136,6 +158,12 @@ function switchTab(t) {
 }
 
 // ─── Render ───────────────────────────────────────────────────────────────────
+function itemIcon(name, size = 28) {
+  const url = iconMap[name];
+  if (!url) return `<span style="display:inline-block;width:${size}px;height:${size}px;background:var(--bg-3);border-radius:4px;flex-shrink:0;"></span>`;
+  return `<img src="${url}" width="${size}" height="${size}" style="border-radius:4px;object-fit:contain;background:var(--bg-3);flex-shrink:0;" loading="lazy" onerror="this.style.display='none'">`;
+}
+
 function render() {
   buildPriceCache();
 
@@ -172,8 +200,20 @@ function render() {
       const safeId = `item-${i}`;
       const tag = g.source === 'FIR' ? 'tag-fir' : g.source === 'TRD' ? 'tag-trd' : 'tag-buy';
 
+      // Quest demand badge
+      const demandQuests = questDemandMap[g.name];
+      const questBadge = demandQuests
+        ? `<span class="quest-badge" title="Needed for: ${demandQuests.join(', ')}">Q</span>`
+        : '';
+
       invBody.innerHTML += `<tr>
-        <td class="font-mono font-semibold">${g.name}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${itemIcon(g.name, 28)}
+            <span class="font-mono font-semibold">${g.name}</span>
+            ${questBadge}
+          </div>
+        </td>
         <td><span class="tag ${tag}">${g.source}</span></td>
         <td class="font-mono">×${g.count}</td>
         <td class="font-mono" style="color:var(--muted)">${Math.floor(g.cost).toLocaleString()}</td>
@@ -188,7 +228,7 @@ function render() {
       barterSelect.innerHTML += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${g.source}] ×${g.count}</option>`;
     });
 
-  // Audit log — newest first, with session dividers
+  // Audit log
   const totalSessions = audit.filter((e) => e.action === ACTIONS.SESSION_START).length;
   let sessionCounter = totalSessions;
 
@@ -218,19 +258,15 @@ function render() {
     if (!isExcluded) totalProfit += profitDelta;
 
     const time = new Date(entry.ts).toLocaleString([], { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
-    const actClr =
-      profitDelta > 0 ? 'color:var(--emerald)'
-      : profitDelta < 0 ? 'color:var(--rose)'
-      : isInitial ? 'color:var(--cyan)'
-      : isExcluded ? 'color:var(--muted)'
-      : isBarter ? 'color:#a78bfa'
-      : '';
+    const actClr = profitDelta > 0 ? 'color:var(--emerald)' : profitDelta < 0 ? 'color:var(--rose)' : isInitial ? 'color:var(--cyan)' : isExcluded ? 'color:var(--muted)' : isBarter ? 'color:#a78bfa' : '';
 
     auditBody.insertAdjacentHTML('beforeend',
       `<tr style="${isExcluded ? 'opacity:0.5' : ''}">
         <td class="font-mono" style="font-size:0.75rem;color:var(--muted)">${time}</td>
         <td style="font-weight:600;font-size:0.75rem;${actClr}">${entry.action}</td>
-        <td style="${isExcluded ? 'text-decoration:line-through' : ''}">${entry.name}</td>
+        <td style="${isExcluded ? 'text-decoration:line-through' : ''}">
+          <div style="display:flex;align-items:center;gap:6px;">${itemIcon(entry.name, 18)}<span>${entry.name}</span></div>
+        </td>
         <td class="font-mono" style="color:var(--muted)">${isCurrency || isInitial ? '—' : '×' + entry.qty}</td>
         <td style="text-align:right;font-weight:600;${profitDelta >= 0 ? 'color:var(--amber)' : 'color:var(--rose)'}">${profitDelta !== 0 ? (profitDelta > 0 ? '+' : '') + Math.floor(profitDelta).toLocaleString() : isInitial || isBarter ? Math.floor(entry.price).toLocaleString() : '—'}</td>
         <td style="text-align:right">${!isExcluded && entry.action !== ACTIONS.INITIAL
@@ -419,7 +455,6 @@ function revertEntry(idx) {
 function toggleCustomItems(checkbox) {
   allowCustomItems = checkbox.checked;
   localStorage.setItem(STORAGE_KEYS.allowCustomItems, String(allowCustomItems));
-  // Show/hide the merge block
   const mergeBlock = document.getElementById('customMergeBlock');
   if (mergeBlock) mergeBlock.style.display = checkbox.checked ? '' : 'none';
 }
@@ -428,16 +463,14 @@ function mergeCustomItems() {
   const from = (document.getElementById('mergeFromInput').value || '').trim();
   const to = (document.getElementById('mergeToInput').value || '').trim();
   if (!from || !to || !confirm(`Rename all instances of "${from}" to "${to}"?`)) return;
-
   stock = stock.map((i) => i.name === from ? { ...i, name: to } : i);
   audit = audit.map((a) => {
     if (a.name === from) return { ...a, name: to };
-    if (a.action === ACTIONS.BARTER && a.name && a.name.includes('→')) {
+    if (a.action === ACTIONS.BARTER && a.name?.includes('→')) {
       return { ...a, name: a.name.replace(new RegExp(`\\b${from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g'), to) };
     }
     return a;
   });
-
   document.getElementById('mergeFromInput').value = '';
   document.getElementById('mergeToInput').value = '';
   render();
@@ -457,20 +490,16 @@ function generateRandomHistory() {
     return a.slice(0, n);
   }
   function randInt(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
-  // Price within ±25% of the item's real value
   function randPrice(item) {
     const base = item.value || 100;
-    const lo = Math.max(1, Math.floor(base * 0.75));
-    const hi = Math.floor(base * 1.25);
-    return randInt(lo, hi);
+    return randInt(Math.max(1, Math.floor(base * 0.75)), Math.floor(base * 1.25));
   }
 
   const now = Date.now(), day = 86400000;
   const ts = (d) => now - (7 - d) * day - Math.random() * day;
 
   const firPool = pick(tradeItems, 6);
-  const buyPool = pick(tradeItems.filter((i) => !firPool.includes(i)), 1);
-  const buyItemObj = buyPool[0];
+  const buyItemObj = pick(tradeItems.filter((i) => !firPool.includes(i)), 1)[0];
   const sellItemObj = firPool[Math.floor(Math.random() * firPool.length)];
 
   audit = []; stock = []; liquidSeeds = 50000;
@@ -491,8 +520,7 @@ function generateRandomHistory() {
     audit.push({ id: genId(), ts: ts(d + 3), action: ACTIONS.RECOVERY, name: item.name, qty, price: 0, cost: 0, source: 'FIR', revertData: { removeStock: [{ name: item.name, source: 'FIR', cost: 0, qty }] } });
   });
 
-  const costPer = randPrice(buyItemObj);
-  const bq = randInt(1, 3);
+  const costPer = randPrice(buyItemObj), bq = randInt(1, 3);
   liquidSeeds -= costPer * bq;
   for (let i = 0; i < bq; i++) stock.push({ name: buyItemObj.name, cost: costPer, source: 'BUY' });
   audit.push({ id: genId(), ts: ts(4), action: ACTIONS.PURCHASE, name: buyItemObj.name, qty: bq, price: costPer, cost: costPer, source: 'BUY', revertData: { deltaLiquid: costPer * bq, removeStock: { name: buyItemObj.name, source: 'BUY', cost: costPer, qty: bq } } });
@@ -508,21 +536,19 @@ function generateRandomHistory() {
   for (let i = 0; i < sellQty; i++) ab.push({ name: sellItemObj.name, source: 'FIR', cost: 0 });
   audit.push({ id: genId(), ts: ts(5), action: ACTIONS.SELL, name: sellItemObj.name, qty: sellQty, price: sellPrice, cost: 0, source: 'FIR', revertData: { deltaLiquid: -(sellPrice * sellQty), addStock: ab } });
 
-  // Second sale of same item for price history chart interest
   if (stock.some((s) => s.name === sellItemObj.name && s.source === 'FIR')) {
-    const sellPrice2 = randPrice(sellItemObj);
+    const sp2 = randPrice(sellItemObj);
     let r2 = 0;
     for (let i = stock.length - 1; i >= 0 && r2 < 1; i--) {
       if (stock[i].name === sellItemObj.name && stock[i].source === 'FIR') { stock.splice(i, 1); r2++; }
     }
-    liquidSeeds += sellPrice2;
-    audit.push({ id: genId(), ts: ts(6), action: ACTIONS.SELL, name: sellItemObj.name, qty: 1, price: sellPrice2, cost: 0, source: 'FIR', revertData: { deltaLiquid: -sellPrice2, addStock: [{ name: sellItemObj.name, source: 'FIR', cost: 0 }] } });
+    liquidSeeds += sp2;
+    audit.push({ id: genId(), ts: ts(6), action: ACTIONS.SELL, name: sellItemObj.name, qty: 1, price: sp2, cost: 0, source: 'FIR', revertData: { deltaLiquid: -sp2, addStock: [{ name: sellItemObj.name, source: 'FIR', cost: 0 }] } });
   }
 
   const adj = randInt(-500, 500);
   liquidSeeds += adj;
   audit.push({ id: genId(), ts: ts(6) + 1000, action: ACTIONS.ADJUST, name: 'Manual Correction', qty: 1, price: adj, cost: 0, source: 'SYS', revertData: { deltaLiquid: -adj } });
-
   render();
 }
 
@@ -532,12 +558,15 @@ function renderAnalytics() {
   const firBody = document.getElementById('topFirBody');
   const perBody = document.getElementById('perItemStatsBody');
   const sessionsBody = document.getElementById('sessionsBody');
+  const questsBody = document.getElementById('questsBody');
   if (!flipBody || !firBody || !perBody || !sessionsBody) return;
 
   flipBody.innerHTML = ''; firBody.innerHTML = ''; perBody.innerHTML = ''; sessionsBody.innerHTML = '';
 
   const valid = audit.filter((l) => ![ACTIONS.VOID, ACTIONS.REVERTED].includes(l.action));
+  const heldNames = new Set(stock.map((s) => s.name));
 
+  // Per-item sell stats
   const stats = valid.reduce((acc, l) => {
     if (l.action !== ACTIONS.SELL) return acc;
     if (!acc[l.name]) acc[l.name] = { profit: 0, qty: 0, revenue: 0, costBasis: 0, isFIR: l.source === 'FIR' };
@@ -549,7 +578,8 @@ function renderAnalytics() {
   }, {});
 
   Object.entries(stats).sort((a, b) => b[1].profit - a[1].profit).forEach(([name, s]) => {
-    const row = `<tr><td>${name}</td><td style="text-align:right;color:var(--emerald);font-weight:600">+${Math.floor(s.profit).toLocaleString()}</td></tr>`;
+    const icon = itemIcon(name, 20);
+    const row = `<tr><td><div style="display:flex;align-items:center;gap:6px;">${icon}<span>${name}</span></div></td><td style="text-align:right;color:var(--emerald);font-weight:600">+${Math.floor(s.profit).toLocaleString()}</td></tr>`;
     if (s.isFIR) firBody.innerHTML += row; else flipBody.innerHTML += row;
   });
 
@@ -560,8 +590,11 @@ function renderAnalytics() {
     const roiStyle = s.costBasis > 0 ? (s.profit >= 0 ? 'color:var(--emerald)' : 'color:var(--rose)') : 'color:var(--muted)';
     const safeName = name.replace(/'/g, "\\'");
     perBody.innerHTML += `<tr>
-      <td class="font-semibold" style="cursor:pointer" onclick="showPriceHistory('${safeName}')" title="View price history">
-        <span style="color:var(--cyan);text-decoration:underline dotted;">${name}</span>
+      <td style="cursor:pointer" onclick="showPriceHistory('${safeName}')">
+        <div style="display:flex;align-items:center;gap:6px;">
+          ${itemIcon(name, 20)}
+          <span style="color:var(--cyan);text-decoration:underline dotted;">${name}</span>
+        </div>
       </td>
       <td style="text-align:right">${s.qty}</td>
       <td style="text-align:right" class="font-mono">${Math.floor(s.revenue).toLocaleString()}</td>
@@ -572,12 +605,13 @@ function renderAnalytics() {
     </tr>`;
   });
 
+  // Session history
   const sorted = [...valid].sort((a, b) => a.ts - b.ts);
   const sessions = [];
   let current = null;
   sorted.forEach((e) => {
     if (e.action === ACTIONS.SESSION_START) { if (current) sessions.push(current); current = { startTs: e.ts, entries: [] }; }
-    else if (current) { current.entries.push(e); }
+    else if (current) current.entries.push(e);
   });
   if (current) sessions.push(current);
 
@@ -600,6 +634,63 @@ function renderAnalytics() {
     });
   }
 
+  // Quests panel
+  if (questsBody) {
+    questsBody.innerHTML = '';
+    if (quests.length === 0) {
+      questsBody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem;font-size:0.85rem;">Quest data not loaded — run the Sync Action to fetch quests</td></tr>`;
+    } else {
+      // Group quests by trader
+      const byTrader = quests.reduce((acc, q) => {
+        const t = q.trader_name || 'Unknown';
+        if (!acc[t]) acc[t] = [];
+        acc[t].push(q);
+        return acc;
+      }, {});
+
+      Object.entries(byTrader).sort((a, b) => a[0].localeCompare(b[0])).forEach(([trader, qs]) => {
+        questsBody.innerHTML += `<tr><td colspan="4" style="background:rgba(6,182,212,0.08);color:var(--cyan);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:5px 16px;border-top:1px solid rgba(6,182,212,0.2);">${trader}</td></tr>`;
+        qs.forEach((q) => {
+          const reqItems = q.required_items || [];
+          const rewardItems = q.rewards || [];
+
+          const reqHtml = reqItems.length === 0
+            ? '<span style="color:var(--muted);font-size:0.75rem;">—</span>'
+            : reqItems.map((ri) => {
+                const held = heldNames.has(ri.item?.name);
+                const heldCount = stock.filter((s) => s.name === ri.item?.name).length;
+                const qty = ri.quantity || 1;
+                const enough = heldCount >= qty;
+                const color = held ? (enough ? 'var(--emerald)' : 'var(--amber)') : 'var(--muted)';
+                const icon = ri.item?.icon ? `<img src="${ri.item.icon}" width="16" height="16" style="border-radius:3px;object-fit:contain;background:var(--bg-3);vertical-align:middle;margin-right:3px;" loading="lazy">` : '';
+                return `<span style="display:inline-flex;align-items:center;margin-right:6px;color:${color};font-size:0.75rem;">${icon}${ri.item?.name || '?'} ×${qty}${held ? ` <span style="font-size:0.65rem;margin-left:2px;">(${heldCount})</span>` : ''}</span>`;
+              }).join('');
+
+          const rewardHtml = rewardItems.length === 0
+            ? '<span style="color:var(--muted);font-size:0.75rem;">—</span>'
+            : rewardItems.slice(0, 4).map((ri) => {
+                const icon = ri.item?.icon ? `<img src="${ri.item.icon}" width="16" height="16" style="border-radius:3px;object-fit:contain;background:var(--bg-3);vertical-align:middle;margin-right:3px;" loading="lazy">` : '';
+                return `<span style="display:inline-flex;align-items:center;margin-right:6px;color:var(--text-dim);font-size:0.75rem;">${icon}${ri.item?.name || '?'} ×${ri.quantity || 1}</span>`;
+              }).join('') + (rewardItems.length > 4 ? `<span style="color:var(--muted);font-size:0.7rem;">+${rewardItems.length - 4} more</span>` : '');
+
+          questsBody.innerHTML += `<tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px;">
+                ${q.image ? `<img src="${q.image}" width="32" height="32" style="border-radius:6px;object-fit:cover;flex-shrink:0;" loading="lazy" onerror="this.style.display='none'">` : ''}
+                <div>
+                  <div style="font-weight:600;font-size:0.85rem;">${q.name}</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:0.75rem;color:var(--muted);max-width:220px;">${(q.objectives || []).slice(0, 2).join(' · ')}</td>
+            <td>${reqHtml}</td>
+            <td>${rewardHtml}</td>
+          </tr>`;
+        });
+      });
+    }
+  }
+
   buildNetWorthChart();
 }
 
@@ -612,17 +703,18 @@ function showPriceHistory(name) {
 
   const sells = audit
     .filter((e) => e.action === ACTIONS.SELL && e.name === name && ![ACTIONS.VOID, ACTIONS.REVERTED].includes(e.action))
-    .sort((a, b) => a.ts - b.ts)
-    .slice(-50);
+    .sort((a, b) => a.ts - b.ts).slice(-50);
 
   if (sells.length === 0) return;
 
   const prices = sells.map((s) => s.price);
   const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
-  const sorted = [...prices].sort((a, b) => a - b);
-  const med = sorted.length % 2 ? sorted[Math.floor(sorted.length / 2)] : (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2;
+  const sortedP = [...prices].sort((a, b) => a - b);
+  const med = sortedP.length % 2 ? sortedP[Math.floor(sortedP.length / 2)] : (sortedP[sortedP.length / 2 - 1] + sortedP[sortedP.length / 2]) / 2;
 
-  title.textContent = name;
+  // Show icon in modal title
+  const iconHtml = iconMap[name] ? `<img src="${iconMap[name]}" width="28" height="28" style="border-radius:4px;object-fit:contain;background:var(--bg-3);margin-right:8px;vertical-align:middle;" loading="lazy">` : '';
+  title.innerHTML = `${iconHtml}${name}`;
   statsEl.textContent = `${sells.length} sales · avg ${Math.floor(avg).toLocaleString()} · median ${Math.floor(med).toLocaleString()}`;
   modal.style.display = 'flex';
 
@@ -727,7 +819,7 @@ function initTextareaAutocomplete() {
   Object.assign(dropdown.style, {
     position: 'fixed', zIndex: '9999',
     background: 'var(--bg-1)', border: '1px solid var(--border-bright)',
-    borderRadius: '8px', maxHeight: '220px', overflowY: 'auto',
+    borderRadius: '8px', maxHeight: '260px', overflowY: 'auto',
     display: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
   });
   document.body.appendChild(dropdown);
@@ -756,19 +848,41 @@ function initTextareaAutocomplete() {
   function updateHighlight() {
     Array.from(dropdown.children).forEach((el, i) => {
       el.style.background = i === selectedIndex ? 'var(--bg-3)' : 'transparent';
-      el.style.color = i === selectedIndex ? 'var(--cyan)' : 'var(--text-dim)';
     });
   }
 
   function showDropdown(matches) {
     currentMatches = matches; selectedIndex = -1; dropdown.innerHTML = '';
-    matches.forEach((name, i) => {
-      const item = document.createElement('div');
-      item.textContent = name;
-      Object.assign(item.style, { padding: '8px 14px', cursor: 'pointer', fontSize: '0.8rem', fontFamily: "'JetBrains Mono', monospace", color: 'var(--text-dim)', borderBottom: '1px solid var(--border)', transition: 'background 0.1s' });
-      item.addEventListener('mouseenter', () => { selectedIndex = i; updateHighlight(); });
-      item.addEventListener('mousedown', (e) => { e.preventDefault(); replaceCurrentLine(name); });
-      dropdown.appendChild(item);
+    matches.forEach((item, i) => {
+      const el = document.createElement('div');
+      Object.assign(el.style, { padding: '7px 12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid var(--border)', transition: 'background 0.1s' });
+
+      // Icon
+      if (iconMap[item.name]) {
+        const img = document.createElement('img');
+        img.src = iconMap[item.name];
+        img.width = 22; img.height = 22;
+        Object.assign(img.style, { borderRadius: '3px', objectFit: 'contain', background: 'var(--bg-3)', flexShrink: '0' });
+        img.loading = 'lazy';
+        el.appendChild(img);
+      }
+
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = item.name;
+      Object.assign(nameSpan.style, { fontSize: '0.8rem', fontFamily: "'JetBrains Mono', monospace", color: 'var(--text-dim)', flex: '1' });
+      el.appendChild(nameSpan);
+
+      // Quest demand indicator
+      if (questDemandMap[item.name]) {
+        const qBadge = document.createElement('span');
+        qBadge.textContent = 'Q';
+        Object.assign(qBadge.style, { fontSize: '0.6rem', fontWeight: '700', background: 'rgba(245,158,11,0.2)', color: 'var(--amber)', border: '1px solid rgba(245,158,11,0.4)', borderRadius: '3px', padding: '1px 4px' });
+        el.appendChild(qBadge);
+      }
+
+      el.addEventListener('mouseenter', () => { selectedIndex = i; updateHighlight(); });
+      el.addEventListener('mousedown', (e) => { e.preventDefault(); replaceCurrentLine(item.name); });
+      dropdown.appendChild(el);
     });
     const rect = textarea.getBoundingClientRect();
     dropdown.style.left = `${rect.left}px`;
@@ -783,8 +897,7 @@ function initTextareaAutocomplete() {
     const query = getCurrentLineText();
     if (query.length < 2) { hideDropdown(); return; }
     const lower = query.toLowerCase();
-    // Only suggest tradeable items (value > 0) in the autocomplete
-    const matches = tradeItems.map((i) => i.name).filter((n) => n && n.toLowerCase().includes(lower)).slice(0, 12);
+    const matches = tradeItems.filter((i) => i.name && i.name.toLowerCase().includes(lower)).slice(0, 12);
     if (matches.length === 0) { hideDropdown(); return; }
     showDropdown(matches);
   });
@@ -796,9 +909,12 @@ function initTextareaAutocomplete() {
     else if (e.key === 'ArrowUp') { e.preventDefault(); selectedIndex = Math.max(selectedIndex - 1, 0); updateHighlight(); }
     else if (e.key === 'Enter') {
       const target = currentMatches.length === 1 ? currentMatches[0] : (selectedIndex >= 0 ? currentMatches[selectedIndex] : null);
-      if (target) { e.preventDefault(); replaceCurrentLine(target); }
+      if (target) { e.preventDefault(); replaceCurrentLine(target.name); }
     }
-    else if (e.key === 'Tab') { const t = selectedIndex >= 0 ? currentMatches[selectedIndex] : currentMatches[0]; if (t) { e.preventDefault(); replaceCurrentLine(t); } }
+    else if (e.key === 'Tab') {
+      const t = selectedIndex >= 0 ? currentMatches[selectedIndex] : currentMatches[0];
+      if (t) { e.preventDefault(); replaceCurrentLine(t.name); }
+    }
     else if (e.key === 'Escape') { hideDropdown(); }
   });
 
@@ -829,14 +945,21 @@ function init() {
       if (!apiItems || apiItems.length === 0) {
         apiItems = await fetchMetaforgeFromLocalFile();
         if (apiItems.length) {
-          buildTradeItems(apiItems);
+          buildDerivedItemData(apiItems);
           writeJson(STORAGE_KEYS.metaforgeCache, apiItems);
           localStorage.setItem(STORAGE_KEYS.metaforgeCacheTs, String(Date.now()));
           const el = document.getElementById('metaforgeStatus');
-          if (el) el.textContent = `Synced (site data) ${new Date().toLocaleString()} (${apiItems.length})`;
+          if (el) el.textContent = `Synced (site data) ${new Date().toLocaleString()} (${apiItems.length} items)`;
         }
       }
     } catch { /* ignore */ }
+
+    // Load quests (non-fatal if file doesn't exist yet)
+    try {
+      quests = await fetchQuestsFromLocalFile();
+      buildQuestDemandMap(quests);
+    } catch { quests = []; }
+
     render();
   })();
 
