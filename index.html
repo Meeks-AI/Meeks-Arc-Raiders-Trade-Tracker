@@ -83,6 +83,7 @@
         .tool-block label { display:block; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:0.75rem; }
         .version-tag { font-size:0.6rem; padding:2px 6px; border:1px solid var(--amber); color:var(--amber); border-radius:4px; font-family:'JetBrains Mono',monospace; letter-spacing:0.08em; }
         .session-divider td { background:rgba(139,92,246,0.08) !important; color:var(--violet); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; padding:5px 16px; border-top:1px solid rgba(139,92,246,0.3); border-bottom:1px solid rgba(139,92,246,0.3); }
+        .warehouse-section-header td { background:var(--bg-3) !important; color:var(--text-dim); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; padding:6px 16px; border-top:1px solid var(--border-bright); border-bottom:1px solid var(--border-bright); }
         .setting-row { display:flex; align-items:flex-start; gap:0.75rem; padding:0.75rem 0; border-bottom:1px solid var(--border); }
         .setting-row:last-child { border-bottom:none; padding-bottom:0; }
         .setting-row input[type=checkbox] { width:16px; height:16px; margin-top:2px; padding:0; cursor:pointer; accent-color:var(--cyan); flex-shrink:0; }
@@ -208,15 +209,12 @@
                             <table><thead><tr><th>Started</th><th>Session</th><th style="text-align:right">Items Found</th><th style="text-align:right">Seeds Found</th><th style="text-align:right">Sell Profit</th></tr></thead><tbody id="sessionsBody"></tbody></table>
                         </div>
                         <div class="card" style="overflow-x:auto">
-                            <div class="card-header"><span class="card-title" style="color:var(--emerald)">Per-Item Sales</span><span style="font-size:0.7rem;color:var(--muted);">Click item name for price history</span></div>
-                            <table><thead><tr><th>Item</th><th style="text-align:right">Qty</th><th style="text-align:right">Revenue</th><th style="text-align:right">Avg</th><th style="text-align:right">Cost</th><th style="text-align:right">Profit</th><th style="text-align:right">ROI</th></tr></thead><tbody id="perItemStatsBody"></tbody></table>
+                            <div class="card-header"><span class="card-title" style="color:var(--cyan)">Looted — Per-Item Sales</span><span style="font-size:0.7rem;color:var(--muted);">Click item for price history</span></div>
+                            <table><thead><tr><th>Item</th><th style="text-align:right">Qty</th><th style="text-align:right">Revenue</th><th style="text-align:right">Avg</th><th style="text-align:right">Cost</th><th style="text-align:right">Profit</th><th style="text-align:right">ROI</th></tr></thead><tbody id="perItemLootBody"></tbody></table>
                         </div>
                         <div class="card" style="overflow-x:auto">
-                            <div class="card-header">
-                                <span class="card-title" style="color:var(--amber)">Quests</span>
-                                <span style="font-size:0.7rem;color:var(--muted);"><span style="color:var(--emerald)">Green</span> = enough in stock &nbsp;·&nbsp; <span style="color:var(--amber)">Amber</span> = partially held &nbsp;·&nbsp; <span style="color:var(--muted)">Grey</span> = not held</span>
-                            </div>
-                            <table><thead><tr><th style="width:220px">Quest</th><th>Objective</th><th>Required Items</th><th>Rewards</th></tr></thead><tbody id="questsBody"></tbody></table>
+                            <div class="card-header"><span class="card-title" style="color:var(--amber)">Bought — Per-Item Sales</span><span style="font-size:0.7rem;color:var(--muted);">Click item for price history</span></div>
+                            <table><thead><tr><th>Item</th><th style="text-align:right">Qty</th><th style="text-align:right">Revenue</th><th style="text-align:right">Avg</th><th style="text-align:right">Cost</th><th style="text-align:right">Profit</th><th style="text-align:right">ROI</th></tr></thead><tbody id="perItemBuyBody"></tbody></table>
                         </div>
                     </div>
                 </div>
