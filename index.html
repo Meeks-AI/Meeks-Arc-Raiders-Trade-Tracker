@@ -422,119 +422,126 @@
 
                 <!-- THEMES -->
                 <div id="view-themes" class="tab-content">
-                    <div style="max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:1.5rem;">
+                    <div style="max-width:660px;margin:0 auto;display:flex;flex-direction:column;gap:1.25rem;">
 
-                        <!-- Presets -->
+                        <!-- Presets row including Custom -->
                         <div class="card" style="padding:1.25rem;">
-                            <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Full Presets</h3>
+                            <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Preset</h3>
                             <div class="theme-row">
                                 <button class="theme-opt" data-preset="terminal" onclick="applyPreset('terminal')" style="flex:1;">
                                     <div style="font-size:0.8rem;font-weight:700;margin-bottom:2px;">Terminal</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">Dark blue · Sidebar · Default fonts</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Dark blue · Sidebar</div>
                                 </button>
                                 <button class="theme-opt" data-preset="tactical" onclick="applyPreset('tactical')" style="flex:1;">
                                     <div style="font-size:0.8rem;font-weight:700;margin-bottom:2px;">Tactical</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">Military green · Sharp · All mono</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Military · Sharp</div>
                                 </button>
                                 <button class="theme-opt" data-preset="clean" onclick="applyPreset('clean')" style="flex:1;">
                                     <div style="font-size:0.8rem;font-weight:700;margin-bottom:2px;">Clean</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">Purple dusk · Top nav · Pill corners</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Dusk · Top nav</div>
                                 </button>
                                 <button class="theme-opt" data-preset="neon" onclick="applyPreset('neon')" style="flex:1;">
                                     <div style="font-size:0.8rem;font-weight:700;margin-bottom:2px;">Neon</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">Pure black · High contrast · Mono</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Black · High contrast</div>
+                                </button>
+                                <button class="theme-opt" data-preset="custom" onclick="applyPreset('custom')" style="flex:1;">
+                                    <div style="font-size:0.8rem;font-weight:700;margin-bottom:2px;">Custom</div>
+                                    <div style="font-size:0.68rem;color:var(--muted);">Mix and match</div>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Colour palette -->
-                        <div class="card" style="padding:1.25rem;">
-                            <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Colour Palette</h3>
-                            <div class="theme-row">
-                                <button class="theme-opt" data-theme-prop="palette" data-theme-val="arc" onclick="setThemeProp('palette','arc')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#06b6d4;"></span>Arc Blue</span></button>
-                                <button class="theme-opt" data-theme-prop="palette" data-theme-val="tactical" onclick="setThemeProp('palette','tactical')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#8db842;"></span>Tactical</span></button>
-                                <button class="theme-opt" data-theme-prop="palette" data-theme-val="slate" onclick="setThemeProp('palette','slate')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#818cf8;"></span>Slate</span></button>
-                                <button class="theme-opt" data-theme-prop="palette" data-theme-val="neon" onclick="setThemeProp('palette','neon')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#00ffcc;"></span>Neon</span></button>
-                                <button class="theme-opt" data-theme-prop="palette" data-theme-val="dusk" onclick="setThemeProp('palette','dusk')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#c084fc;"></span>Dusk</span></button>
-                                <button class="theme-opt" data-theme-prop="palette" data-theme-val="ash" onclick="setThemeProp('palette','ash')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#d0d0d0;"></span>Ash</span></button>
-                            </div>
-                        </div>
+                        <!-- Custom controls — only visible when Custom is selected -->
+                        <div id="customThemeControls" style="display:none;flex-direction:column;gap:1.25rem;">
 
-                        <!-- Fonts -->
-                        <div class="card" style="padding:1.25rem;">
-                            <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Font Pair</h3>
-                            <div class="theme-row">
-                                <button class="theme-opt" data-theme-prop="fonts" data-theme-val="default" onclick="setThemeProp('fonts','default')" style="flex:1;">
-                                    <div style="font-size:0.8rem;font-weight:700;">Outfit + JetBrains</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">UI sans + mono data</div>
-                                </button>
-                                <button class="theme-opt" data-theme-prop="fonts" data-theme-val="allMono" onclick="setThemeProp('fonts','allMono')" style="flex:1;">
-                                    <div style="font-size:0.8rem;font-weight:700;font-family:'JetBrains Mono',monospace;">All Monospace</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">JetBrains Mono throughout</div>
-                                </button>
-                                <button class="theme-opt" data-theme-prop="fonts" data-theme-val="modern" onclick="setThemeProp('fonts','modern')" style="flex:1;">
-                                    <div style="font-size:0.8rem;font-weight:700;font-family:'Inter',sans-serif;">Inter + Fira Code</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">Clean UI + code font</div>
-                                </button>
+                            <div class="card" style="padding:1.25rem;">
+                                <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Colour Palette</h3>
+                                <div class="theme-row">
+                                    <button class="theme-opt" data-theme-prop="palette" data-theme-val="arc" onclick="setThemeProp('palette','arc')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#06b6d4;"></span>Arc Blue</span></button>
+                                    <button class="theme-opt" data-theme-prop="palette" data-theme-val="tactical" onclick="setThemeProp('palette','tactical')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#8db842;"></span>Tactical</span></button>
+                                    <button class="theme-opt" data-theme-prop="palette" data-theme-val="slate" onclick="setThemeProp('palette','slate')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#818cf8;"></span>Slate</span></button>
+                                    <button class="theme-opt" data-theme-prop="palette" data-theme-val="neon" onclick="setThemeProp('palette','neon')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#00ffcc;"></span>Neon</span></button>
+                                    <button class="theme-opt" data-theme-prop="palette" data-theme-val="dusk" onclick="setThemeProp('palette','dusk')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#c084fc;"></span>Dusk</span></button>
+                                    <button class="theme-opt" data-theme-prop="palette" data-theme-val="ash" onclick="setThemeProp('palette','ash')"><span style="display:flex;align-items:center;gap:6px;"><span class="theme-swatch" style="background:#d0d0d0;"></span>Ash</span></button>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Density -->
-                        <div class="card" style="padding:1.25rem;">
-                            <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Density</h3>
-                            <div class="theme-row">
-                                <button class="theme-opt" data-theme-prop="density" data-theme-val="comfortable" onclick="setThemeProp('density','comfortable')" style="flex:1;">
-                                    <div style="font-size:0.8rem;font-weight:700;">Comfortable</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">More padding, easier to read</div>
-                                </button>
-                                <button class="theme-opt" data-theme-prop="density" data-theme-val="compact" onclick="setThemeProp('density','compact')" style="flex:1;">
-                                    <div style="font-size:0.8rem;font-weight:700;">Compact</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">Tighter rows, more on screen</div>
-                                </button>
+                            <div class="card" style="padding:1.25rem;">
+                                <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Font Pair</h3>
+                                <div class="theme-row">
+                                    <button class="theme-opt" data-theme-prop="fonts" data-theme-val="default" onclick="setThemeProp('fonts','default')" style="flex:1;">
+                                        <div style="font-size:0.8rem;font-weight:700;">Outfit + JetBrains</div>
+                                        <div style="font-size:0.68rem;color:var(--muted);">UI sans + mono data</div>
+                                    </button>
+                                    <button class="theme-opt" data-theme-prop="fonts" data-theme-val="allMono" onclick="setThemeProp('fonts','allMono')" style="flex:1;">
+                                        <div style="font-size:0.8rem;font-weight:700;font-family:'JetBrains Mono',monospace;">All Monospace</div>
+                                        <div style="font-size:0.68rem;color:var(--muted);">JetBrains Mono throughout</div>
+                                    </button>
+                                    <button class="theme-opt" data-theme-prop="fonts" data-theme-val="modern" onclick="setThemeProp('fonts','modern')" style="flex:1;">
+                                        <div style="font-size:0.8rem;font-weight:700;font-family:'Inter',sans-serif;">Inter + Fira Code</div>
+                                        <div style="font-size:0.68rem;color:var(--muted);">Clean UI + code font</div>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Border style -->
-                        <div class="card" style="padding:1.25rem;">
-                            <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Border Style</h3>
-                            <div class="theme-row">
-                                <button class="theme-opt" data-theme-prop="borders" data-theme-val="rounded" onclick="setThemeProp('borders','rounded')" style="flex:1;border-radius:8px;">
-                                    <div style="font-size:0.8rem;font-weight:700;">Rounded</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">Soft corners</div>
-                                </button>
-                                <button class="theme-opt" data-theme-prop="borders" data-theme-val="sharp" onclick="setThemeProp('borders','sharp')" style="flex:1;border-radius:2px;">
-                                    <div style="font-size:0.8rem;font-weight:700;">Sharp</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">Square edges</div>
-                                </button>
-                                <button class="theme-opt" data-theme-prop="borders" data-theme-val="pill" onclick="setThemeProp('borders','pill')" style="flex:1;border-radius:999px;">
-                                    <div style="font-size:0.8rem;font-weight:700;">Pill</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">Fully rounded buttons</div>
-                                </button>
+                            <div class="card" style="padding:1.25rem;">
+                                <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Density</h3>
+                                <div class="theme-row">
+                                    <button class="theme-opt" data-theme-prop="density" data-theme-val="comfortable" onclick="setThemeProp('density','comfortable')" style="flex:1;">
+                                        <div style="font-size:0.8rem;font-weight:700;">Comfortable</div>
+                                        <div style="font-size:0.68rem;color:var(--muted);">More padding, easier to read</div>
+                                    </button>
+                                    <button class="theme-opt" data-theme-prop="density" data-theme-val="compact" onclick="setThemeProp('density','compact')" style="flex:1;">
+                                        <div style="font-size:0.8rem;font-weight:700;">Compact</div>
+                                        <div style="font-size:0.68rem;color:var(--muted);">Tighter rows, more on screen</div>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Navigation -->
-                        <div class="card" style="padding:1.25rem;">
-                            <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Navigation</h3>
-                            <div class="theme-row">
-                                <button class="theme-opt" data-theme-prop="nav" data-theme-val="sidebar" onclick="setThemeProp('nav','sidebar')" style="flex:1;">
-                                    <div style="font-size:0.8rem;font-weight:700;">Sidebar</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">Icon nav on the left</div>
-                                </button>
-                                <button class="theme-opt" data-theme-prop="nav" data-theme-val="topnav" onclick="setThemeProp('nav','topnav')" style="flex:1;">
-                                    <div style="font-size:0.8rem;font-weight:700;">Top Bar</div>
-                                    <div style="font-size:0.68rem;color:var(--muted);">Horizontal tab bar</div>
-                                </button>
+                            <div class="card" style="padding:1.25rem;">
+                                <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Border Style</h3>
+                                <div class="theme-row">
+                                    <button class="theme-opt" data-theme-prop="borders" data-theme-val="rounded" onclick="setThemeProp('borders','rounded')" style="flex:1;border-radius:8px;">
+                                        <div style="font-size:0.8rem;font-weight:700;">Rounded</div>
+                                        <div style="font-size:0.68rem;color:var(--muted);">Soft corners</div>
+                                    </button>
+                                    <button class="theme-opt" data-theme-prop="borders" data-theme-val="sharp" onclick="setThemeProp('borders','sharp')" style="flex:1;border-radius:2px;">
+                                        <div style="font-size:0.8rem;font-weight:700;">Sharp</div>
+                                        <div style="font-size:0.68rem;color:var(--muted);">Square edges</div>
+                                    </button>
+                                    <button class="theme-opt" data-theme-prop="borders" data-theme-val="pill" onclick="setThemeProp('borders','pill')" style="flex:1;border-radius:999px;">
+                                        <div style="font-size:0.8rem;font-weight:700;">Pill</div>
+                                        <div style="font-size:0.68rem;color:var(--muted);">Fully rounded buttons</div>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+
+                            <div class="card" style="padding:1.25rem;">
+                                <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Navigation</h3>
+                                <div class="theme-row">
+                                    <button class="theme-opt" data-theme-prop="nav" data-theme-val="sidebar" onclick="setThemeProp('nav','sidebar')" style="flex:1;">
+                                        <div style="font-size:0.8rem;font-weight:700;">Sidebar</div>
+                                        <div style="font-size:0.68rem;color:var(--muted);">Icon nav on the left</div>
+                                    </button>
+                                    <button class="theme-opt" data-theme-prop="nav" data-theme-val="topnav" onclick="setThemeProp('nav','topnav')" style="flex:1;">
+                                        <div style="font-size:0.8rem;font-weight:700;">Top Bar</div>
+                                        <div style="font-size:0.68rem;color:var(--muted);">Horizontal tab bar</div>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div><!-- end customThemeControls -->
 
                         <!-- Apply -->
-                        <div style="position:sticky;bottom:1rem;display:flex;justify-content:center;">
+                        <div style="display:flex;justify-content:center;padding-bottom:1rem;">
                             <button id="themeApplyBtn" class="btn btn-cyan" onclick="applyPendingTheme()" style="padding:12px 48px;font-size:0.85rem;opacity:0.45;">Applied</button>
                         </div>
 
                     </div>
                 </div>
+
+            </div>
+        </main>
     </div>
     <datalist id="itemOptions"></datalist>
     <script type="module" src="./src/app.js"></script>
