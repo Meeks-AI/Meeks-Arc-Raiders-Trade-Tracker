@@ -4,6 +4,7 @@ export const LOCAL_METAFORGE_QUESTS_URL = './data/metaforge-quests.json';
 
 export const ACTIONS = Object.freeze({
   INITIAL: 'INITIAL',
+  STOCK_INIT: 'STOCK_INIT',
   RECOVERY: 'RECOVERY',
   PURCHASE: 'PURCHASE',
   SELL: 'SELL',
@@ -15,6 +16,13 @@ export const ACTIONS = Object.freeze({
   SESSION_START: 'SESSION_START',
 });
 
+export const SOURCES = Object.freeze({
+  LOOTED: 'LOOTED',
+  BUY: 'BUY',
+  TRADE: 'TRADE',
+  SYS: 'SYS',
+});
+
 export const STORAGE_PREFIX = 'arc_trade_tracker_v1';
 
 export const STORAGE_KEYS = Object.freeze({
@@ -24,4 +32,5 @@ export const STORAGE_KEYS = Object.freeze({
   audit: `${STORAGE_PREFIX}_audit`,
   liquidSeeds: `${STORAGE_PREFIX}_liquid_seeds`,
   allowCustomItems: `${STORAGE_PREFIX}_allow_custom_items`,
+  staleThresholdDays: `${STORAGE_PREFIX}_stale_threshold_days`,
 });
