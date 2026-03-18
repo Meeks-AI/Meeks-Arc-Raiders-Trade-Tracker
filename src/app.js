@@ -209,39 +209,52 @@ function render() {
     return acc;
   }, {});
 
-  Object.values(grouped)
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .forEach((g, i) => {
-      const myMedian = priceCache[g.name] || null;
-      assetValuation += (myMedian ?? g.cost) * g.count;
-      if (searchQuery && !g.name.toLowerCase().includes(searchQuery)) return;
+  const sortedGroups = Object.values(grouped).sort((a, b) => a.name.localeCompare(b.name));
+  const blueprints = sortedGroups.filter((g) => apiItems.find((i) => i.name === g.name)?.item_type === 'Blueprint');
+  const general = sortedGroups.filter((g) => apiItems.find((i) => i.name === g.name)?.item_type !== 'Blueprint');
 
-      const safeId = `item-${i}`;
-      const tag = g.source === SOURCES.LOOTED ? 'tag-looted' : g.source === SOURCES.TRADE ? 'tag-trade' : 'tag-buy';
-      const tagLabel = g.source === SOURCES.LOOTED ? 'Looted' : g.source === SOURCES.TRADE ? 'Trade' : 'Bought';
+  function renderGroupRow(g, i) {
+    const myMedian = priceCache[g.name] || null;
+    assetValuation += (myMedian ?? g.cost) * g.count;
+    if (searchQuery && !g.name.toLowerCase().includes(searchQuery)) return;
 
-      const demandQuests = questDemandMap[g.name];
-      const questBadge = demandQuests ? `<span class="quest-badge" title="Needed for: ${demandQuests.join(', ')}">Q</span>` : '';
+    const safeId = `item-${i}`;
+    const tag = g.source === SOURCES.LOOTED ? 'tag-looted' : g.source === SOURCES.TRADE ? 'tag-trade' : 'tag-buy';
+    const tagLabel = g.source === SOURCES.LOOTED ? 'Looted' : g.source === SOURCES.TRADE ? 'Trade' : 'Bought';
+    const demandQuests = questDemandMap[g.name];
+    const questBadge = demandQuests ? `<span class="quest-badge" title="Needed for: ${demandQuests.join(', ')}">Q</span>` : '';
+    const ageCol = staleColor(g.oldestAddedAt);
+    const rowStyle = ageCol ? `border-left:3px solid ${ageCol};` : '';
+    const ageTitle = g.oldestAddedAt ? `Held for ${Math.floor((Date.now() - g.oldestAddedAt) / 86400000)}d (oldest unit)` : '';
 
-      const ageCol = staleColor(g.oldestAddedAt);
-      const rowStyle = ageCol ? `border-left:3px solid ${ageCol};` : '';
-      const ageTitle = g.oldestAddedAt ? `Held for ${Math.floor((Date.now() - g.oldestAddedAt) / 86400000)}d (oldest unit)` : '';
+    invBody.innerHTML += `<tr style="${rowStyle}" ${ageTitle ? `title="${ageTitle}"` : ''}>
+      <td><div style="display:flex;align-items:center;gap:8px;">${itemIcon(g.name, 28)}<span class="font-mono font-semibold">${g.name}</span>${questBadge}</div></td>
+      <td><span class="tag ${tag}">${tagLabel}</span></td>
+      <td class="font-mono">×${g.count}</td>
+      <td class="font-mono" style="color:var(--muted)">${Math.floor(g.cost).toLocaleString()}</td>
+      <td class="font-mono" style="${myMedian ? 'color:var(--cyan)' : 'color:var(--muted)'}">${myMedian ? Math.floor(myMedian).toLocaleString() : '—'}</td>
+      <td style="text-align:right;white-space:nowrap;">
+        <input type="number" id="q-${safeId}" value="1" min="1" max="${g.count}" style="width:52px;padding:6px;margin-right:2px;display:inline-block">
+        <input type="number" id="p-${safeId}" placeholder="Price" style="width:80px;padding:6px;margin-right:4px;display:inline-block">
+        <button class="btn btn-sell" onclick="sellX('${g.name.replace(/'/g, "\\'")}', '${g.source}', ${g.cost}, '${safeId}')">Sell</button>
+        <button class="btn btn-ghost" style="padding:6px 10px;font-size:0.7rem;color:var(--amber)" title="Sell entire stack" onclick="sellAll('${g.name.replace(/'/g, "\\'")}', '${g.source}', ${g.cost}, '${safeId}')">All</button>
+      </td>
+    </tr>`;
+    barterSelect.innerHTML += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${tagLabel}] ×${g.count}</option>`;
+  }
 
-      invBody.innerHTML += `<tr style="${rowStyle}" ${ageTitle ? `title="${ageTitle}"` : ''}>
-        <td><div style="display:flex;align-items:center;gap:8px;">${itemIcon(g.name, 28)}<span class="font-mono font-semibold">${g.name}</span>${questBadge}</div></td>
-        <td><span class="tag ${tag}">${tagLabel}</span></td>
-        <td class="font-mono">×${g.count}</td>
-        <td class="font-mono" style="color:var(--muted)">${Math.floor(g.cost).toLocaleString()}</td>
-        <td class="font-mono ${myMedian ? '' : ''}" style="${myMedian ? 'color:var(--cyan)' : 'color:var(--muted)'}">${myMedian ? Math.floor(myMedian).toLocaleString() : '—'}</td>
-        <td style="text-align:right;white-space:nowrap;">
-          <input type="number" id="q-${safeId}" value="1" min="1" max="${g.count}" style="width:52px;padding:6px;margin-right:2px;display:inline-block">
-          <input type="number" id="p-${safeId}" placeholder="Price" style="width:80px;padding:6px;margin-right:4px;display:inline-block">
-          <button class="btn btn-sell" onclick="sellX('${g.name.replace(/'/g, "\\'")}', '${g.source}', ${g.cost}, '${safeId}')">Sell</button>
-          <button class="btn btn-ghost" style="padding:6px 10px;font-size:0.7rem;color:var(--amber)" title="Sell entire stack — auto-fills your median price if available" onclick="sellAll('${g.name.replace(/'/g, "\\'")}', '${g.source}', ${g.cost}, '${safeId}')">All</button>
-        </td>
-      </tr>`;
-      barterSelect.innerHTML += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${tagLabel}] ×${g.count}</option>`;
-    });
+  function sectionHeader(label, count) {
+    invBody.innerHTML += `<tr class="warehouse-section-header"><td colspan="6"><span>${label}</span><span style="color:var(--muted);font-weight:400;margin-left:0.5rem;">${count} item${count !== 1 ? 's' : ''}</span></td></tr>`;
+  }
+
+  if (general.length > 0) {
+    sectionHeader('General', general.length);
+    general.forEach((g, i) => renderGroupRow(g, i));
+  }
+  if (blueprints.length > 0) {
+    sectionHeader('Blueprints', blueprints.length);
+    blueprints.forEach((g, i) => renderGroupRow(g, general.length + i));
+  }
 
   const totalSessions = audit.filter((e) => e.action === ACTIONS.SESSION_START).length;
   let sessionCounter = totalSessions;
@@ -294,7 +307,7 @@ function render() {
 
   document.getElementById('liquidDisplay').textContent = Math.floor(liquidSeeds).toLocaleString();
   document.getElementById('assetValuation').textContent = Math.floor(assetValuation).toLocaleString();
-  document.getElementById('netWorth').textContent = Math.floor(liquidSeeds + assetValuation).toLocaleString();
+  document.getElementById('netWorth').textContent = '~' + Math.floor(liquidSeeds + assetValuation).toLocaleString();
   document.getElementById('totalProfit').textContent = Math.floor(totalProfit).toLocaleString();
   document.getElementById('invCount').textContent = stock.length;
 
@@ -327,6 +340,13 @@ function massIngest() {
     const rawName = line.replace(/\d+/, '').trim();
     if (!rawName) return;
     const qty = nums ? parseInt(nums[0], 10) : 1;
+    const lower = rawName.toLowerCase();
+    // Treat any seeds item as liquid currency
+    if (lower === 'assorted seeds' || lower === 'raw seeds' || lower === 'seeds') {
+      liquidSeeds += qty;
+      audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.CURRENCY, name: rawName, qty: 1, price: qty, cost: 0, source: SOURCES.LOOTED, revertData: { deltaLiquid: -qty } });
+      return;
+    }
     const text = validateItemName(rawName);
     if (!text) return;
     const now = Date.now();
@@ -595,15 +615,16 @@ function generateRandomHistory() {
 function renderAnalytics() {
   const flipBody = document.getElementById('topFlipBody');
   const lootBody = document.getElementById('topLootBody');
-  const perBody = document.getElementById('perItemStatsBody');
+  const perLootBody = document.getElementById('perItemLootBody');
+  const perBuyBody = document.getElementById('perItemBuyBody');
   const sessionsBody = document.getElementById('sessionsBody');
-  const questsBody = document.getElementById('questsBody');
-  if (!flipBody || !lootBody || !perBody || !sessionsBody) return;
+  if (!flipBody || !lootBody || !perLootBody || !perBuyBody || !sessionsBody) return;
 
-  flipBody.innerHTML = ''; lootBody.innerHTML = ''; perBody.innerHTML = ''; sessionsBody.innerHTML = '';
+  flipBody.innerHTML = ''; lootBody.innerHTML = '';
+  perLootBody.innerHTML = ''; perBuyBody.innerHTML = '';
+  sessionsBody.innerHTML = '';
 
   const valid = audit.filter((l) => ![ACTIONS.VOID, ACTIONS.REVERTED].includes(l.action));
-  const heldNames = new Set(stock.map((s) => s.name));
 
   const stats = valid.reduce((acc, l) => {
     if (l.action !== ACTIONS.SELL) return acc;
@@ -615,29 +636,42 @@ function renderAnalytics() {
     return acc;
   }, {});
 
+  // Top profit summaries
   Object.entries(stats).sort((a, b) => b[1].profit - a[1].profit).forEach(([name, s]) => {
     const icon = itemIcon(name, 20);
     const row = `<tr><td><div style="display:flex;align-items:center;gap:6px;">${icon}<span>${name}</span></div></td><td style="text-align:right;color:var(--emerald);font-weight:600">+${Math.floor(s.profit).toLocaleString()}</td></tr>`;
     if (s.isLooted) lootBody.innerHTML += row; else flipBody.innerHTML += row;
   });
 
-  Object.entries(stats).sort((a, b) => b[1].profit - a[1].profit).forEach(([name, s]) => {
-    const avgP = s.qty ? s.revenue / s.qty : 0;
-    const avgC = s.qty ? s.costBasis / s.qty : 0;
-    const roi = s.costBasis > 0 ? `${((s.profit / s.costBasis) * 100).toFixed(0)}%` : '—';
-    const roiStyle = s.costBasis > 0 ? (s.profit >= 0 ? 'color:var(--emerald)' : 'color:var(--rose)') : 'color:var(--muted)';
-    const safeName = name.replace(/'/g, "\\'");
-    perBody.innerHTML += `<tr>
-      <td style="cursor:pointer" onclick="showPriceHistory('${safeName}')"><div style="display:flex;align-items:center;gap:6px;">${itemIcon(name, 20)}<span style="color:var(--cyan);text-decoration:underline dotted;">${name}</span></div></td>
-      <td style="text-align:right">${s.qty}</td>
-      <td style="text-align:right" class="font-mono">${Math.floor(s.revenue).toLocaleString()}</td>
-      <td style="text-align:right" class="font-mono">${Math.floor(avgP).toLocaleString()}</td>
-      <td style="text-align:right;color:var(--muted)" class="font-mono">${Math.floor(avgC).toLocaleString()}</td>
-      <td style="text-align:right;color:var(--emerald);font-weight:600">+${Math.floor(s.profit).toLocaleString()}</td>
-      <td style="text-align:right;${roiStyle}" class="font-mono">${roi}</td>
-    </tr>`;
-  });
+  // Per-item stats table builder
+  function buildPerItemRows(entries, tbody) {
+    if (entries.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:1.5rem;font-size:0.85rem;">No sales recorded yet</td></tr>`;
+      return;
+    }
+    entries.forEach(([name, s]) => {
+      const avgP = s.qty ? s.revenue / s.qty : 0;
+      const avgC = s.qty ? s.costBasis / s.qty : 0;
+      const roi = s.costBasis > 0 ? `${((s.profit / s.costBasis) * 100).toFixed(0)}%` : '—';
+      const roiStyle = s.costBasis > 0 ? (s.profit >= 0 ? 'color:var(--emerald)' : 'color:var(--rose)') : 'color:var(--muted)';
+      const safeName = name.replace(/'/g, "\\'");
+      tbody.innerHTML += `<tr>
+        <td style="cursor:pointer" onclick="showPriceHistory('${safeName}')"><div style="display:flex;align-items:center;gap:6px;">${itemIcon(name, 20)}<span style="color:var(--cyan);text-decoration:underline dotted;">${name}</span></div></td>
+        <td style="text-align:right">${s.qty}</td>
+        <td style="text-align:right" class="font-mono">${Math.floor(s.revenue).toLocaleString()}</td>
+        <td style="text-align:right" class="font-mono">${Math.floor(avgP).toLocaleString()}</td>
+        <td style="text-align:right;color:var(--muted)" class="font-mono">${Math.floor(avgC).toLocaleString()}</td>
+        <td style="text-align:right;color:var(--emerald);font-weight:600">+${Math.floor(s.profit).toLocaleString()}</td>
+        <td style="text-align:right;${roiStyle}" class="font-mono">${roi}</td>
+      </tr>`;
+    });
+  }
 
+  const sorted = Object.entries(stats).sort((a, b) => b[1].profit - a[1].profit);
+  buildPerItemRows(sorted.filter(([, s]) => s.isLooted), perLootBody);
+  buildPerItemRows(sorted.filter(([, s]) => !s.isLooted), perBuyBody);
+
+  // Session history
   const sortedAudit = [...valid].sort((a, b) => a.ts - b.ts);
   const sessions = [];
   let current = null;
@@ -664,41 +698,6 @@ function renderAnalytics() {
         <td style="text-align:right;font-weight:600;${sellProfit >= 0 ? 'color:var(--emerald)' : 'color:var(--rose)'}" class="font-mono">${sellProfit > 0 ? '+' : ''}${Math.floor(sellProfit).toLocaleString()}</td>
       </tr>`;
     });
-  }
-
-  if (questsBody) {
-    questsBody.innerHTML = '';
-    if (quests.length === 0) {
-      questsBody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem;font-size:0.85rem;">Quest data not loaded — run the Sync Action to fetch quests</td></tr>`;
-    } else {
-      const byTrader = quests.reduce((acc, q) => { const t = q.trader_name || 'Unknown'; if (!acc[t]) acc[t] = []; acc[t].push(q); return acc; }, {});
-      Object.entries(byTrader).sort((a, b) => a[0].localeCompare(b[0])).forEach(([trader, qs]) => {
-        questsBody.innerHTML += `<tr><td colspan="4" style="background:rgba(6,182,212,0.08);color:var(--cyan);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:5px 16px;border-top:1px solid rgba(6,182,212,0.2);">${trader}</td></tr>`;
-        qs.forEach((q) => {
-          const reqItems = q.required_items || [];
-          const rewardItems = q.rewards || [];
-          const reqHtml = reqItems.length === 0 ? '<span style="color:var(--muted);font-size:0.75rem;">—</span>' : reqItems.map((ri) => {
-            const held = heldNames.has(ri.item?.name);
-            const heldCount = stock.filter((s) => s.name === ri.item?.name).length;
-            const qty = ri.quantity || 1;
-            const enough = heldCount >= qty;
-            const color = held ? (enough ? 'var(--emerald)' : 'var(--amber)') : 'var(--muted)';
-            const icon = ri.item?.icon ? `<img src="${ri.item.icon}" width="16" height="16" style="border-radius:3px;object-fit:contain;background:var(--bg-3);vertical-align:middle;margin-right:3px;" loading="lazy">` : '';
-            return `<span style="display:inline-flex;align-items:center;margin-right:6px;color:${color};font-size:0.75rem;">${icon}${ri.item?.name || '?'} ×${qty}${held ? ` <span style="font-size:0.65rem;margin-left:2px;">(${heldCount})</span>` : ''}</span>`;
-          }).join('');
-          const rewardHtml = rewardItems.length === 0 ? '<span style="color:var(--muted);font-size:0.75rem;">—</span>' : rewardItems.slice(0, 4).map((ri) => {
-            const icon = ri.item?.icon ? `<img src="${ri.item.icon}" width="16" height="16" style="border-radius:3px;object-fit:contain;background:var(--bg-3);vertical-align:middle;margin-right:3px;" loading="lazy">` : '';
-            return `<span style="display:inline-flex;align-items:center;margin-right:6px;color:var(--text-dim);font-size:0.75rem;">${icon}${ri.item?.name || '?'} ×${ri.quantity || 1}</span>`;
-          }).join('') + (rewardItems.length > 4 ? `<span style="color:var(--muted);font-size:0.7rem;">+${rewardItems.length - 4} more</span>` : '');
-          questsBody.innerHTML += `<tr>
-            <td><div style="display:flex;align-items:center;gap:8px;">${q.image ? `<img src="${q.image}" width="32" height="32" style="border-radius:6px;object-fit:cover;flex-shrink:0;" loading="lazy" onerror="this.style.display='none'">` : ''}<span style="font-weight:600;font-size:0.85rem;">${q.name}</span></div></td>
-            <td style="font-size:0.75rem;color:var(--muted);max-width:220px;">${(q.objectives || []).slice(0, 2).join(' · ')}</td>
-            <td>${reqHtml}</td>
-            <td>${rewardHtml}</td>
-          </tr>`;
-        });
-      });
-    }
   }
 
   buildNetWorthChart();
