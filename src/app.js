@@ -1340,10 +1340,9 @@ function applyTheme(t) {
   root.style.setProperty('--rose', p.rose);
   root.style.setProperty('--theme-glow', p.glow);
 
-  // Fonts
+  // Fonts — via CSS var only, no inline body style
   root.style.setProperty('--font-ui', f.ui);
   root.style.setProperty('--font-mono', f.mono);
-  document.body.style.fontFamily = f.ui;
 
   // Density
   root.style.setProperty('--td-padding', d.tdPadding);
@@ -1357,7 +1356,11 @@ function applyTheme(t) {
   root.style.setProperty('--radius-input', b.input);
   root.style.setProperty('--radius-tag', b.tag);
 
-  // Nav layout
+  // Background — via CSS var, body rule uses it
+  root.style.setProperty('--body-bg-image',
+    `radial-gradient(ellipse 80% 50% at 50% -20%, ${p.glow}, transparent), linear-gradient(180deg, ${p.bg0} 0%, ${p.bg1} 100%)`);
+
+  // Nav layout — these are structural so inline is unavoidable, but they're symmetrical
   const sidebar = document.querySelector('.sidebar');
   const topnav = document.getElementById('topnav');
   const appEl = document.querySelector('.app');
@@ -1370,9 +1373,6 @@ function applyTheme(t) {
     if (topnav) topnav.style.display = 'none';
     if (appEl) appEl.style.flexDirection = '';
   }
-
-  // Background glow
-  document.body.style.backgroundImage = `radial-gradient(ellipse 80% 50% at 50% -20%, ${p.glow}, transparent), linear-gradient(180deg, ${p.bg0} 0%, ${p.bg1} 100%)`;
 
   // Update active states in theme UI
   updateThemeUI();
