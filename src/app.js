@@ -1248,6 +1248,8 @@ let currentTheme = JSON.parse(localStorage.getItem(STORAGE_KEYS.theme) || 'null'
 
 function applyTheme(t) {
   currentTheme = t;
+  pendingTheme = { ...t };
+  pendingPreset = Object.keys(PRESETS).find((k) => Object.keys(PRESETS[k]).every((p) => PRESETS[k][p] === t[p])) || 'custom';
   localStorage.setItem(STORAGE_KEYS.theme, JSON.stringify(t));
 
   const p = PALETTES[t.palette] || PALETTES.arc;
