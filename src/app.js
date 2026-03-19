@@ -243,7 +243,14 @@ function render() {
       <td><div style="display:flex;align-items:center;gap:8px;">${itemIcon(g.name, 28)}<span class="font-mono font-semibold">${g.name}</span>${questBadge}</div></td>
       <td><span class="tag ${tag}">${tagLabel}</span></td>
       <td class="font-mono">×${g.count}</td>
-      <td class="font-mono" style="color:var(--muted)">${(() => { const ss = stackMap[g.name] || 1; const slots = g.count / ss; return slots % 1 === 0 ? slots.toString() : slots.toFixed(1); })()}</td>
+      <td class="font-mono" style="color:var(--muted);font-size:0.78rem;">${(() => {
+        const ss = stackMap[g.name] || 1;
+        if (ss === 1) return `${g.count} (${g.count} slot${g.count !== 1 ? 's' : ''})`;
+        const full = Math.floor(g.count / ss);
+        const rem = g.count % ss;
+        if (rem === 0) return `${g.count} (${full}× stacks of ${ss})`;
+        return `${g.count} (${full}× stacks of ${ss}, +${rem})`;
+      })()}</td>
       <td class="font-mono" style="color:var(--muted)">${Math.floor(g.cost).toLocaleString()}</td>
       <td class="font-mono" style="${myMedian ? 'color:var(--cyan)' : 'color:var(--muted)'}">${myMedian ? Math.floor(myMedian).toLocaleString() : '—'}</td>
       <td style="text-align:right;white-space:nowrap;">
