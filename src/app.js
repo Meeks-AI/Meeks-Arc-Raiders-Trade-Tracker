@@ -171,6 +171,8 @@ function switchTab(t) {
   document.getElementById(`view-${t}`)?.classList.add('active');
   document.getElementById(`nav-${t}`)?.classList.add('active');
   document.getElementById(`topnav-${t}`)?.classList.add('active');
+  const content = document.querySelector('.content');
+  if (content) content.scrollTop = 0;
   if (t === 'analytics') renderAnalytics();
   if (t === 'comms') renderCommsTab();
   if (t === 'themes') updateThemeUI();
