@@ -565,7 +565,7 @@ function setStaleThreshold() {
 // ─── Random history ───────────────────────────────────────────────────────────
 function generateRandomHistory() {
   if (tradeItems.length === 0) return;
-  if (!confirm('Replace all data with random test history?')) return;
+  if (!confirm('Add a random raid session to existing history?')) return;
 
   function pick(arr, n) {
     const a = [...arr];
@@ -573,65 +573,108 @@ function generateRandomHistory() {
     return a.slice(0, n);
   }
   function randInt(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
-  function randPrice(item) {
-    const base = item.value || 100;
-    return randInt(Math.max(1, Math.floor(base * 0.75)), Math.floor(base * 1.25));
+  function weighted(options) { // [{val, weight}]
+    const total = options.reduce((s, o) => s + o.weight, 0);
+    let r = Math.random() * total;
+    for (const o of options) { r -= o.weight; if (r <= 0) return o.val; }
+    return options[options.length - 1].val;
   }
 
-  const now = Date.now(), day = 86400000;
-  const ts = (d) => now - (7 - d) * day - Math.random() * day;
-
-  const lootPool = pick(tradeItems, 6);
-  const buyItemObj = pick(tradeItems.filter((i) => !lootPool.includes(i)), 1)[0];
-  const sellItemObj = lootPool[Math.floor(Math.random() * lootPool.length)];
-
-  audit = []; stock = []; liquidSeeds = 50000;
-  audit.push({ id: genId(), ts: ts(0), action: ACTIONS.INITIAL, name: 'Starting Capital', qty: 1, price: 50000, cost: 0, source: SOURCES.SYS });
-  audit.push({ id: genId(), ts: ts(0) + 1000, action: ACTIONS.SESSION_START, name: 'Session Start', qty: 1, price: 0, cost: 0, source: SOURCES.SYS });
-
-  lootPool.slice(0, 3).forEach((item, d) => {
-    const qty = randInt(1, 4);
-    for (let i = 0; i < qty; i++) stock.push({ name: item.name, cost: 0, source: SOURCES.LOOTED, addedAt: ts(d + 1) });
-    audit.push({ id: genId(), ts: ts(d + 1), action: ACTIONS.RECOVERY, name: item.name, qty, price: 0, cost: 0, source: SOURCES.LOOTED, revertData: { removeStock: [{ name: item.name, source: SOURCES.LOOTED, cost: 0, qty }] } });
-  });
-
-  audit.push({ id: genId(), ts: ts(3), action: ACTIONS.SESSION_START, name: 'Session Start', qty: 1, price: 0, cost: 0, source: SOURCES.SYS });
-
-  lootPool.slice(3).forEach((item, d) => {
-    const qty = randInt(1, 4);
-    for (let i = 0; i < qty; i++) stock.push({ name: item.name, cost: 0, source: SOURCES.LOOTED, addedAt: ts(d + 3) });
-    audit.push({ id: genId(), ts: ts(d + 3), action: ACTIONS.RECOVERY, name: item.name, qty, price: 0, cost: 0, source: SOURCES.LOOTED, revertData: { removeStock: [{ name: item.name, source: SOURCES.LOOTED, cost: 0, qty }] } });
-  });
-
-  const costPer = randPrice(buyItemObj), bq = randInt(1, 3);
-  liquidSeeds -= costPer * bq;
-  for (let i = 0; i < bq; i++) stock.push({ name: buyItemObj.name, cost: costPer, source: SOURCES.BUY, addedAt: ts(4) });
-  audit.push({ id: genId(), ts: ts(4), action: ACTIONS.PURCHASE, name: buyItemObj.name, qty: bq, price: costPer, cost: costPer, source: SOURCES.BUY, revertData: { deltaLiquid: costPer * bq, removeStock: { name: buyItemObj.name, source: SOURCES.BUY, cost: costPer, qty: bq } } });
-
-  const sellPrice = randPrice(sellItemObj);
-  const sellQty = Math.min(randInt(1, 3), stock.filter((s) => s.name === sellItemObj.name).length) || 1;
-  let removed = 0;
-  for (let i = stock.length - 1; i >= 0 && removed < sellQty; i--) {
-    if (stock[i].name === sellItemObj.name && stock[i].source === SOURCES.LOOTED) { stock.splice(i, 1); removed++; }
+  function realisticSellPrice(item) {
+    const isBlueprint = item.item_type === 'Blueprint';
+    if (isBlueprint) return randInt(1000, 2000);
+    // ~10% chance of low-value junk (1-15 seeds, usually high qty)
+    if (Math.random() < 0.10) return randInt(1, 15);
+    // Otherwise 50-150 seeds with slight variation
+    const base = randInt(50, 150);
+    return Math.round(base * (0.85 + Math.random() * 0.3));
   }
-  liquidSeeds += sellPrice * sellQty;
-  const ab = [];
-  for (let i = 0; i < sellQty; i++) ab.push({ name: sellItemObj.name, source: SOURCES.LOOTED, cost: 0 });
-  audit.push({ id: genId(), ts: ts(5), action: ACTIONS.SELL, name: sellItemObj.name, qty: sellQty, price: sellPrice, cost: 0, source: SOURCES.LOOTED, revertData: { deltaLiquid: -(sellPrice * sellQty), addStock: ab } });
 
-  if (stock.some((s) => s.name === sellItemObj.name && s.source === SOURCES.LOOTED)) {
-    const sp2 = randPrice(sellItemObj);
-    let r2 = 0;
-    for (let i = stock.length - 1; i >= 0 && r2 < 1; i--) {
-      if (stock[i].name === sellItemObj.name && stock[i].source === SOURCES.LOOTED) { stock.splice(i, 1); r2++; }
+  function realisticBuyPrice(item) {
+    const isBlueprint = item.item_type === 'Blueprint';
+    if (isBlueprint) return randInt(800, 1800);
+    if (Math.random() < 0.10) return randInt(5, 20);
+    return randInt(40, 130);
+  }
+
+  function realisticLootQty(item) {
+    const isBlueprint = item.item_type === 'Blueprint';
+    if (isBlueprint) return 1;
+    // Junk items come in bigger stacks
+    const price = realisticSellPrice(item);
+    if (price <= 15) return randInt(3, 12);
+    return randInt(1, 3);
+  }
+
+  // Split items into blueprints and general
+  const blueprints = tradeItems.filter((i) => i.item_type === 'Blueprint');
+  const general = tradeItems.filter((i) => i.item_type !== 'Blueprint');
+
+  const now = Date.now();
+  // Offset from most recent audit entry, or now minus a few days
+  const lastTs = audit.length ? Math.max(...audit.map((a) => a.ts)) : now - 7 * 86400000;
+  const sessionStart = lastTs + randInt(3600000, 28800000); // 1-8 hours after last entry
+  const ts = (offset) => sessionStart + offset * randInt(60000, 600000); // minutes apart
+
+  // Session start marker
+  audit.push({ id: genId(), ts: sessionStart, action: ACTIONS.SESSION_START, name: 'Session Start', qty: 1, price: 0, cost: 0, source: SOURCES.SYS });
+
+  // Pick loot: 2-5 general items, maybe 1 blueprint (25% chance)
+  const lootGeneral = pick(general, randInt(2, 5));
+  const lootBlueprint = blueprints.length > 0 && Math.random() < 0.25 ? pick(blueprints, 1) : [];
+  const lootPool = [...lootGeneral, ...lootBlueprint];
+
+  let step = 1;
+  lootPool.forEach((item) => {
+    const qty = realisticLootQty(item);
+    const t = ts(step++);
+    for (let i = 0; i < qty; i++) stock.push({ name: item.name, cost: 0, source: SOURCES.LOOTED, addedAt: t });
+    audit.push({ id: genId(), ts: t, action: ACTIONS.RECOVERY, name: item.name, qty, price: 0, cost: 0, source: SOURCES.LOOTED, revertData: { removeStock: [{ name: item.name, source: SOURCES.LOOTED, cost: 0, qty }] } });
+  });
+
+  // Random seeds found (50-400, weighted toward lower)
+  const seedsFound = weighted([
+    { val: randInt(50, 100), weight: 5 },
+    { val: randInt(100, 250), weight: 3 },
+    { val: randInt(250, 400), weight: 1 },
+  ]);
+  if (Math.random() < 0.7) { // not every raid has seeds
+    liquidSeeds += seedsFound;
+    audit.push({ id: genId(), ts: ts(step++), action: ACTIONS.CURRENCY, name: 'Assorted Seeds', qty: 1, price: seedsFound, cost: 0, source: SOURCES.LOOTED, revertData: { deltaLiquid: -seedsFound } });
+  }
+
+  // 50% chance of a purchase between sessions
+  if (general.length > 0 && Math.random() < 0.5) {
+    const available = general.filter((i) => !lootPool.includes(i));
+    if (available.length > 0) {
+      const buyItem = pick(available, 1)[0];
+      const bQty = randInt(1, 2);
+      const bCost = realisticBuyPrice(buyItem);
+      if (liquidSeeds >= bCost * bQty) {
+        liquidSeeds -= bCost * bQty;
+        const t = ts(step++);
+        for (let i = 0; i < bQty; i++) stock.push({ name: buyItem.name, cost: bCost, source: SOURCES.BUY, addedAt: t });
+        audit.push({ id: genId(), ts: t, action: ACTIONS.PURCHASE, name: buyItem.name, qty: bQty, price: bCost, cost: bCost, source: SOURCES.BUY, revertData: { deltaLiquid: bCost * bQty, removeStock: { name: buyItem.name, source: SOURCES.BUY, cost: bCost, qty: bQty } } });
+      }
     }
-    liquidSeeds += sp2;
-    audit.push({ id: genId(), ts: ts(6), action: ACTIONS.SELL, name: sellItemObj.name, qty: 1, price: sp2, cost: 0, source: SOURCES.LOOTED, revertData: { deltaLiquid: -sp2, addStock: [{ name: sellItemObj.name, source: SOURCES.LOOTED, cost: 0 }] } });
   }
 
-  const adj = randInt(-500, 500);
-  liquidSeeds += adj;
-  audit.push({ id: genId(), ts: ts(6) + 1000, action: ACTIONS.ADJUST, name: 'Manual Correction', qty: 1, price: adj, cost: 0, source: SOURCES.SYS, revertData: { deltaLiquid: -adj } });
+  // 60% chance of selling something from stock this session
+  const sellable = stock.filter((s) => s.source === SOURCES.LOOTED);
+  if (sellable.length > 0 && Math.random() < 0.6) {
+    const sellItem = sellable[Math.floor(Math.random() * sellable.length)];
+    const maxQty = stock.filter((s) => s.name === sellItem.name && s.source === SOURCES.LOOTED).length;
+    const sellQty = randInt(1, Math.min(maxQty, 3));
+    const sellPrice = realisticSellPrice(tradeItems.find((i) => i.name === sellItem.name) || { item_type: '' });
+    let removed = 0;
+    for (let i = stock.length - 1; i >= 0 && removed < sellQty; i--) {
+      if (stock[i].name === sellItem.name && stock[i].source === SOURCES.LOOTED) { stock.splice(i, 1); removed++; }
+    }
+    liquidSeeds += sellPrice * sellQty;
+    const addBack = Array.from({ length: sellQty }, () => ({ name: sellItem.name, source: SOURCES.LOOTED, cost: 0 }));
+    audit.push({ id: genId(), ts: ts(step++), action: ACTIONS.SELL, name: sellItem.name, qty: sellQty, price: sellPrice, cost: 0, source: SOURCES.LOOTED, revertData: { deltaLiquid: -(sellPrice * sellQty), addStock: addBack } });
+  }
+
   render();
 }
 
@@ -1342,6 +1385,25 @@ function applyPendingTheme() {
   applyTheme(pendingTheme);
 }
 
+function resetTheme() {
+  applyTheme({ ...PRESETS.terminal });
+  updateThemeUI();
+}
+
+function randomizeTheme() {
+  const pick = (obj) => { const keys = Object.keys(obj); return keys[Math.floor(Math.random() * keys.length)]; };
+  const t = {
+    palette: pick(PALETTES),
+    fonts: pick(FONT_PAIRS),
+    density: pick(DENSITIES),
+    borders: pick(BORDER_STYLES),
+    nav: Math.random() > 0.7 ? 'topnav' : 'sidebar',
+  };
+  pendingTheme = t;
+  pendingPreset = 'custom';
+  updateThemeUI();
+}
+
 function updateThemeUI() {
   // Preset buttons — only one ever highlighted (including Custom)
   document.querySelectorAll('[data-preset]').forEach((btn) => {
@@ -1376,7 +1438,25 @@ function updateThemeUI() {
   }
 }
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
+function resetTheme() {
+  applyTheme({ ...PRESETS.terminal });
+  pendingTheme = { ...PRESETS.terminal };
+  pendingPreset = 'terminal';
+  localStorage.removeItem(STORAGE_KEYS.theme);
+  updateThemeUI();
+}
+
+function randomizeTheme() {
+  const palKeys = Object.keys(PALETTES);
+  const fontKeys = Object.keys(FONT_PAIRS);
+  const densityKeys = Object.keys(DENSITIES);
+  const borderKeys = Object.keys(BORDER_STYLES);
+  const navKeys = ['sidebar', 'topnav'];
+  const rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  pendingTheme = { palette: rnd(palKeys), fonts: rnd(fontKeys), density: rnd(densityKeys), borders: rnd(borderKeys), nav: rnd(navKeys) };
+  pendingPreset = 'custom';
+  updateThemeUI();
+}
 function init() {
   Object.assign(window, {
     switchTab, massIngest, buyItem, executeBarter,
@@ -1385,7 +1465,7 @@ function init() {
     startNewSession, showPriceHistory, closePriceHistory, handleModalClick,
     toggleCustomItems, mergeCustomItems, addStartingStock, setStaleThreshold,
     generateListing, copyListing, commsSelectAll, commsSelectNone,
-    applyPreset, setThemeProp, applyPendingTheme,
+    applyPreset, setThemeProp, applyPendingTheme, resetTheme, randomizeTheme, resetTheme, randomizeTheme,
   });
 
   applyTheme(currentTheme);
