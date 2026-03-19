@@ -643,21 +643,22 @@ function generateRandomHistory() {
     audit.push({ id: genId(), ts: ts(step++), action: ACTIONS.CURRENCY, name: 'Assorted Seeds', qty: 1, price: seedsFound, cost: 0, source: SOURCES.LOOTED, revertData: { deltaLiquid: -seedsFound } });
   }
 
-  // Ensure there's some liquid to work with for buys
-  if (audit.length === 1) { // just the SESSION_START we added above
-    liquidSeeds = randInt(200, 800);
+  // Ensure there's some liquid to work with
+  if (audit.filter((a) => a.action !== ACTIONS.SESSION_START).length === 0) {
+    liquidSeeds = randInt(300, 1200);
     audit.unshift({ id: genId(), ts: sessionStart - 1000, action: ACTIONS.INITIAL, name: 'Starting Capital', qty: 1, price: liquidSeeds, cost: 0, source: SOURCES.SYS });
   }
 
-  // 50% chance of a purchase between sessions — always attempt if enough seeds
-  if (general.length > 0) {
-    const available = general.filter((i) => !lootPool.includes(i));
-    if (available.length > 0 && Math.random() < 0.5) {
-      const buyItem = pick(available, 1)[0];
-      const bQty = randInt(1, 2);
+  // Always buy something — heavily weighted toward blueprints (70%)
+  {
+    const useBlueprintBuy = blueprints.length > 0 && Math.random() < 0.70;
+    const buyPool = useBlueprintBuy ? blueprints : general.filter((i) => !lootPool.includes(i));
+    if (buyPool.length > 0) {
+      const buyItem = pick(buyPool, 1)[0];
+      const bQty = useBlueprintBuy ? 1 : randInt(1, 2);
       const bCost = realisticBuyPrice(buyItem);
       const total = bCost * bQty;
-      if (liquidSeeds < total) liquidSeeds += total; // ensure we can afford it
+      if (liquidSeeds < total) liquidSeeds += total;
       liquidSeeds -= total;
       const t = ts(step++);
       for (let i = 0; i < bQty; i++) stock.push({ name: buyItem.name, cost: bCost, source: SOURCES.BUY, addedAt: t });
