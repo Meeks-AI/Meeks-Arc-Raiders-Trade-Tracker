@@ -33,7 +33,7 @@ async function main() {
 
   // Items
   console.log('Fetching items...');
-  const items = await fetchAllPages(`${METAFORGE_URL}/items?minimal=true`);
+const items = await fetchAllPages(`${METAFORGE_URL}/items`);
   await writeFile(
     new URL('../data/metaforge-items.json', import.meta.url),
     JSON.stringify({ updatedAt: new Date().toISOString(), count: items.length, data: items }, null, 2),
