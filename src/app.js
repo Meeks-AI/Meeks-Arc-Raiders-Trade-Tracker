@@ -643,27 +643,36 @@ function generateRandomHistory() {
     audit.push({ id: genId(), ts: ts(step++), action: ACTIONS.CURRENCY, name: 'Assorted Seeds', qty: 1, price: seedsFound, cost: 0, source: SOURCES.LOOTED, revertData: { deltaLiquid: -seedsFound } });
   }
 
-  // 50% chance of a purchase between sessions
-  if (general.length > 0 && Math.random() < 0.5) {
+  // Ensure there's some liquid to work with for buys
+  if (audit.length === 1) { // just the SESSION_START we added above
+    liquidSeeds = randInt(200, 800);
+    audit.unshift({ id: genId(), ts: sessionStart - 1000, action: ACTIONS.INITIAL, name: 'Starting Capital', qty: 1, price: liquidSeeds, cost: 0, source: SOURCES.SYS });
+  }
+
+  // 50% chance of a purchase between sessions — always attempt if enough seeds
+  if (general.length > 0) {
     const available = general.filter((i) => !lootPool.includes(i));
-    if (available.length > 0) {
+    if (available.length > 0 && Math.random() < 0.5) {
       const buyItem = pick(available, 1)[0];
       const bQty = randInt(1, 2);
       const bCost = realisticBuyPrice(buyItem);
-      if (liquidSeeds >= bCost * bQty) {
-        liquidSeeds -= bCost * bQty;
-        const t = ts(step++);
-        for (let i = 0; i < bQty; i++) stock.push({ name: buyItem.name, cost: bCost, source: SOURCES.BUY, addedAt: t });
-        audit.push({ id: genId(), ts: t, action: ACTIONS.PURCHASE, name: buyItem.name, qty: bQty, price: bCost, cost: bCost, source: SOURCES.BUY, revertData: { deltaLiquid: bCost * bQty, removeStock: { name: buyItem.name, source: SOURCES.BUY, cost: bCost, qty: bQty } } });
-      }
+      const total = bCost * bQty;
+      if (liquidSeeds < total) liquidSeeds += total; // ensure we can afford it
+      liquidSeeds -= total;
+      const t = ts(step++);
+      for (let i = 0; i < bQty; i++) stock.push({ name: buyItem.name, cost: bCost, source: SOURCES.BUY, addedAt: t });
+      audit.push({ id: genId(), ts: t, action: ACTIONS.PURCHASE, name: buyItem.name, qty: bQty, price: bCost, cost: bCost, source: SOURCES.BUY, revertData: { deltaLiquid: total, removeStock: { name: buyItem.name, source: SOURCES.BUY, cost: bCost, qty: bQty } } });
     }
   }
 
-  // 60% chance of selling something from stock this session
+  // Always sell at least one item from stock this session
   const sellable = stock.filter((s) => s.source === SOURCES.LOOTED);
-  if (sellable.length > 0 && Math.random() < 0.6) {
-    const sellItem = sellable[Math.floor(Math.random() * sellable.length)];
-    const maxQty = stock.filter((s) => s.name === sellItem.name && s.source === SOURCES.LOOTED).length;
+  const sellCount = Math.random() < 0.4 ? 2 : 1; // 40% chance of two sells
+  for (let s = 0; s < sellCount && sellable.length > 0; s++) {
+    const idx = Math.floor(Math.random() * sellable.length);
+    const sellItem = sellable.splice(idx, 1)[0]; // avoid selling same item twice
+    const maxQty = stock.filter((st) => st.name === sellItem.name && st.source === SOURCES.LOOTED).length;
+    if (maxQty === 0) continue;
     const sellQty = randInt(1, Math.min(maxQty, 3));
     const sellPrice = realisticSellPrice(tradeItems.find((i) => i.name === sellItem.name) || { item_type: '' });
     let removed = 0;
