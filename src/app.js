@@ -566,6 +566,8 @@ function setStaleThreshold() {
 function generateRandomHistory() {
   if (tradeItems.length === 0) return;
   if (!confirm('Add a random raid session to existing history?')) return;
+
+  function pick(arr, n) {
     const a = [...arr];
     for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
     return a.slice(0, n);
