@@ -566,8 +566,6 @@ function setStaleThreshold() {
 function generateRandomHistory() {
   if (tradeItems.length === 0) return;
   if (!confirm('Add a random raid session to existing history?')) return;
-
-  function pick(arr, n) {
     const a = [...arr];
     for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
     return a.slice(0, n);
@@ -634,9 +632,9 @@ function generateRandomHistory() {
 
   // Random seeds found (50-400, weighted toward lower)
   const seedsFound = weighted([
-    { val: randInt(50, 100), weight: 5 },
-    { val: randInt(100, 250), weight: 3 },
-    { val: randInt(250, 400), weight: 1 },
+    { val: randInt(10, 30), weight: 5 },
+    { val: randInt(30, 60), weight: 3 },
+    { val: randInt(60, 120), weight: 1 },
   ]);
   if (Math.random() < 0.7) { // not every raid has seeds
     liquidSeeds += seedsFound;
@@ -1385,25 +1383,6 @@ function applyPendingTheme() {
   applyTheme(pendingTheme);
 }
 
-function resetTheme() {
-  applyTheme({ ...PRESETS.terminal });
-  updateThemeUI();
-}
-
-function randomizeTheme() {
-  const pick = (obj) => { const keys = Object.keys(obj); return keys[Math.floor(Math.random() * keys.length)]; };
-  const t = {
-    palette: pick(PALETTES),
-    fonts: pick(FONT_PAIRS),
-    density: pick(DENSITIES),
-    borders: pick(BORDER_STYLES),
-    nav: Math.random() > 0.7 ? 'topnav' : 'sidebar',
-  };
-  pendingTheme = t;
-  pendingPreset = 'custom';
-  updateThemeUI();
-}
-
 function updateThemeUI() {
   // Preset buttons — only one ever highlighted (including Custom)
   document.querySelectorAll('[data-preset]').forEach((btn) => {
@@ -1465,7 +1444,7 @@ function init() {
     startNewSession, showPriceHistory, closePriceHistory, handleModalClick,
     toggleCustomItems, mergeCustomItems, addStartingStock, setStaleThreshold,
     generateListing, copyListing, commsSelectAll, commsSelectNone,
-    applyPreset, setThemeProp, applyPendingTheme, resetTheme, randomizeTheme, resetTheme, randomizeTheme,
+    applyPreset, setThemeProp, applyPendingTheme, resetTheme, randomizeTheme,
   });
 
   applyTheme(currentTheme);
