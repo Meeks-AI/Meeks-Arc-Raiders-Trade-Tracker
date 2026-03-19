@@ -32,7 +32,7 @@
             --radius-tag: 6px;
         }
         * { box-sizing: border-box; }
-        body { margin:0; min-height:100vh; background:var(--bg-0); color:var(--text); font-family:var(--font-ui); background-image: radial-gradient(ellipse 80% 50% at 50% -20%, var(--theme-glow), transparent), linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%); }
+        body { margin:0; min-height:100vh; background:var(--bg-0); color:var(--text); font-family:var(--font-ui); background-image:var(--body-bg-image, radial-gradient(ellipse 80% 50% at 50% -20%, var(--theme-glow), transparent), linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 100%)); }
         .font-mono { font-family:var(--font-mono); }
         .app { display:flex; min-height:100vh; }
         .sidebar { width:72px; flex-shrink:0; background:var(--bg-2); border-right:1px solid var(--border); display:flex; flex-direction:column; align-items:center; padding:1rem 0; gap:0.5rem; }
@@ -217,7 +217,7 @@
                                 <h3>Sell from Reserve</h3>
                                 <p style="font-size:0.72rem;color:var(--muted);margin-bottom:0.75rem;">Log a sale of an item not tracked in your warehouse — adds to liquid, no stock removed.</p>
                                 <div class="fields">
-                                    <input type="text" id="reserveName" list="itemOptions" placeholder="Item name" autocomplete="off">
+                                    <input type="text" id="reserveName" placeholder="Item name" autocomplete="off">
                                     <div class="row">
                                         <div><label class="stat-label" style="margin-bottom:4px">Qty</label><input type="number" id="reserveQty" value="1" min="1" style="width:100%"></div>
                                         <div><label class="stat-label" style="margin-bottom:4px">Price/ea</label><input type="number" id="reservePrice" placeholder="Seeds" style="width:100%"></div>
