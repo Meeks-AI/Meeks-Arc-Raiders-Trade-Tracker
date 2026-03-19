@@ -120,7 +120,25 @@
     </style>
 </head>
 <body>
-    <!-- Price History Modal -->
+    <!-- Scrap Advisor Modal -->
+    <div id="scrapModal" onclick="if(event.target===this)closeScrapModal()" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
+        <div style="background:var(--bg-2);border:1px solid var(--border-bright);border-radius:var(--radius-card);padding:1.5rem;width:min(720px,95vw);max-height:80vh;display:flex;flex-direction:column;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+                <div>
+                    <h2 style="font-size:1rem;font-weight:700;color:var(--rose);margin:0;">🗑 Scrap Advisor</h2>
+                    <p style="font-size:0.72rem;color:var(--muted);margin:4px 0 0;">Ranked by how safe it is to remove. Blueprints excluded — manage those manually.</p>
+                </div>
+                <button onclick="closeScrapModal()" class="btn btn-ghost" style="padding:4px 12px;font-size:1.1rem;line-height:1;">×</button>
+            </div>
+            <div style="overflow-y:auto;flex:1;">
+                <table>
+                    <thead><tr><th>Item</th><th style="text-align:right">Stock</th><th>Reasoning</th><th style="text-align:right">Action</th></tr></thead>
+                    <tbody id="scrapList"></tbody>
+                </table>
+            </div>
+            <p style="font-size:0.65rem;color:var(--muted);text-align:center;margin-top:0.75rem;">Suggested qty keeps 3 sessions of demand in reserve · Edit the number to customise</p>
+        </div>
+    </div>
     <div id="priceHistoryModal" onclick="handleModalClick(event)" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
         <div style="background:var(--bg-2);border:1px solid var(--border-bright);border-radius:12px;padding:1.5rem;width:min(580px,90vw);">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
@@ -195,8 +213,18 @@
                                     <button class="btn btn-slate" onclick="buyItem()">Purchase & Deduct</button>
                                 </div>
                             </div>
-                            <div class="form-block barter">
-                                <h3>Barter Exchange</h3>
+                            <div class="form-block buy">
+                                <h3>Sell from Reserve</h3>
+                                <p style="font-size:0.72rem;color:var(--muted);margin-bottom:0.75rem;">Log a sale of an item not tracked in your warehouse — adds to liquid, no stock removed.</p>
+                                <div class="fields">
+                                    <input type="text" id="reserveName" list="itemOptions" placeholder="Item name" autocomplete="off">
+                                    <div class="row">
+                                        <div><label class="stat-label" style="margin-bottom:4px">Qty</label><input type="number" id="reserveQty" value="1" min="1" style="width:100%"></div>
+                                        <div><label class="stat-label" style="margin-bottom:4px">Price/ea</label><input type="number" id="reservePrice" placeholder="Seeds" style="width:100%"></div>
+                                    </div>
+                                    <button class="btn btn-slate" onclick="sellFromReserve()">Record Sale</button>
+                                </div>
+                            </div>
                                 <div class="fields">
                                     <label class="stat-label">Giving</label>
                                     <select id="tradeFrom"></select>
@@ -211,7 +239,10 @@
                         <div class="card">
                             <div class="card-header">
                                 <span class="card-title">Warehouse · <span id="invCount">0</span> items</span>
-                                <input type="text" id="invSearch" oninput="render()" placeholder="Filter..." style="width:180px;padding:8px 12px;font-size:0.8rem">
+                                <div style="display:flex;gap:0.5rem;align-items:center;">
+                                    <button class="btn btn-ghost" onclick="openScrapAdvisor()" style="font-size:0.7rem;padding:5px 10px;color:var(--rose);border:1px solid rgba(244,63,94,0.25);">🗑 Scrap?</button>
+                                    <input type="text" id="invSearch" oninput="render()" placeholder="Filter..." style="width:160px;padding:8px 12px;font-size:0.8rem">
+                                </div>
                             </div>
                             <div style="overflow-x:auto;max-height:calc(100vh - 280px)">
                                 <table>
