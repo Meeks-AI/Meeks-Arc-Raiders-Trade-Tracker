@@ -20,6 +20,8 @@ let priceCache = {};
 let apiItems = [];
 let tradeItems = [];
 let iconMap = {};
+let stackMap = {};   // name -> stackSize
+let itemTypeMap = {}; // name -> item_type
 let quests = [];
 let questDemandMap = {};
 let allowCustomItems = localStorage.getItem(STORAGE_KEYS.allowCustomItems) === 'true';
@@ -35,8 +37,14 @@ function genId() {
 // ─── Metaforge data ───────────────────────────────────────────────────────────
 function buildDerivedItemData(items) {
   tradeItems = items.filter((i) => i.value > 0);
-  iconMap = {};
-  items.forEach((i) => { if (i.name && i.icon) iconMap[i.name] = i.icon; });
+  iconMap = {}; stackMap = {}; itemTypeMap = {};
+  items.forEach((i) => {
+    if (i.name && i.icon) iconMap[i.name] = i.icon;
+    if (i.name) {
+      stackMap[i.name] = i.stat_block?.stackSize || 1;
+      itemTypeMap[i.name] = i.item_type || '';
+    }
+  });
 }
 
 function loadMetaforgeCache() {
@@ -1448,6 +1456,124 @@ function randomizeTheme() {
   pendingPreset = 'custom';
   updateThemeUI();
 }
+
+// ─── Scrap advisor ────────────────────────────────────────────────────────────
+function openScrapAdvisor() {
+  const modal = document.getElementById('scrapModal');
+  if (!modal) return;
+  const tbody = document.getElementById('scrapList');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  const validSells = audit.filter((a) => a.action === ACTIONS.SELL && ![ACTIONS.VOID, ACTIONS.REVERTED].includes(a.action));
+  const sessionCount = Math.max(1, audit.filter((a) => a.action === ACTIONS.SESSION_START).length);
+
+  const sellStats = {};
+  validSells.forEach((a) => {
+    if (!sellStats[a.name]) sellStats[a.name] = { totalQty: 0 };
+    sellStats[a.name].totalQty += a.qty;
+  });
+
+  // Group non-blueprint stock
+  const grouped = stock.reduce((acc, item) => {
+    if ((itemTypeMap[item.name] || item.item_type) === 'Blueprint') return acc;
+    acc[item.name] = (acc[item.name] || 0) + 1;
+    return acc;
+  }, {});
+
+  if (Object.keys(grouped).length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem;">No scrappable items in warehouse.</td></tr>';
+    modal.style.display = 'flex';
+    return;
+  }
+
+  const rows = Object.entries(grouped).map(([name, qty]) => {
+    const stackSize = stackMap[name] || 1;
+    const stats = sellStats[name];
+    const medianPrice = priceCache[name] || null;
+    const seedsPerSlot = medianPrice ? medianPrice * stackSize : null;
+    const avgSellsPerSession = stats ? stats.totalQty / sessionCount : 0;
+    const daysOfSupply = avgSellsPerSession > 0 ? qty / avgSellsPerSession : null;
+    const safeReserve = avgSellsPerSession > 0 ? Math.max(1, Math.ceil(avgSellsPerSession * 3)) : 1;
+    const suggestedScrap = Math.max(0, qty - safeReserve);
+
+    let score = 0;
+    if (!stats) score = 900 + qty;
+    else {
+      const supplyScore = daysOfSupply ? Math.min(daysOfSupply * 10, 500) : 0;
+      const valueScore = seedsPerSlot ? Math.max(0, 200 - seedsPerSlot / 10) : 100;
+      score = supplyScore + valueScore;
+    }
+
+    let reasoning = '';
+    if (!stats) reasoning = 'Never sold — unknown demand';
+    else if (daysOfSupply > 20) reasoning = `~${Math.round(daysOfSupply)} sessions of supply`;
+    else if (daysOfSupply > 10) reasoning = `~${Math.round(daysOfSupply)} sessions of stock`;
+    else reasoning = `~${avgSellsPerSession.toFixed(1)}/session sell rate`;
+    if (seedsPerSlot) reasoning += ` · ${Math.floor(seedsPerSlot).toLocaleString()} seeds/slot`;
+
+    return { name, qty, suggestedScrap, reasoning, score, noHistory: !stats };
+  }).sort((a, b) => b.score - a.score);
+
+  rows.forEach((r) => {
+    const scrapDefault = r.suggestedScrap > 0 ? r.suggestedScrap : 1;
+    const scrapId = `scrap-${r.name.replace(/[^a-z0-9]/gi, '_')}`;
+    tbody.innerHTML += `<tr>
+      <td><div style="display:flex;align-items:center;gap:8px;">${itemIcon(r.name, 20)}<span style="font-size:0.82rem;">${r.name}</span></div></td>
+      <td class="font-mono" style="text-align:right;color:var(--muted);">×${r.qty}</td>
+      <td style="font-size:0.75rem;color:var(--muted);">${r.reasoning}</td>
+      <td style="text-align:right;white-space:nowrap;">
+        <span style="font-size:0.72rem;color:var(--muted);margin-right:4px;">Scrap</span>
+        <input type="number" id="${scrapId}" value="${scrapDefault}" min="1" max="${r.qty - 1}"
+          style="width:52px;padding:4px 6px;font-size:0.8rem;text-align:center;display:inline-block;">
+        <button class="btn btn-ghost" onclick="scrapItem('${r.name.replace(/'/g, "\\'")}', '${scrapId}')"
+          style="padding:4px 10px;font-size:0.7rem;color:var(--rose);border:1px solid rgba(244,63,94,0.3);margin-left:4px;">Scrap</button>
+      </td>
+    </tr>`;
+  });
+
+  if (!tbody.innerHTML) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:2rem;">Nothing flagged — stock looks balanced.</td></tr>';
+  }
+
+  modal.style.display = 'flex';
+}
+
+function scrapItem(name, inputId) {
+  const qty = parseInt(document.getElementById(inputId)?.value) || 0;
+  if (qty <= 0) return;
+  const inStock = stock.filter((s) => s.name === name).length;
+  if (qty >= inStock) { alert(`Keep at least 1 — you have ${inStock} in stock.`); return; }
+  if (!confirm(`Scrap ${qty}× ${name}? Removed from warehouse, no sale recorded.`)) return;
+  let removed = 0;
+  for (let i = stock.length - 1; i >= 0 && removed < qty; i--) {
+    if (stock[i].name === name) { stock.splice(i, 1); removed++; }
+  }
+  audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.ADJUST, name: `Scrapped ${qty}× ${name}`, qty, price: 0, cost: 0, source: SOURCES.SYS });
+  render();
+  openScrapAdvisor();
+}
+
+function closeScrapModal() {
+  const modal = document.getElementById('scrapModal');
+  if (modal) modal.style.display = 'none';
+}
+
+// ─── Sell from reserve ────────────────────────────────────────────────────────
+function sellFromReserve() {
+  const name = (document.getElementById('reserveName').value || '').trim();
+  const qty = parseInt(document.getElementById('reserveQty').value) || 0;
+  const price = parseFloat(document.getElementById('reservePrice').value) || 0;
+  if (!name || qty <= 0 || price <= 0) return;
+  liquidSeeds += price * qty;
+  audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.SELL, name, qty, price, cost: 0, source: SOURCES.LOOTED,
+    revertData: { deltaLiquid: -(price * qty), addStock: [] } });
+  document.getElementById('reserveName').value = '';
+  document.getElementById('reserveQty').value = '1';
+  document.getElementById('reservePrice').value = '';
+  render();
+}
+
 function init() {
   Object.assign(window, {
     switchTab, massIngest, buyItem, executeBarter,
@@ -1457,6 +1583,7 @@ function init() {
     toggleCustomItems, mergeCustomItems, addStartingStock, setStaleThreshold,
     generateListing, copyListing, commsSelectAll, commsSelectNone,
     applyPreset, setThemeProp, applyPendingTheme, resetTheme, randomizeTheme,
+    openScrapAdvisor, closeScrapModal, scrapItem, sellFromReserve,
   });
 
   applyTheme(currentTheme);
@@ -1467,6 +1594,7 @@ function init() {
   initTextareaAutocomplete();
   initInputAutocomplete('buyName');
   initInputAutocomplete('tradeTo');
+  initInputAutocomplete('reserveName');
 
   const customToggle = document.getElementById('allowCustomItemsToggle');
   if (customToggle) customToggle.checked = allowCustomItems;
