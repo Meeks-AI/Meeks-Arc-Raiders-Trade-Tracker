@@ -225,6 +225,8 @@
                                     <button class="btn btn-slate" onclick="sellFromReserve()">Record Sale</button>
                                 </div>
                             </div>
+                            <div class="form-block barter">
+                                <h3>Barter Exchange</h3>
                                 <div class="fields">
                                     <label class="stat-label">Giving</label>
                                     <select id="tradeFrom"></select>
@@ -246,7 +248,7 @@
                             </div>
                             <div style="overflow-x:auto;max-height:calc(100vh - 280px)">
                                 <table>
-                                    <thead><tr><th>Item</th><th>Source</th><th>Qty</th><th>Cost</th><th title="Median price from your own sell history">Your Median</th><th style="text-align:right">Action</th></tr></thead>
+                                    <thead><tr><th>Item</th><th>Source</th><th>Qty</th><th title="Inventory slots used">Slots</th><th>Cost</th><th title="Median price from your own sell history">Your Median</th><th style="text-align:right">Action</th></tr></thead>
                                     <tbody id="inventoryTable"></tbody>
                                 </table>
                             </div>
