@@ -408,7 +408,7 @@
                         </div>
                         <div class="tool-block">
                             <label>Testing</label>
-                            <button id="randomHistoryBtn" class="btn btn-slate" onclick="generateRandomHistory()" style="border-color:var(--amber);color:var(--amber)">Generate Random History</button>
+                            <button id="randomHistoryBtn" class="btn btn-slate" onclick="generateRandomHistory()" style="border-color:var(--amber);color:var(--amber)">Add Random Session</button>
                         </div>
                         <div class="tool-block" style="border-color:rgba(100,116,139,0.3);">
                             <label>About & Attribution</label>
@@ -455,6 +455,14 @@
 
                         <!-- Custom controls — only visible when Custom is selected -->
                         <div id="customThemeControls" style="display:none;gap:1.25rem;">
+
+                            <div style="display:flex;justify-content:flex-end;">
+                                <button class="btn btn-ghost" onclick="randomizeTheme()" style="font-size:0.75rem;border:1px solid var(--border-bright);padding:6px 14px;">🎲 Randomize</button>
+                            </div>
+
+                            <div style="display:flex;justify-content:flex-end;margin-bottom:0.25rem;">
+                                <button class="btn btn-ghost" onclick="randomizeTheme()" style="font-size:0.75rem;border:1px solid var(--border-bright);">🎲 Randomize</button>
+                            </div>
 
                             <div class="card" style="padding:1.25rem;">
                                 <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Colour Palette</h3>
@@ -534,9 +542,10 @@
 
                         </div><!-- end customThemeControls -->
 
-                        <!-- Apply -->
-                        <div style="display:flex;justify-content:center;padding-bottom:1rem;">
+                        <!-- Apply + Reset -->
+                        <div style="display:flex;justify-content:center;gap:0.75rem;padding-bottom:1rem;">
                             <button id="themeApplyBtn" class="btn btn-cyan" onclick="applyPendingTheme()" style="padding:12px 48px;font-size:0.85rem;opacity:0.45;">Applied</button>
+                            <button class="btn btn-ghost" onclick="resetTheme()" style="padding:12px 20px;font-size:0.85rem;border:1px solid rgba(244,63,94,0.3);color:var(--rose);" title="Reset to Terminal default">Reset</button>
                         </div>
 
                     </div>
