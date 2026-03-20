@@ -1626,7 +1626,7 @@ function sellFromReserve() {
 const TUTORIAL_STEPS = [
   {
     title: 'Welcome to MARTT',
-    text: 'The Meek's Arc Raiders Trade Tracker helps you manage your in-game economy — tracking loot, purchases, sales, barters, and profit across sessions. This quick tour covers the main features. It takes about 2 minutes.',
+    text: 'MARTT — Meek\'s Arc Raiders Trade Tracker — helps you track your trading empire across raid sessions. This quick tour covers the main features. It takes about 2 minutes.',
     target: null,
   },
   {
