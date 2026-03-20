@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Arc Trade Tracker v0.19</title>
+    <title>ARTT v1.00-public</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -121,6 +121,27 @@
     </style>
 </head>
 <body>
+    <!-- Tutorial Overlay -->
+    <div id="tutorialOverlay" style="display:none;position:fixed;inset:0;z-index:3000;pointer-events:none;">
+        <div id="tutorialBackdrop" style="position:absolute;inset:0;background:rgba(0,0,0,0.78);pointer-events:all;"></div>
+        <div id="tutorialHighlight" style="position:absolute;border-radius:8px;box-shadow:0 0 0 3px var(--cyan),0 0 0 6px rgba(6,182,212,0.25);pointer-events:none;transition:all 0.25s ease;"></div>
+        <div id="tutorialCard" style="position:absolute;width:340px;background:var(--bg-2);border:1px solid var(--border-bright);border-radius:12px;padding:1.25rem;pointer-events:all;box-shadow:0 8px 32px rgba(0,0,0,0.6);transition:all 0.25s ease;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                <span id="tutorialStep" style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);"></span>
+                <button onclick="tutorialSkip()" style="background:none;border:none;color:var(--muted);font-size:0.75rem;cursor:pointer;padding:2px 6px;border-radius:4px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Skip tutorial</button>
+            </div>
+            <h3 id="tutorialTitle" style="font-size:1rem;font-weight:700;color:var(--cyan);margin:0 0 0.5rem;"></h3>
+            <p id="tutorialText" style="font-size:0.82rem;color:var(--text-dim);line-height:1.6;margin:0 0 1rem;"></p>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div id="tutorialDots" style="display:flex;gap:4px;"></div>
+                <div style="display:flex;gap:0.5rem;">
+                    <button id="tutorialPrev" onclick="tutorialPrev()" style="background:var(--bg-3);border:1px solid var(--border);color:var(--text-dim);padding:6px 14px;border-radius:6px;font-size:0.75rem;cursor:pointer;">← Back</button>
+                    <button id="tutorialNext" onclick="tutorialNext()" style="background:var(--cyan);border:none;color:#000;padding:6px 16px;border-radius:6px;font-size:0.75rem;font-weight:700;cursor:pointer;">Next →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scrap Advisor Modal -->
     <div id="scrapModal" onclick="if(event.target===this)closeScrapModal()" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
         <div style="background:var(--bg-2);border:1px solid var(--border-bright);border-radius:var(--radius-card);padding:1.5rem;width:min(720px,95vw);max-height:80vh;display:flex;flex-direction:column;">
@@ -165,7 +186,7 @@
             <button class="topnav-btn" id="topnav-themes" onclick="switchTab('themes')">🎨 Themes</button>
         </nav>
         <aside class="sidebar">
-            <div class="version-tag" style="margin-bottom:0.5rem;">v4.20.69b</div>
+            <div class="version-tag" title="Actual version: v1.00-public" style="margin-bottom:0.5rem;cursor:default;">v4.20.69b</div>
             <button class="nav-btn active" id="nav-trade" onclick="switchTab('trade')" title="Operations">📦<span>Operations</span></button>
             <button class="nav-btn" id="nav-analytics" onclick="switchTab('analytics')" title="Analytics">📊<span>Analytics</span></button>
             <button class="nav-btn" id="nav-audit" onclick="switchTab('audit')" title="Ledger">📋<span>Ledger</span></button>
@@ -430,6 +451,9 @@
                                     <div class="setting-label">Allow Custom Named Items</div>
                                     <div class="setting-desc">When off, only Metaforge items are accepted.</div>
                                 </div>
+                            </div>
+                            <div style="margin-top:0.75rem;">
+                                <button class="btn btn-slate" onclick="startTutorial()" style="width:100%;font-size:0.75rem;">▶ Replay Tutorial</button>
                             </div>
                         </div>
                         <div class="tool-block" id="customMergeBlock" style="display:none;border-color:rgba(139,92,246,0.3);">
