@@ -184,6 +184,7 @@ function switchTab(t) {
   if (t === 'analytics') renderAnalytics();
   if (t === 'comms') renderCommsTab();
   if (t === 'themes') updateThemeUI();
+  if (t === 'tools') loadVisitorCount();
 }
 
 // ─── Icon helper ──────────────────────────────────────────────────────────────
@@ -1622,6 +1623,16 @@ function sellFromReserve() {
   render();
 }
 
+// ─── GoatCounter visitor count ────────────────────────────────────────────────
+function loadVisitorCount() {
+  const el = document.getElementById('goatVisitorCount');
+  if (!el || el.dataset.loaded) return;
+  fetch('https://meeks.goatcounter.com/counter/TOTAL.json')
+    .then((r) => r.json())
+    .then((d) => { if (el) { el.textContent = d.count; el.dataset.loaded = '1'; } })
+    .catch(() => { if (el) el.textContent = '—'; });
+}
+
 // ─── Tutorial ─────────────────────────────────────────────────────────────────
 const TUTORIAL_STEPS = [
   {
@@ -1828,7 +1839,7 @@ function init() {
     generateListing, copyListing, commsSelectAll, commsSelectNone,
     applyPreset, setThemeProp, applyPendingTheme, resetTheme, randomizeTheme,
     openScrapAdvisor, closeScrapModal, scrapItem, sellFromReserve, toggleWarehouseCategory,
-    startTutorial, tutorialNext, tutorialPrev, tutorialSkip,
+    startTutorial, tutorialNext, tutorialPrev, tutorialSkip, loadVisitorCount,
   });
 
   applyTheme(currentTheme);
