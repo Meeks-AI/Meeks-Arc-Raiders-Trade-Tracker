@@ -1627,88 +1627,88 @@ const TUTORIAL_STEPS = [
   {
     title: 'Welcome to MARTT',
     text: 'MARTT — Meek\'s Arc Raiders Trade Tracker — helps you track your trading empire across raid sessions. This quick tour covers the main features. It takes about 2 minutes.',
-    target: null,
+    target: null, tab: 'trade',
   },
   {
     title: 'Your Liquid Seeds',
     text: 'This is your spendable seed balance — updated automatically when you buy, sell, or log currency finds. It\'s the seeds you actually have available to trade with right now.',
-    target: '#liquidDisplay',
+    target: '#liquidDisplay', tab: 'trade',
   },
   {
     title: 'Net Worth & Asset Valuation',
     text: 'Net Worth = Liquid + Assets. Asset value is calculated per item using your personal sell history median (last 5 sales). If you\'ve never sold an item, it falls back to your cost basis. This gives you a realistic picture of what your stock is actually worth to you.',
-    target: '#netWorth',
+    target: '#netWorth', tab: 'trade',
   },
   {
     title: 'Total Profit',
     text: 'Profit = (sell price − cost basis) × qty sold, summed across all non-voided sales. Looted items have a cost of 0 so their full sell price counts as profit. Bought items subtract what you paid.',
-    target: '#totalProfit',
+    target: '#totalProfit', tab: 'trade',
   },
   {
     title: '⚑ New Session',
     text: 'Hit this before each raid run. Sessions let the analytics tab break down your performance per run — items found, seeds collected, and sell profit per session. Without sessions, everything shows as one big blob.',
-    target: '#view-trade .btn-ghost',
+    target: '#view-trade .btn-ghost', tab: 'trade',
   },
   {
     title: 'Raid Loot',
     text: 'After a raid, type your loot here — one item per line. Format is "Qty ItemName" e.g. "3 Broken Flashlight". Ctrl+Enter to process. Items named "Seeds", "Assorted Seeds" or "Raw Seeds" automatically log as currency instead of stock.',
-    target: '#bulkText',
+    target: '#bulkText', tab: 'trade',
   },
   {
     title: 'Warehouse Categories',
     text: 'Your stock is split into Blueprints, Weapons, Keys, and General. Click any category header to collapse it. Items that haven\'t moved in a while glow amber → orange → red based on your stale threshold setting — a heads-up to consider selling.',
-    target: '#inventoryTable',
+    target: '#inventoryTable', tab: 'trade',
   },
   {
     title: 'Qty / Stacks Column',
     text: 'Shows how much inventory space your stock uses. Stack sizes come from the Metaforge item database. For example: 7 items with a stack of 3 shows "7 (2× stacks of 3, +1)". A partial stack shows "2 (2 of 3/stack)". Items that don\'t stack show slots used.',
-    target: '#inventoryTable',
+    target: '#inventoryTable', tab: 'trade',
   },
   {
     title: 'Selling & Your Median Price',
     text: 'Enter a qty and price, then hit Sell. The "All" button fills your qty to max and auto-fills your median price if available. Your Median is calculated from your last 5 sales for that item — it\'s your personal market data, not a global price.',
-    target: '#inventoryTable',
+    target: '#inventoryTable', tab: 'trade',
   },
   {
     title: 'Market Acquisition',
     text: 'When you buy something from another player, log it here. The cost per unit is tracked as your cost basis, which feeds into profit calculations when you eventually sell it. Seeds are automatically deducted from your liquid balance.',
-    target: '#buyName',
+    target: '#buyName', tab: 'trade',
   },
   {
     title: 'Barter Exchange',
     text: 'When you trade items for other items, use this. The cost basis of the items you give up gets transferred to the items you receive — proportionally split if quantities differ. This keeps your asset valuation accurate after trades.',
-    target: '#tradeFrom',
+    target: '#tradeFrom', tab: 'trade',
   },
   {
     title: 'Sell from Reserve',
     text: 'Sold something you weren\'t tracking in the warehouse? Log it here. It adds to your liquid and appears in the ledger as a normal sale — useful for one-off deals or items you held outside the tracker.',
-    target: '#reserveName',
+    target: '#reserveName', tab: 'trade',
   },
   {
     title: '🗑 Scrap Advisor',
     text: 'Running low on inventory space? The Scrap Advisor scores each non-blueprint item by scrappability. Score factors in: days of supply on hand (qty ÷ avg sells per session) and seeds per inventory slot (median price × stack size). Higher score = safer to remove. Suggested qty keeps 3 sessions of demand in reserve.',
-    target: null,
+    target: null, tab: 'trade',
     highlight: () => document.querySelector('[onclick="openScrapAdvisor()"]'),
   },
   {
     title: 'Analytics Tab',
     text: 'Tracks your performance over time. Investment Efficiency shows profit from bought-then-sold items. Loot Revenue shows profit from looted items. Per-item stats include avg sell price, total revenue, cost basis, profit, and ROI. Click any item name for a price history chart.',
-    target: '#nav-analytics',
+    target: '#nav-analytics', tab: 'analytics',
   },
   {
     title: 'Listings Tab',
     text: 'Generates trade listings for Metaforge and Discord. Select items from your warehouse, set ask prices, toggle options like bulk discount or "open to offers", and hit Generate. Two formats are produced — one for Metaforge\'s listing description field, one formatted for Discord.',
-    target: '#nav-comms',
+    target: '#nav-comms', tab: 'comms',
   },
   {
     title: 'Tools & Settings',
     text: 'Sync the Metaforge item database, adjust your seed balance manually, set starting stock, configure the stale item threshold, allow custom item names, and export/import your full data as JSON for backup.',
-    target: '#nav-tools',
+    target: '#nav-tools', tab: 'tools',
   },
   {
     title: 'You\'re all set 🎯',
     text: 'Good luck out there. Track your loot, know your margins, and don\'t leave seeds on the table. You can replay this tutorial any time from Tools → Settings.',
-    target: null,
+    target: null, tab: 'trade',
   },
 ];
 
@@ -1716,6 +1716,7 @@ let tutorialStep = 0;
 
 function startTutorial() {
   tutorialStep = 0;
+  switchTab('trade');
   document.getElementById('tutorialOverlay').style.display = 'block';
   renderTutorialStep();
 }
@@ -1759,6 +1760,9 @@ function renderTutorialStep() {
   stepEl.textContent = `Step ${tutorialStep + 1} of ${total}`;
   prevBtn.style.display = tutorialStep === 0 ? 'none' : '';
   nextBtn.textContent = tutorialStep === total - 1 ? '✓ Done' : 'Next →';
+
+  // Switch to the relevant tab for this step
+  if (step.tab) switchTab(step.tab);
 
   // Dots
   dotsEl.innerHTML = TUTORIAL_STEPS.map((_, i) =>
