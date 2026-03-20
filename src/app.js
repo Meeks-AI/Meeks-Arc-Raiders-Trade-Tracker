@@ -208,7 +208,7 @@ function render() {
   invBody.innerHTML = '';
   auditBody.innerHTML = '';
   dataList.innerHTML = '';
-  barterSelect.innerHTML = '<option value="">— Choose item —</option>';
+  barterSelect.innerHTML = '';
 
   let totalProfit = 0;
   let assetValuation = 0;
@@ -233,6 +233,9 @@ function render() {
   const catKeys       = sortedGroups.filter((g) => getItemType(g.name) === 'Key');
   const catGeneral    = sortedGroups.filter((g) => !['Blueprint','Weapon','Key'].includes(getItemType(g.name)));
 
+  let invHtml = '';
+  let barterHtml = '<option value="">— Choose item —</option>';
+
   function renderGroupRow(g, safeIdx, catId, collapsed) {
     const myMedian = priceCache[g.name] || null;
     assetValuation += (myMedian ?? g.cost) * g.count;
@@ -256,7 +259,7 @@ function render() {
       : `${g.count} (${full}× stacks of ${ss}, +${rem})`;
     const costStr = g.source === SOURCES.LOOTED ? '<span style="color:var(--border-bright)">N/A</span>' : Math.floor(g.cost).toLocaleString();
 
-    barterSelect.innerHTML += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${tagLabel}] ×${g.count}</option>`;
+    barterHtml += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${tagLabel}] ×${g.count}</option>`;
 
     return `<tr data-cat="${catId}" style="${rowStyle}${collapsed ? 'display:none;' : ''}" ${ageTitle ? `title="${ageTitle}"` : ''}>
       <td><div style="display:flex;align-items:center;gap:8px;">${itemIcon(g.name, 28)}<span class="font-mono font-semibold">${g.name}</span>${questBadge}</div></td>
@@ -279,18 +282,14 @@ function render() {
     if (visibleItems.length === 0) return;
     const totalQty = visibleItems.reduce((s, g) => s + g.count, 0);
     const collapsed = sessionStorage.getItem(`cat_${catId}`) === '1';
-    invBody.innerHTML += `<tr class="warehouse-section-header" onclick="toggleWarehouseCategory('${catId}')" style="cursor:pointer;">
+    invHtml += `<tr class="warehouse-section-header" onclick="toggleWarehouseCategory('${catId}')" style="cursor:pointer;">
       <td colspan="6">
         <span id="cat-arrow-${catId}" style="margin-right:6px;display:inline-block;transition:transform 0.2s;transform:rotate(${collapsed ? '-90' : '0'}deg);">▾</span>
         <span>${label}</span>
         <span style="color:var(--muted);font-weight:400;margin-left:0.5rem;">${totalQty} item${totalQty !== 1 ? 's' : ''}</span>
       </td>
     </tr>`;
-    // Always render all rows — toggle just sets display:none
-    items.forEach((g, i) => {
-      const row = renderGroupRow(g, `${catId}_${i}`, catId, collapsed);
-      if (row) invBody.innerHTML += row;
-    });
+    items.forEach((g, i) => { invHtml += renderGroupRow(g, `${catId}_${i}`, catId, collapsed); });
   }
 
   renderCategory('Blueprints', catBlueprints, 'blueprints');
@@ -298,15 +297,19 @@ function render() {
   renderCategory('Keys', catKeys, 'keys');
   renderCategory('General', catGeneral, 'general');
 
+  invBody.innerHTML = invHtml;
+  barterSelect.innerHTML = barterHtml;
+
   const totalSessions = audit.filter((e) => e.action === ACTIONS.SESSION_START).length;
   let sessionCounter = totalSessions;
+  let auditHtml = '';
 
   for (let idx = audit.length - 1; idx >= 0; idx--) {
     const entry = audit[idx];
 
     if (entry.action === ACTIONS.SESSION_START) {
       const time = new Date(entry.ts).toLocaleString([], { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
-      auditBody.insertAdjacentHTML('beforeend', `<tr class="session-divider"><td colspan="6">⚑ Session ${sessionCounter--} &nbsp;·&nbsp; ${time}</td></tr>`);
+      auditHtml += `<tr class="session-divider"><td colspan="6">⚑ Session ${sessionCounter--} &nbsp;·&nbsp; ${time}</td></tr>`;
       continue;
     }
 
@@ -329,8 +332,7 @@ function render() {
     const time = new Date(entry.ts).toLocaleString([], { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
     const actClr = profitDelta > 0 ? 'color:var(--emerald)' : profitDelta < 0 ? 'color:var(--rose)' : isInitial ? 'color:var(--cyan)' : isExcluded ? 'color:var(--muted)' : isBarter ? 'color:#a78bfa' : '';
 
-    auditBody.insertAdjacentHTML('beforeend',
-      `<tr style="${isExcluded ? 'opacity:0.5' : ''}">
+    auditHtml += `<tr style="${isExcluded ? 'opacity:0.5' : ''}">
         <td class="font-mono" style="font-size:0.75rem;color:var(--muted)">${time}</td>
         <td style="font-weight:600;font-size:0.75rem;${actClr}">${entry.action}</td>
         <td style="${isExcluded ? 'text-decoration:line-through' : ''}"><div style="display:flex;align-items:center;gap:6px;">${itemIcon(entry.name, 18)}<span>${entry.name}</span></div></td>
@@ -339,13 +341,13 @@ function render() {
         <td style="text-align:right">${!isExcluded && entry.action !== ACTIONS.INITIAL
           ? `<button class="btn btn-ghost" style="padding:2px 6px;font-size:0.65rem" onclick="voidEntry(${idx})">Void</button><button class="btn btn-ghost" style="padding:2px 6px;font-size:0.65rem" onclick="revertEntry(${idx})">Revert</button>`
           : isReverted ? '<span style="font-size:0.7rem;color:var(--muted)">Reverted</span>' : ''}</td>
-      </tr>`
-    );
+      </tr>`;
   }
+  auditBody.innerHTML = auditHtml;
 
   const allNames = [...new Set([...stock.map((i) => i.name), ...audit.map((i) => i.name), ...apiItems.map((i) => i.name)])]
     .filter(Boolean).sort();
-  allNames.forEach((n) => { dataList.innerHTML += `<option value="${n}">`; });
+  dataList.innerHTML = allNames.map((n) => `<option value="${n}">`).join('');
 
   document.getElementById('liquidDisplay').textContent = Math.floor(liquidSeeds).toLocaleString();
   document.getElementById('assetValuation').textContent = Math.floor(assetValuation).toLocaleString();
