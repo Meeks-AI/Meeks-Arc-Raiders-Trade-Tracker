@@ -252,7 +252,7 @@ function render() {
         if (rem === 0) return `${g.count} (${full}× stacks of ${ss})`;
         return `${g.count} (${full}× stacks of ${ss}, +${rem})`;
       })()}</td>
-      <td class="font-mono" style="color:var(--muted)">${Math.floor(g.cost).toLocaleString()}</td>
+      <td class="font-mono" style="color:var(--muted)">${g.source === 'LOOTED' ? '<span style="color:var(--border-bright)">N/A</span>' : Math.floor(g.cost).toLocaleString()}</td>
       <td class="font-mono" style="${myMedian ? 'color:var(--cyan)' : 'color:var(--muted)'}">${myMedian ? Math.floor(myMedian).toLocaleString() : '—'}</td>
       <td style="text-align:right;white-space:nowrap;">
         <input type="number" id="q-${safeId}" value="1" min="1" max="${g.count}" style="width:52px;padding:6px;margin-right:2px;display:inline-block">
