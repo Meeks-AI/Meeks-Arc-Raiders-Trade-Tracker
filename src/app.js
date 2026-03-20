@@ -248,6 +248,7 @@ function render() {
         if (ss === 1) return `${g.count} (${g.count} slot${g.count !== 1 ? 's' : ''})`;
         const full = Math.floor(g.count / ss);
         const rem = g.count % ss;
+        if (full === 0) return `${g.count} (${g.count} of ${ss} for stack)`;
         if (rem === 0) return `${g.count} (${full}× stacks of ${ss})`;
         return `${g.count} (${full}× stacks of ${ss}, +${rem})`;
       })()}</td>
