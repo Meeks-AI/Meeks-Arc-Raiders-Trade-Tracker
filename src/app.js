@@ -222,15 +222,17 @@ function render() {
   }, {});
 
   const sortedGroups = Object.values(grouped).sort((a, b) => a.name.localeCompare(b.name));
-  const blueprints = sortedGroups.filter((g) => apiItems.find((i) => i.name === g.name)?.item_type === 'Blueprint');
-  const general = sortedGroups.filter((g) => apiItems.find((i) => i.name === g.name)?.item_type !== 'Blueprint');
+  const catBlueprints = sortedGroups.filter((g) => (itemTypeMap[g.name] || '') === 'Blueprint');
+  const catWeapons    = sortedGroups.filter((g) => (itemTypeMap[g.name] || '') === 'Weapon');
+  const catKeys       = sortedGroups.filter((g) => (itemTypeMap[g.name] || '') === 'Key');
+  const catGeneral    = sortedGroups.filter((g) => !['Blueprint','Weapon','Key'].includes(itemTypeMap[g.name] || ''));
 
-  function renderGroupRow(g, i) {
+  function renderGroupRow(g, safeIdx) {
     const myMedian = priceCache[g.name] || null;
     assetValuation += (myMedian ?? g.cost) * g.count;
-    if (searchQuery && !g.name.toLowerCase().includes(searchQuery)) return;
+    if (searchQuery && !g.name.toLowerCase().includes(searchQuery)) return '';
 
-    const safeId = `item-${i}`;
+    const safeId = `item-${safeIdx}`;
     const tag = g.source === SOURCES.LOOTED ? 'tag-looted' : g.source === SOURCES.TRADE ? 'tag-trade' : 'tag-buy';
     const tagLabel = g.source === SOURCES.LOOTED ? 'Looted' : g.source === SOURCES.TRADE ? 'Trade' : 'Bought';
     const demandQuests = questDemandMap[g.name];
@@ -238,20 +240,23 @@ function render() {
     const ageCol = staleColor(g.oldestAddedAt);
     const rowStyle = ageCol ? `border-left:3px solid ${ageCol};` : '';
     const ageTitle = g.oldestAddedAt ? `Held for ${Math.floor((Date.now() - g.oldestAddedAt) / 86400000)}d (oldest unit)` : '';
+    const ss = stackMap[g.name] || 1;
+    const full = Math.floor(g.count / ss);
+    const rem = g.count % ss;
+    const stockStr = ss === 1
+      ? `${g.count} (${g.count} slot${g.count !== 1 ? 's' : ''})`
+      : full === 0 ? `${g.count} (${g.count} of ${ss}/stack)`
+      : rem === 0 ? `${g.count} (${full}× stacks of ${ss})`
+      : `${g.count} (${full}× stacks of ${ss}, +${rem})`;
+    const costStr = g.source === SOURCES.LOOTED ? '<span style="color:var(--border-bright)">N/A</span>' : Math.floor(g.cost).toLocaleString();
 
-    invBody.innerHTML += `<tr style="${rowStyle}" ${ageTitle ? `title="${ageTitle}"` : ''}>
+    barterSelect.innerHTML += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${tagLabel}] ×${g.count}</option>`;
+
+    return `<tr style="${rowStyle}" ${ageTitle ? `title="${ageTitle}"` : ''}>
       <td><div style="display:flex;align-items:center;gap:8px;">${itemIcon(g.name, 28)}<span class="font-mono font-semibold">${g.name}</span>${questBadge}</div></td>
       <td><span class="tag ${tag}">${tagLabel}</span></td>
-      <td class="font-mono" style="color:var(--text-dim);font-size:0.78rem;">${(() => {
-        const ss = stackMap[g.name] || 1;
-        if (ss === 1) return `${g.count} (${g.count} slot${g.count !== 1 ? 's' : ''})`;
-        const full = Math.floor(g.count / ss);
-        const rem = g.count % ss;
-        if (full === 0) return `${g.count} (${g.count} of ${ss} for stack)`;
-        if (rem === 0) return `${g.count} (${full}× stacks of ${ss})`;
-        return `${g.count} (${full}× stacks of ${ss}, +${rem})`;
-      })()}</td>
-      <td class="font-mono" style="color:var(--muted)">${g.source === 'LOOTED' ? '<span style="color:var(--border-bright)">N/A</span>' : Math.floor(g.cost).toLocaleString()}</td>
+      <td class="font-mono" style="color:var(--text-dim);font-size:0.78rem;">${stockStr}</td>
+      <td class="font-mono" style="color:var(--muted)">${costStr}</td>
       <td class="font-mono" style="${myMedian ? 'color:var(--cyan)' : 'color:var(--muted)'}">${myMedian ? Math.floor(myMedian).toLocaleString() : '—'}</td>
       <td style="text-align:right;white-space:nowrap;">
         <input type="number" id="q-${safeId}" value="1" min="1" max="${g.count}" style="width:52px;padding:6px;margin-right:2px;display:inline-block">
@@ -260,21 +265,32 @@ function render() {
         <button class="btn btn-ghost" style="padding:6px 10px;font-size:0.7rem;color:var(--amber)" title="Sell entire stack" onclick="sellAll('${g.name.replace(/'/g, "\\'")}', '${g.source}', ${g.cost}, '${safeId}')">All</button>
       </td>
     </tr>`;
-    barterSelect.innerHTML += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${tagLabel}] ×${g.count}</option>`;
   }
 
-  function sectionHeader(label, count) {
-    invBody.innerHTML += `<tr class="warehouse-section-header"><td colspan="6"><span>${label}</span><span style="color:var(--muted);font-weight:400;margin-left:0.5rem;">${count} item${count !== 1 ? 's' : ''}</span></td></tr>`;
+  function renderCategory(label, items, catId) {
+    if (items.length === 0) return;
+    const visibleItems = items.filter((g) => !searchQuery || g.name.toLowerCase().includes(searchQuery));
+    if (visibleItems.length === 0) return;
+    const collapsed = sessionStorage.getItem(`cat_${catId}`) === '1';
+    invBody.innerHTML += `<tr class="warehouse-section-header" onclick="toggleWarehouseCategory('${catId}')" style="cursor:pointer;">
+      <td colspan="6">
+        <span id="cat-arrow-${catId}" style="margin-right:6px;display:inline-block;transition:transform 0.2s;transform:rotate(${collapsed ? '-90' : '0'}deg);">▾</span>
+        <span>${label}</span>
+        <span style="color:var(--muted);font-weight:400;margin-left:0.5rem;">${visibleItems.length} item${visibleItems.length !== 1 ? 's' : ''}</span>
+      </td>
+    </tr>`;
+    if (!collapsed) {
+      items.forEach((g, i) => {
+        const row = renderGroupRow(g, `${catId}_${i}`);
+        if (row) invBody.innerHTML += row;
+      });
+    }
   }
 
-  if (general.length > 0) {
-    sectionHeader('General', general.length);
-    general.forEach((g, i) => renderGroupRow(g, i));
-  }
-  if (blueprints.length > 0) {
-    sectionHeader('Blueprints', blueprints.length);
-    blueprints.forEach((g, i) => renderGroupRow(g, general.length + i));
-  }
+  renderCategory('Blueprints', catBlueprints, 'blueprints');
+  renderCategory('Weapons', catWeapons, 'weapons');
+  renderCategory('Keys', catKeys, 'keys');
+  renderCategory('General', catGeneral, 'general');
 
   const totalSessions = audit.filter((e) => e.action === ACTIONS.SESSION_START).length;
   let sessionCounter = totalSessions;
@@ -575,6 +591,13 @@ function setStaleThreshold() {
   if (isNaN(val) || val <= 0) return;
   staleThresholdDays = val;
   localStorage.setItem(STORAGE_KEYS.staleThresholdDays, String(val));
+  render();
+}
+
+// ─── Warehouse category toggle ────────────────────────────────────────────────
+function toggleWarehouseCategory(catId) {
+  const collapsed = sessionStorage.getItem(`cat_${catId}`) === '1';
+  sessionStorage.setItem(`cat_${catId}`, collapsed ? '0' : '1');
   render();
 }
 
@@ -1591,7 +1614,7 @@ function init() {
     toggleCustomItems, mergeCustomItems, addStartingStock, setStaleThreshold,
     generateListing, copyListing, commsSelectAll, commsSelectNone,
     applyPreset, setThemeProp, applyPendingTheme, resetTheme, randomizeTheme,
-    openScrapAdvisor, closeScrapModal, scrapItem, sellFromReserve,
+    openScrapAdvisor, closeScrapModal, scrapItem, sellFromReserve, toggleWarehouseCategory,
   });
 
   applyTheme(currentTheme);
