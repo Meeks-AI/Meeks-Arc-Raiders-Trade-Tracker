@@ -233,7 +233,7 @@ function render() {
   const catKeys       = sortedGroups.filter((g) => getItemType(g.name) === 'Key');
   const catGeneral    = sortedGroups.filter((g) => !['Blueprint','Weapon','Key'].includes(getItemType(g.name)));
 
-  function renderGroupRow(g, safeIdx) {
+  function renderGroupRow(g, safeIdx, catId, collapsed) {
     const myMedian = priceCache[g.name] || null;
     assetValuation += (myMedian ?? g.cost) * g.count;
     if (searchQuery && !g.name.toLowerCase().includes(searchQuery)) return '';
@@ -258,7 +258,7 @@ function render() {
 
     barterSelect.innerHTML += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${tagLabel}] ×${g.count}</option>`;
 
-    return `<tr style="${rowStyle}" ${ageTitle ? `title="${ageTitle}"` : ''}>
+    return `<tr data-cat="${catId}" style="${rowStyle}${collapsed ? 'display:none;' : ''}" ${ageTitle ? `title="${ageTitle}"` : ''}>
       <td><div style="display:flex;align-items:center;gap:8px;">${itemIcon(g.name, 28)}<span class="font-mono font-semibold">${g.name}</span>${questBadge}</div></td>
       <td><span class="tag ${tag}">${tagLabel}</span></td>
       <td class="font-mono" style="color:var(--text-dim);font-size:0.78rem;">${stockStr}</td>
@@ -286,12 +286,11 @@ function render() {
         <span style="color:var(--muted);font-weight:400;margin-left:0.5rem;">${totalQty} item${totalQty !== 1 ? 's' : ''}</span>
       </td>
     </tr>`;
-    if (!collapsed) {
-      items.forEach((g, i) => {
-        const row = renderGroupRow(g, `${catId}_${i}`);
-        if (row) invBody.innerHTML += row;
-      });
-    }
+    // Always render all rows — toggle just sets display:none
+    items.forEach((g, i) => {
+      const row = renderGroupRow(g, `${catId}_${i}`, catId, collapsed);
+      if (row) invBody.innerHTML += row;
+    });
   }
 
   renderCategory('Blueprints', catBlueprints, 'blueprints');
@@ -604,8 +603,16 @@ function setStaleThreshold() {
 // ─── Warehouse category toggle ────────────────────────────────────────────────
 function toggleWarehouseCategory(catId) {
   const collapsed = sessionStorage.getItem(`cat_${catId}`) === '1';
-  sessionStorage.setItem(`cat_${catId}`, collapsed ? '0' : '1');
-  render();
+  const nowCollapsed = !collapsed;
+  sessionStorage.setItem(`cat_${catId}`, nowCollapsed ? '1' : '0');
+
+  // Toggle row visibility directly — no full re-render
+  const rows = document.querySelectorAll(`[data-cat="${catId}"]`);
+  rows.forEach((r) => { r.style.display = nowCollapsed ? 'none' : ''; });
+
+  // Rotate arrow
+  const arrow = document.getElementById(`cat-arrow-${catId}`);
+  if (arrow) arrow.style.transform = `rotate(${nowCollapsed ? '-90' : '0'}deg)`;
 }
 
 // ─── Random history ───────────────────────────────────────────────────────────
