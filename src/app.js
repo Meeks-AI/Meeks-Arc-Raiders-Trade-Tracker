@@ -221,11 +221,17 @@ function render() {
     return acc;
   }, {});
 
+  function getItemType(name) {
+    if (itemTypeMap[name]) return itemTypeMap[name];
+    // Fallback: search apiItems directly (handles stale cache)
+    return apiItems.find((i) => i.name === name)?.item_type || '';
+  }
+
   const sortedGroups = Object.values(grouped).sort((a, b) => a.name.localeCompare(b.name));
-  const catBlueprints = sortedGroups.filter((g) => (itemTypeMap[g.name] || '') === 'Blueprint');
-  const catWeapons    = sortedGroups.filter((g) => (itemTypeMap[g.name] || '') === 'Weapon');
-  const catKeys       = sortedGroups.filter((g) => (itemTypeMap[g.name] || '') === 'Key');
-  const catGeneral    = sortedGroups.filter((g) => !['Blueprint','Weapon','Key'].includes(itemTypeMap[g.name] || ''));
+  const catBlueprints = sortedGroups.filter((g) => getItemType(g.name) === 'Blueprint');
+  const catWeapons    = sortedGroups.filter((g) => getItemType(g.name) === 'Weapon');
+  const catKeys       = sortedGroups.filter((g) => getItemType(g.name) === 'Key');
+  const catGeneral    = sortedGroups.filter((g) => !['Blueprint','Weapon','Key'].includes(getItemType(g.name)));
 
   function renderGroupRow(g, safeIdx) {
     const myMedian = priceCache[g.name] || null;
@@ -271,12 +277,13 @@ function render() {
     if (items.length === 0) return;
     const visibleItems = items.filter((g) => !searchQuery || g.name.toLowerCase().includes(searchQuery));
     if (visibleItems.length === 0) return;
+    const totalQty = visibleItems.reduce((s, g) => s + g.count, 0);
     const collapsed = sessionStorage.getItem(`cat_${catId}`) === '1';
     invBody.innerHTML += `<tr class="warehouse-section-header" onclick="toggleWarehouseCategory('${catId}')" style="cursor:pointer;">
       <td colspan="6">
         <span id="cat-arrow-${catId}" style="margin-right:6px;display:inline-block;transition:transform 0.2s;transform:rotate(${collapsed ? '-90' : '0'}deg);">▾</span>
         <span>${label}</span>
-        <span style="color:var(--muted);font-weight:400;margin-left:0.5rem;">${visibleItems.length} item${visibleItems.length !== 1 ? 's' : ''}</span>
+        <span style="color:var(--muted);font-weight:400;margin-left:0.5rem;">${totalQty} item${totalQty !== 1 ? 's' : ''}</span>
       </td>
     </tr>`;
     if (!collapsed) {
@@ -1507,7 +1514,8 @@ function openScrapAdvisor() {
 
   // Group non-blueprint stock
   const grouped = stock.reduce((acc, item) => {
-    if ((itemTypeMap[item.name] || item.item_type) === 'Blueprint') return acc;
+    const itemType = itemTypeMap[item.name] || apiItems.find((i) => i.name === item.name)?.item_type || '';
+    if (itemType === 'Blueprint') return acc;
     acc[item.name] = (acc[item.name] || 0) + 1;
     return acc;
   }, {});
