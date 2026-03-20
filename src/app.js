@@ -1622,6 +1622,198 @@ function sellFromReserve() {
   render();
 }
 
+// ─── Tutorial ─────────────────────────────────────────────────────────────────
+const TUTORIAL_STEPS = [
+  {
+    title: 'Welcome to ARTT',
+    text: 'The Arc Raiders Trade Tracker helps you manage your in-game economy — tracking loot, purchases, sales, barters, and profit across sessions. This quick tour covers the main features. It takes about 2 minutes.',
+    target: null,
+  },
+  {
+    title: 'Your Liquid Seeds',
+    text: 'This is your spendable seed balance — updated automatically when you buy, sell, or log currency finds. It\'s the seeds you actually have available to trade with right now.',
+    target: '#liquidDisplay',
+  },
+  {
+    title: 'Net Worth & Asset Valuation',
+    text: 'Net Worth = Liquid + Assets. Asset value is calculated per item using your personal sell history median (last 5 sales). If you\'ve never sold an item, it falls back to your cost basis. This gives you a realistic picture of what your stock is actually worth to you.',
+    target: '#netWorth',
+  },
+  {
+    title: 'Total Profit',
+    text: 'Profit = (sell price − cost basis) × qty sold, summed across all non-voided sales. Looted items have a cost of 0 so their full sell price counts as profit. Bought items subtract what you paid.',
+    target: '#totalProfit',
+  },
+  {
+    title: '⚑ New Session',
+    text: 'Hit this before each raid run. Sessions let the analytics tab break down your performance per run — items found, seeds collected, and sell profit per session. Without sessions, everything shows as one big blob.',
+    target: '#view-trade .btn-ghost',
+  },
+  {
+    title: 'Raid Loot',
+    text: 'After a raid, type your loot here — one item per line. Format is "Qty ItemName" e.g. "3 Broken Flashlight". Ctrl+Enter to process. Items named "Seeds", "Assorted Seeds" or "Raw Seeds" automatically log as currency instead of stock.',
+    target: '#bulkText',
+  },
+  {
+    title: 'Warehouse Categories',
+    text: 'Your stock is split into Blueprints, Weapons, Keys, and General. Click any category header to collapse it. Items that haven\'t moved in a while glow amber → orange → red based on your stale threshold setting — a heads-up to consider selling.',
+    target: '#inventoryTable',
+  },
+  {
+    title: 'Qty / Stacks Column',
+    text: 'Shows how much inventory space your stock uses. Stack sizes come from the Metaforge item database. For example: 7 items with a stack of 3 shows "7 (2× stacks of 3, +1)". A partial stack shows "2 (2 of 3/stack)". Items that don\'t stack show slots used.',
+    target: '#inventoryTable',
+  },
+  {
+    title: 'Selling & Your Median Price',
+    text: 'Enter a qty and price, then hit Sell. The "All" button fills your qty to max and auto-fills your median price if available. Your Median is calculated from your last 5 sales for that item — it\'s your personal market data, not a global price.',
+    target: '#inventoryTable',
+  },
+  {
+    title: 'Market Acquisition',
+    text: 'When you buy something from another player, log it here. The cost per unit is tracked as your cost basis, which feeds into profit calculations when you eventually sell it. Seeds are automatically deducted from your liquid balance.',
+    target: '#buyName',
+  },
+  {
+    title: 'Barter Exchange',
+    text: 'When you trade items for other items, use this. The cost basis of the items you give up gets transferred to the items you receive — proportionally split if quantities differ. This keeps your asset valuation accurate after trades.',
+    target: '#tradeFrom',
+  },
+  {
+    title: 'Sell from Reserve',
+    text: 'Sold something you weren\'t tracking in the warehouse? Log it here. It adds to your liquid and appears in the ledger as a normal sale — useful for one-off deals or items you held outside the tracker.',
+    target: '#reserveName',
+  },
+  {
+    title: '🗑 Scrap Advisor',
+    text: 'Running low on inventory space? The Scrap Advisor scores each non-blueprint item by scrappability. Score factors in: days of supply on hand (qty ÷ avg sells per session) and seeds per inventory slot (median price × stack size). Higher score = safer to remove. Suggested qty keeps 3 sessions of demand in reserve.',
+    target: null,
+    highlight: () => document.querySelector('[onclick="openScrapAdvisor()"]'),
+  },
+  {
+    title: 'Analytics Tab',
+    text: 'Tracks your performance over time. Investment Efficiency shows profit from bought-then-sold items. Loot Revenue shows profit from looted items. Per-item stats include avg sell price, total revenue, cost basis, profit, and ROI. Click any item name for a price history chart.',
+    target: '#nav-analytics',
+  },
+  {
+    title: 'Listings Tab',
+    text: 'Generates trade listings for Metaforge and Discord. Select items from your warehouse, set ask prices, toggle options like bulk discount or "open to offers", and hit Generate. Two formats are produced — one for Metaforge\'s listing description field, one formatted for Discord.',
+    target: '#nav-comms',
+  },
+  {
+    title: 'Tools & Settings',
+    text: 'Sync the Metaforge item database, adjust your seed balance manually, set starting stock, configure the stale item threshold, allow custom item names, and export/import your full data as JSON for backup.',
+    target: '#nav-tools',
+  },
+  {
+    title: 'You\'re all set 🎯',
+    text: 'Good luck out there. Track your loot, know your margins, and don\'t leave seeds on the table. You can replay this tutorial any time from Tools → Settings.',
+    target: null,
+  },
+];
+
+let tutorialStep = 0;
+
+function startTutorial() {
+  tutorialStep = 0;
+  document.getElementById('tutorialOverlay').style.display = 'block';
+  renderTutorialStep();
+}
+
+function tutorialSkip() {
+  document.getElementById('tutorialOverlay').style.display = 'none';
+  localStorage.setItem(STORAGE_KEYS.tutorialDone, '1');
+}
+
+function tutorialNext() {
+  if (tutorialStep < TUTORIAL_STEPS.length - 1) {
+    tutorialStep++;
+    renderTutorialStep();
+  } else {
+    tutorialSkip();
+  }
+}
+
+function tutorialPrev() {
+  if (tutorialStep > 0) {
+    tutorialStep--;
+    renderTutorialStep();
+  }
+}
+
+function renderTutorialStep() {
+  const step = TUTORIAL_STEPS[tutorialStep];
+  const total = TUTORIAL_STEPS.length;
+  const overlay = document.getElementById('tutorialOverlay');
+  const highlight = document.getElementById('tutorialHighlight');
+  const card = document.getElementById('tutorialCard');
+  const titleEl = document.getElementById('tutorialTitle');
+  const textEl = document.getElementById('tutorialText');
+  const stepEl = document.getElementById('tutorialStep');
+  const dotsEl = document.getElementById('tutorialDots');
+  const prevBtn = document.getElementById('tutorialPrev');
+  const nextBtn = document.getElementById('tutorialNext');
+
+  titleEl.textContent = step.title;
+  textEl.textContent = step.text;
+  stepEl.textContent = `Step ${tutorialStep + 1} of ${total}`;
+  prevBtn.style.display = tutorialStep === 0 ? 'none' : '';
+  nextBtn.textContent = tutorialStep === total - 1 ? '✓ Done' : 'Next →';
+
+  // Dots
+  dotsEl.innerHTML = TUTORIAL_STEPS.map((_, i) =>
+    `<div style="width:6px;height:6px;border-radius:50%;background:${i === tutorialStep ? 'var(--cyan)' : 'var(--border-bright)'};transition:background 0.2s;"></div>`
+  ).join('');
+
+  // Find target element
+  let targetEl = null;
+  if (step.highlight) targetEl = step.highlight();
+  else if (step.target) targetEl = document.querySelector(step.target);
+
+  const padding = 8;
+  if (targetEl) {
+    // Scroll target into view
+    targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    setTimeout(() => {
+      const rect = targetEl.getBoundingClientRect();
+      highlight.style.display = 'block';
+      highlight.style.left = `${rect.left - padding}px`;
+      highlight.style.top = `${rect.top - padding}px`;
+      highlight.style.width = `${rect.width + padding * 2}px`;
+      highlight.style.height = `${rect.height + padding * 2}px`;
+      positionCard(card, rect, padding);
+    }, 80);
+  } else {
+    highlight.style.display = 'none';
+    // Center card
+    card.style.left = '50%';
+    card.style.top = '50%';
+    card.style.transform = 'translate(-50%, -50%)';
+  }
+}
+
+function positionCard(card, rect, padding) {
+  const cw = 340, ch = 220, vw = window.innerWidth, vh = window.innerHeight, gap = 16;
+  card.style.transform = '';
+  // Try below first
+  if (rect.bottom + padding + gap + ch < vh) {
+    card.style.top = `${rect.bottom + padding + gap}px`;
+    card.style.left = `${Math.min(Math.max(rect.left, gap), vw - cw - gap)}px`;
+  // Try above
+  } else if (rect.top - padding - gap - ch > 0) {
+    card.style.top = `${rect.top - padding - gap - ch}px`;
+    card.style.left = `${Math.min(Math.max(rect.left, gap), vw - cw - gap)}px`;
+  // Try right
+  } else if (rect.right + padding + gap + cw < vw) {
+    card.style.left = `${rect.right + padding + gap}px`;
+    card.style.top = `${Math.min(Math.max(rect.top, gap), vh - ch - gap)}px`;
+  // Fall back left
+  } else {
+    card.style.left = `${Math.max(rect.left - cw - gap, gap)}px`;
+    card.style.top = `${Math.min(Math.max(rect.top, gap), vh - ch - gap)}px`;
+  }
+}
+
 function init() {
   Object.assign(window, {
     switchTab, massIngest, buyItem, executeBarter,
@@ -1632,6 +1824,7 @@ function init() {
     generateListing, copyListing, commsSelectAll, commsSelectNone,
     applyPreset, setThemeProp, applyPendingTheme, resetTheme, randomizeTheme,
     openScrapAdvisor, closeScrapModal, scrapItem, sellFromReserve, toggleWarehouseCategory,
+    startTutorial, tutorialNext, tutorialPrev, tutorialSkip,
   });
 
   applyTheme(currentTheme);
@@ -1674,6 +1867,11 @@ function init() {
     audit.push({ id: genId(), ts: Date.now(), action: ACTIONS.INITIAL, name: 'Starting Capital', qty: 1, price: seed, cost: 0, source: SOURCES.SYS });
   }
   render();
+
+  // Show tutorial on first visit
+  if (!localStorage.getItem(STORAGE_KEYS.tutorialDone)) {
+    setTimeout(startTutorial, 600);
+  }
 }
 
 init();

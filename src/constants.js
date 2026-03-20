@@ -26,4 +26,5 @@ export const STORAGE_KEYS = Object.freeze({
   allowCustomItems: `${STORAGE_PREFIX}_allow_custom_items`,
   staleThresholdDays: `${STORAGE_PREFIX}_stale_threshold_days`,
   theme: `${STORAGE_PREFIX}_theme`,
+  tutorialDone: `${STORAGE_PREFIX}_tutorial_done`,
 });
