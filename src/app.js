@@ -264,7 +264,7 @@ function render() {
     barterHtml += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${tagLabel}] ×${g.count}</option>`;
 
     return `<tr data-cat="${catId}" style="${rowStyle}${collapsed ? 'display:none;' : ''}" ${ageTitle ? `title="${ageTitle}"` : ''}>
-      <td><div style="display:flex;align-items:center;gap:8px;">${itemIcon(g.name, 28)}<span class="font-mono font-semibold" style="cursor:pointer;color:var(--cyan);text-decoration:underline dotted;" onclick="showPriceHistory('${g.name.replace(/'/g, "\\'")}')">${g.name}</span>${questBadge}</div></td>
+      <td><div style="display:flex;align-items:center;gap:8px;">${itemIcon(g.name, 28)}<span class="font-mono font-semibold item-name-link" data-item-name="${g.name.replace(/"/g, '&quot;')}" style="cursor:pointer;color:var(--cyan);text-decoration:underline dotted;">${g.name}</span>${questBadge}</div></td>
       <td><span class="tag ${tag}">${tagLabel}</span></td>
       <td class="font-mono" style="color:var(--text-dim);font-size:0.78rem;">${stockStr}</td>
       <td class="font-mono" style="color:var(--muted)">${costStr}</td>
@@ -301,6 +301,12 @@ function render() {
 
   invBody.innerHTML = invHtml;
   barterSelect.innerHTML = barterHtml;
+
+  // Event delegation for item name clicks
+  invBody.onclick = (e) => {
+    const span = e.target.closest('.item-name-link');
+    if (span && span.dataset.itemName) showPriceHistory(span.dataset.itemName);
+  };
 
   const totalSessions = audit.filter((e) => e.action === ACTIONS.SESSION_START).length;
   let sessionCounter = totalSessions;
@@ -1283,9 +1289,14 @@ function commsSelectAll() { document.querySelectorAll('.comms-check').forEach((c
 function commsSelectNone() { document.querySelectorAll('.comms-check').forEach((c) => c.checked = false); }
 
 function generateListing() {
+  // Ensure the comms table is populated
+  const tbody = document.getElementById('commsItemTable');
+  if (tbody && !tbody.innerHTML.trim()) renderCommsTab();
+
   const checks = [...document.querySelectorAll('.comms-check:checked')];
   if (checks.length === 0) {
-    renderDiscordPreview('Select at least one item first.');
+    const el = document.getElementById('discordPreview');
+    if (el) el.textContent = '⚠ Select at least one item above first.';
     return;
   }
 
