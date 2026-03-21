@@ -29,6 +29,7 @@ let staleThresholdDays = parseFloat(localStorage.getItem(STORAGE_KEYS.staleThres
 let listingOutput = { metaforge: '', discord: '' };
 let chartInstance = null;
 let priceHistoryChart = null;
+let stockHistoryChart = null;
 
 function genId() {
   return `e${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
@@ -263,7 +264,7 @@ function render() {
     barterHtml += `<option value="${g.name}|${g.source}|${g.cost}">${g.name} [${tagLabel}] ×${g.count}</option>`;
 
     return `<tr data-cat="${catId}" style="${rowStyle}${collapsed ? 'display:none;' : ''}" ${ageTitle ? `title="${ageTitle}"` : ''}>
-      <td><div style="display:flex;align-items:center;gap:8px;">${itemIcon(g.name, 28)}<span class="font-mono font-semibold">${g.name}</span>${questBadge}</div></td>
+      <td><div style="display:flex;align-items:center;gap:8px;">${itemIcon(g.name, 28)}<span class="font-mono font-semibold" style="cursor:pointer;color:var(--cyan);text-decoration:underline dotted;" onclick="showPriceHistory('${g.name.replace(/'/g, "\\'")}')">${g.name}</span>${questBadge}</div></td>
       <td><span class="tag ${tag}">${tagLabel}</span></td>
       <td class="font-mono" style="color:var(--text-dim);font-size:0.78rem;">${stockStr}</td>
       <td class="font-mono" style="color:var(--muted)">${costStr}</td>
@@ -843,39 +844,81 @@ function showPriceHistory(name) {
   const statsEl = document.getElementById('priceHistoryStats');
   if (!modal || !title) return;
 
-  const sells = audit.filter((e) => e.action === ACTIONS.SELL && e.name === name && ![ACTIONS.VOID, ACTIONS.REVERTED].includes(e.action)).sort((a, b) => a.ts - b.ts).slice(-50);
-  if (sells.length === 0) return;
-
-  const prices = sells.map((s) => s.price);
-  const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
-  const sortedP = [...prices].sort((a, b) => a - b);
-  const med = sortedP.length % 2 ? sortedP[Math.floor(sortedP.length / 2)] : (sortedP[sortedP.length / 2 - 1] + sortedP[sortedP.length / 2]) / 2;
-
   const iconHtml = iconMap[name] ? `<img src="${iconMap[name]}" width="28" height="28" style="border-radius:4px;object-fit:contain;background:var(--bg-3);margin-right:8px;vertical-align:middle;" loading="lazy">` : '';
   title.innerHTML = `${iconHtml}${name}`;
-  statsEl.textContent = `${sells.length} sales · avg ${Math.floor(avg).toLocaleString()} · median ${Math.floor(med).toLocaleString()}`;
   modal.style.display = 'flex';
 
-  const labels = sells.map((s) => new Date(s.ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }));
-  const canvas = document.getElementById('priceHistoryCanvas');
-  if (priceHistoryChart) priceHistoryChart.destroy();
-  priceHistoryChart = new Chart(canvas, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        { label: 'Sell Price', data: prices, borderColor: '#06b6d4', backgroundColor: 'rgba(6,182,212,0.08)', fill: true, tension: 0.3, pointRadius: 4, pointHoverRadius: 6 },
-        { label: 'Median', data: Array(prices.length).fill(med), borderColor: 'rgba(245,158,11,0.5)', borderDash: [4, 4], pointRadius: 0, fill: false },
-      ],
-    },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } }, scales: { x: { ticks: { color: '#64748b', maxTicksLimit: 10 }, grid: { color: '#1e2633' } }, y: { ticks: { color: '#64748b' }, grid: { color: '#1e2633' } } } },
+  // ── Price history chart ──
+  const sells = audit.filter((e) => e.action === ACTIONS.SELL && e.name === name && ![ACTIONS.VOID, ACTIONS.REVERTED].includes(e.action)).sort((a, b) => a.ts - b.ts).slice(-50);
+
+  if (priceHistoryChart) { priceHistoryChart.destroy(); priceHistoryChart = null; }
+  if (stockHistoryChart) { stockHistoryChart.destroy(); stockHistoryChart = null; }
+
+  const priceCanvas = document.getElementById('priceHistoryCanvas');
+  const stockCanvas = document.getElementById('stockHistoryCanvas');
+
+  if (sells.length > 0) {
+    const prices = sells.map((s) => s.price);
+    const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
+    const sortedP = [...prices].sort((a, b) => a - b);
+    const med = sortedP.length % 2 ? sortedP[Math.floor(sortedP.length / 2)] : (sortedP[sortedP.length / 2 - 1] + sortedP[sortedP.length / 2]) / 2;
+    statsEl.textContent = `${sells.length} sales · avg ${Math.floor(avg).toLocaleString()} · median ${Math.floor(med).toLocaleString()}`;
+    const labels = sells.map((s) => new Date(s.ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }));
+    priceHistoryChart = new Chart(priceCanvas, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Sell Price', data: prices, borderColor: '#06b6d4', backgroundColor: 'rgba(6,182,212,0.08)', fill: true, tension: 0.3, pointRadius: 4, pointHoverRadius: 6 },
+          { label: 'Median', data: Array(prices.length).fill(med), borderColor: 'rgba(245,158,11,0.5)', borderDash: [4, 4], pointRadius: 0, fill: false },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } }, scales: { x: { ticks: { color: '#64748b', maxTicksLimit: 10 }, grid: { color: '#1e2633' } }, y: { ticks: { color: '#64748b' }, grid: { color: '#1e2633' } } } },
+    });
+    priceCanvas.parentElement.style.display = '';
+  } else {
+    statsEl.textContent = 'No sales recorded yet';
+    priceCanvas.parentElement.style.display = 'none';
+  }
+
+  // ── Stock history chart — reconstruct qty over time from audit ──
+  const relevant = audit.filter((e) =>
+    e.name === name &&
+    [ACTIONS.RECOVERY, ACTIONS.STOCK_INIT, ACTIONS.PURCHASE, ACTIONS.SELL, ACTIONS.BARTER, ACTIONS.REVERTED, ACTIONS.VOID].includes(e.action)
+  ).sort((a, b) => a.ts - b.ts);
+
+  let qty = 0;
+  const stockPoints = [];
+  relevant.forEach((e) => {
+    if ([ACTIONS.RECOVERY, ACTIONS.STOCK_INIT, ACTIONS.PURCHASE].includes(e.action)) qty += e.qty || 1;
+    else if (e.action === ACTIONS.SELL) qty = Math.max(0, qty - (e.qty || 1));
+    else if (e.action === ACTIONS.BARTER) {
+      // If this item was given away in a barter, the barter entry name is composite — skip
+    }
+    stockPoints.push({ ts: e.ts, qty });
   });
+
+  if (stockPoints.length > 0) {
+    const stockLabels = stockPoints.map((p) => new Date(p.ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }));
+    stockHistoryChart = new Chart(stockCanvas, {
+      type: 'line',
+      data: {
+        labels: stockLabels,
+        datasets: [{ label: 'Qty in Stock', data: stockPoints.map((p) => p.qty), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.08)', fill: true, tension: 0.2, pointRadius: 3, stepped: true }],
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } }, scales: { x: { ticks: { color: '#64748b', maxTicksLimit: 10 }, grid: { color: '#1e2633' } }, y: { ticks: { color: '#64748b' }, grid: { color: '#1e2633' } , beginAtZero: true } } },
+    });
+    stockCanvas.parentElement.style.display = '';
+  } else {
+    stockCanvas.parentElement.style.display = 'none';
+  }
 }
 
 function closePriceHistory() {
   const modal = document.getElementById('priceHistoryModal');
   if (modal) modal.style.display = 'none';
   if (priceHistoryChart) { priceHistoryChart.destroy(); priceHistoryChart = null; }
+  if (stockHistoryChart) { stockHistoryChart.destroy(); stockHistoryChart = null; }
 }
 
 function handleModalClick(e) {
@@ -986,6 +1029,10 @@ function initInputAutocomplete(inputId) {
     dropdown.style.display = 'block';
   }
 
+  let mouseInDropdown = false;
+  dropdown.addEventListener('mouseenter', () => { mouseInDropdown = true; });
+  dropdown.addEventListener('mouseleave', () => { mouseInDropdown = false; });
+
   function hideDropdown() { dropdown.style.display = 'none'; selectedIndex = -1; currentMatches = []; }
 
   input.addEventListener('input', () => {
@@ -1009,11 +1056,11 @@ function initInputAutocomplete(inputId) {
     else if (e.key === 'Escape') { hideDropdown(); }
   });
 
-  input.addEventListener('blur', () => setTimeout(hideDropdown, 150));
+  input.addEventListener('blur', () => { if (!mouseInDropdown) setTimeout(hideDropdown, 50); });
   window.addEventListener('scroll', hideDropdown, true);
 }
-function initTextareaAutocomplete() {
-  const textarea = document.getElementById('bulkText');
+function initTextareaAutocomplete(textareaId = 'bulkText') {
+  const textarea = document.getElementById(textareaId);
   if (!textarea) return;
 
   const dropdown = document.createElement('div');
@@ -1078,6 +1125,10 @@ function initTextareaAutocomplete() {
     dropdown.style.display = 'block';
   }
 
+  let mouseInDropdown = false;
+  dropdown.addEventListener('mouseenter', () => { mouseInDropdown = true; });
+  dropdown.addEventListener('mouseleave', () => { mouseInDropdown = false; });
+
   function hideDropdown() { dropdown.style.display = 'none'; selectedIndex = -1; currentMatches = []; }
 
   textarea.addEventListener('input', () => {
@@ -1099,7 +1150,7 @@ function initTextareaAutocomplete() {
     else if (e.key === 'Escape') { hideDropdown(); }
   });
 
-  textarea.addEventListener('blur', () => setTimeout(hideDropdown, 150));
+  textarea.addEventListener('blur', () => { if (!mouseInDropdown) setTimeout(hideDropdown, 50); });
   window.addEventListener('scroll', hideDropdown, true);
 }
 
@@ -1234,65 +1285,37 @@ function commsSelectNone() { document.querySelectorAll('.comms-check').forEach((
 function generateListing() {
   const checks = [...document.querySelectorAll('.comms-check:checked')];
   if (checks.length === 0) {
-    document.getElementById('metaforgePreview').textContent = 'Select at least one item first.';
+    renderDiscordPreview('Select at least one item first.');
     return;
   }
 
   const items = checks.map((c) => ({
     name: c.dataset.name,
-    source: c.dataset.source,
     count: parseInt(c.dataset.count),
     price: parseInt(document.getElementById(`price-${c.dataset.id}`)?.value) || null,
   }));
 
-  const quickTrades = document.getElementById('opt-quickTrades')?.checked;
-  const acceptOffers = document.getElementById('opt-acceptOffers')?.checked;
-  const bulkDiscount = document.getElementById('opt-bulkDiscount')?.checked;
-  const bulkPct = parseInt(document.getElementById('opt-bulkPct')?.value) || 10;
-  const notes = (document.getElementById('opt-notes')?.value || '').trim();
-
-  // ── Build phrase list ──
-  const parts = [];
-
   // Opener
-  if (items.length === 1) {
-    parts.push(rnd(P.singleOpeners).replace('{item}', items[0].name));
-  } else {
-    parts.push(rnd(P.openers));
-  }
+  const opener = items.length === 1
+    ? rnd(P.singleOpeners).replace('{item}', items[0].name)
+    : rnd(P.openers);
 
-  // Conditions (interspersed naturally before items for Metaforge)
-  if (quickTrades) parts.push(rnd(P.quickTrades));
-  if (acceptOffers) parts.push(rnd(P.acceptOffers));
-  if (bulkDiscount && items.length > 1) parts.push(rnd(P.bulkDiscount).replace('{pct}', bulkPct));
-  if (notes) parts.push(`📝 ${notes}`);
+  // Closer
+  const closer = Math.random() > 0.5
+    ? rnd(P.closers)
+    : `${rnd(P.connectors)} ${rnd(P.closers)}`;
 
-  // Closer — 50% chance connector+closer, 50% just closer
-  if (Math.random() > 0.5) {
-    parts.push(rnd(P.closers));
-  } else {
-    parts.push(`${rnd(P.connectors)} ${rnd(P.closers)}`);
-  }
+  const header = `${opener} ${closer}`;
 
-  // Metaforge: single continuous string, add profile note for more listings
-  const profileNote = rnd([
-    'Check my profile for all active listings.',
-    'More items on my profile.',
-    'See my profile for full inventory.',
-    'Browse my profile for more.',
-  ]);
-  const metaforge = [...parts, profileNote].join(' ');
-
-  // Discord: structured item table, no source tags, make an offer if no price
+  // Item table
   const discordItems = items.map((item) => {
     const priceStr = item.price ? `${item.price.toLocaleString()} seeds` : 'Make an offer';
     return `${item.name}  ×${item.count}  |  ${priceStr}`;
   }).join('\n');
 
-  const discord = `${metaforge}\n\`\`\`\n${discordItems}\n\`\`\`\n-# via Speranza Logistics Terminal`;
+  const discord = `${header}\n\`\`\`\n${discordItems}\n\`\`\`\n-# via MARTT · Meek's Arc Raiders Trade Tracker`;
 
-  listingOutput = { metaforge, discord };
-  document.getElementById('metaforgePreview').textContent = metaforge;
+  listingOutput = { discord };
   renderDiscordPreview(discord);
 }
 
@@ -1310,10 +1333,10 @@ function renderDiscordPreview(text) {
 }
 
 function copyListing(format) {
-  const text = format === 'discord' ? listingOutput?.discord : listingOutput?.metaforge;
+  const text = listingOutput?.discord;
   if (!text) return;
   navigator.clipboard.writeText(text).then(() => {
-    const btn = document.querySelector(format === 'discord' ? '[onclick="copyListing(\'discord\')"]' : '[onclick="copyListing(\'metaforge\')"]');
+    const btn = document.querySelector('[onclick="copyListing(\'discord\')"]');
     if (btn) { const orig = btn.textContent; btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = orig, 1500); }
   });
 }
@@ -1848,6 +1871,7 @@ function init() {
 
   loadMetaforgeCache();
   initTextareaAutocomplete();
+  initTextareaAutocomplete('startingStockText');
   initInputAutocomplete('buyName');
   initInputAutocomplete('tradeTo');
   initInputAutocomplete('reserveName');
