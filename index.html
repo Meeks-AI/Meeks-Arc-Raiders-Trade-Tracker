@@ -162,7 +162,7 @@
         </div>
     </div>
     <div id="priceHistoryModal" onclick="handleModalClick(event)" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
-        <div style="background:var(--bg-2);border:1px solid var(--border-bright);border-radius:12px;padding:1.5rem;width:min(580px,90vw);">
+        <div style="background:var(--bg-2);border:1px solid var(--border-bright);border-radius:12px;padding:1.5rem;width:min(680px,92vw);max-height:90vh;overflow-y:auto;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
                 <div style="display:flex;align-items:center;gap:0.5rem;">
                     <span id="priceHistoryTitle" style="font-weight:700;font-size:1rem;color:var(--cyan);font-family:'JetBrains Mono',monospace;display:flex;align-items:center;"></span>
@@ -170,8 +170,15 @@
                 </div>
                 <button onclick="closePriceHistory()" class="btn btn-ghost" style="padding:4px 12px;font-size:1.1rem;line-height:1;">×</button>
             </div>
-            <div style="height:260px;"><canvas id="priceHistoryCanvas"></canvas></div>
-            <p style="font-size:0.65rem;color:var(--muted);text-align:center;margin-top:0.75rem;">Click outside to close · Shows last 50 sales</p>
+            <div style="margin-bottom:0.5rem;">
+                <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:0.4rem;">Price History</div>
+                <div style="height:200px;"><canvas id="priceHistoryCanvas"></canvas></div>
+            </div>
+            <div>
+                <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:0.4rem;margin-top:1rem;">Stock History</div>
+                <div style="height:160px;"><canvas id="stockHistoryCanvas"></canvas></div>
+            </div>
+            <p style="font-size:0.65rem;color:var(--muted);text-align:center;margin-top:0.75rem;">Click outside to close · Price history shows last 50 sales</p>
         </div>
     </div>
 
@@ -329,85 +336,38 @@
                 <div id="view-comms" class="tab-content">
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;">
 
-                        <!-- LEFT: selector + options -->
-                        <div style="display:flex;flex-direction:column;gap:1.25rem;">
-                            <div class="card">
-                                <div class="card-header">
-                                    <span class="card-title">Select Items</span>
-                                    <div style="display:flex;gap:0.5rem;">
-                                        <button class="btn btn-ghost" style="font-size:0.7rem;padding:4px 10px;" onclick="commsSelectAll()">All</button>
-                                        <button class="btn btn-ghost" style="font-size:0.7rem;padding:4px 10px;" onclick="commsSelectNone()">None</button>
-                                    </div>
-                                </div>
-                                <div style="max-height:340px;overflow-y:auto;">
-                                    <table>
-                                        <thead><tr><th style="width:32px;"></th><th>Item</th><th>Source</th><th style="text-align:right">Stock</th><th style="text-align:right;width:110px">Ask Price</th></tr></thead>
-                                        <tbody id="commsItemTable"></tbody>
-                                    </table>
+                        <!-- LEFT: item selector -->
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">Select Items</span>
+                                <div style="display:flex;gap:0.5rem;">
+                                    <button class="btn btn-ghost" style="font-size:0.7rem;padding:4px 10px;" onclick="commsSelectAll()">All</button>
+                                    <button class="btn btn-ghost" style="font-size:0.7rem;padding:4px 10px;" onclick="commsSelectNone()">None</button>
                                 </div>
                             </div>
-                            <div class="card" style="padding:1.25rem;">
-                                <h3 style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:1rem;">Listing Options</h3>
-                                <div style="display:flex;flex-direction:column;gap:0.1rem;">
-                                    <div class="setting-row">
-                                        <input type="checkbox" id="opt-quickTrades">
-                                        <div><div class="setting-label">Trading only right now</div><div class="setting-desc">Not raiding — buyers won't wait long, just any pending trades ahead of them</div></div>
-                                    </div>
-                                    <div class="setting-row">
-                                        <input type="checkbox" id="opt-acceptOffers">
-                                        <div><div class="setting-label">Open to offers</div><div class="setting-desc">Willing to negotiate price or accept item swaps</div></div>
-                                    </div>
-                                    <div class="setting-row">
-                                        <input type="checkbox" id="opt-bulkDiscount">
-                                        <div>
-                                            <div class="setting-label">Bulk discount</div>
-                                            <div class="setting-desc">
-                                                <div style="display:flex;align-items:center;gap:0.5rem;margin-top:4px;">
-                                                    <input type="number" id="opt-bulkPct" min="1" max="50" value="10" style="width:64px;padding:4px 8px;font-size:0.8rem;">
-                                                    <span style="font-size:0.75rem;">% off on multiple items</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style="padding-top:0.75rem;">
-                                        <label style="font-size:0.7rem;font-weight:600;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:0.4rem;">Additional Notes</label>
-                                        <textarea id="opt-notes" rows="2" placeholder="Anything extra to mention..." style="width:100%;font-size:0.8rem;"></textarea>
-                                    </div>
-                                    <div style="padding-top:0.5rem;display:flex;gap:0.5rem;">
-                                        <button class="btn btn-cyan" onclick="generateListing()" style="flex:1;">Generate Listing</button>
-                                    </div>
-                                </div>
+                            <div style="max-height:400px;overflow-y:auto;">
+                                <table>
+                                    <thead><tr><th style="width:32px;"></th><th>Item</th><th>Source</th><th style="text-align:right">Stock</th><th style="text-align:right;width:110px">Ask Price</th></tr></thead>
+                                    <tbody id="commsItemTable"></tbody>
+                                </table>
+                            </div>
+                            <div style="padding:1rem;">
+                                <button class="btn btn-cyan" onclick="generateListing()" style="width:100%;">Generate Discord Listing</button>
                             </div>
                         </div>
 
-                        <!-- RIGHT: two output panels -->
-                        <div style="display:flex;flex-direction:column;gap:1.25rem;">
-
-                            <!-- Metaforge listing -->
-                            <div class="card" style="padding:1.25rem;">
-                                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
-                                    <div>
-                                        <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-dim);margin:0;">Metaforge Listing</h3>
-                                        <p style="font-size:0.68rem;color:var(--muted);margin:3px 0 0;">Paste this as your listing description</p>
-                                    </div>
-                                    <button class="btn btn-ghost" style="font-size:0.7rem;padding:5px 12px;" onclick="copyListing('metaforge')">Copy</button>
+                        <!-- RIGHT: Discord output -->
+                        <div class="card" style="padding:1.25rem;">
+                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                                <div>
+                                    <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#5865F2;margin:0;">Discord Post</h3>
+                                    <p style="font-size:0.68rem;color:var(--muted);margin:3px 0 0;">Formatted for Discord — includes item table</p>
                                 </div>
-                                <div id="metaforgePreview" class="listing-output">Select items and click Generate Listing.</div>
+                                <button class="btn btn-ghost" style="font-size:0.7rem;padding:5px 12px;color:#5865F2;border:1px solid rgba(88,101,242,0.4);" onclick="copyListing('discord')">Copy</button>
                             </div>
-
-                            <!-- Discord listing -->
-                            <div class="card" style="padding:1.25rem;">
-                                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
-                                    <div>
-                                        <h3 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#5865F2;margin:0;">Discord Post</h3>
-                                        <p style="font-size:0.68rem;color:var(--muted);margin:3px 0 0;">Formatted for Discord — includes item table</p>
-                                    </div>
-                                    <button class="btn btn-ghost" style="font-size:0.7rem;padding:5px 12px;color:#5865F2;border:1px solid rgba(88,101,242,0.4);" onclick="copyListing('discord')">Copy</button>
-                                </div>
-                                <div id="discordPreview" class="discord-preview">Discord preview will appear here.</div>
-                            </div>
-
+                            <div id="discordPreview" class="discord-preview">Select items and click Generate Discord Listing.</div>
                         </div>
+
                     </div>
                 </div>
 
