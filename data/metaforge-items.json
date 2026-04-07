@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-06T11:29:31.786Z",
+  "updatedAt": "2026-04-07T11:34:36.614Z",
   "count": 547,
   "data": [
     {
@@ -15498,10 +15498,10 @@
         "increasedRecoilRecoveryTime": 0,
         "reducedDispersionRecoveryTime": 0
       },
-      "flavor_text": "",
+      "flavor_text": "A volatile cansiter that vents fire when shot.",
       "subcategory": "",
       "created_at": "2026-02-24T10:51:42.096802+00:00",
-      "updated_at": "2026-02-25T14:10:49.800199+00:00",
+      "updated_at": "2026-04-07T09:06:28.941343+00:00",
       "shield_type": "",
       "loot_area": "",
       "sources": null,
