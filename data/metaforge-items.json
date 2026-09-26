@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-25T13:46:59.476Z",
+  "updatedAt": "2026-09-26T13:05:15.228Z",
   "count": 607,
   "data": [
     {
@@ -14093,14 +14093,14 @@
       "flavor_text": "",
       "subcategory": "Recyclable",
       "created_at": "2025-10-08T16:41:52.81437+00:00",
-      "updated_at": "2026-06-29T16:23:50.994734+00:00",
+      "updated_at": "2026-09-26T06:22:01.016752+00:00",
       "shield_type": "",
       "loot_area": "Medical",
       "sources": null,
       "ammo_type": "",
       "locations": [],
       "guide_links": [],
-      "article": "I need to audit this article against the 21 rules provided.\n\nLet me check for violations:\n\n1. <strong>Rule 1 (NO SPECIFIC INGREDIENTS/OUTPUTS)</strong>: The article mentions \"Trophy Display project\" but does NOT name specific ingredients or outputs for crafting this item. ✓\n\n2. <strong>Rule 21 (NO \"PLAYERS\" WORD)</strong>: The article uses \"Players can find\" - this violates Rule 21. Must change to \"Raiders\". ✗\n\n3. <strong>Rule 13 (NO NEGATIVE PROGRESSION)</strong>: The article does not contain negative statements about recycling/projects. ✓\n\n4. <strong>Rule 8 (PARAGRAPH TAGS)</strong>: All text is wrapped in `<p>` tags. ✓\n\n5. <strong>Rule 5 (CURRENCY AS \"COINS\")</strong>: No currency mentioned. ✓\n\n6. <strong>Rule 4 (NO \"MACHINES/ROBOTS\")</strong>: No such words used. ✓\n\n7. <strong>Rule 7 (NO MARKDOWN BOLDING)</strong>: Uses `<strong>` tags correctly. ✓\n\n8. <strong>Rule 10 (ARC LINKS)</strong>: No specific ARC names mentioned. ✓\n\n9. <strong>Rule 12 (MAP LINKING)</strong>: No map mentions. ✓\n\n10. <strong>Rule 16 (COIN LINKS BAN)</strong>: No coin links. ✓\n\n11. <strong>Rule 17 (BAN \"MISSION\")</strong>: No \"mission\" word used. ✓\n\n12. <strong>Rule 18 (NO STATION LINKS)</strong>: No station links present. ✓\n\n13. <strong>Rule 20 (NO GENERIC \"ENEMIES\")</strong>: No such word used. ✓\n\nHere is the corrected version:\n\n<p>The Expired Respirator is a worn-out piece of equipment with clogged filters that is no longer usable. It is a component needed to complete Stage 2 of the <strong>Trophy Display</strong> project. Raiders can find this item by scavenging in medical areas. It can also be recycled for crafting materials, which can be tracked using the <a href=\"https://metaforge.app/arc-raiders/needed-items\">Needed Items Tracker</a>.</p>",
+      "article": "",
       "guide_url": "/arc-raiders/where-to-find-expired-respirators-arc-raiders"
     },
     {
@@ -15769,14 +15769,14 @@
       "flavor_text": null,
       "subcategory": "Basic Material",
       "created_at": "2025-09-23T18:21:03.51415+00:00",
-      "updated_at": "2026-06-29T16:23:53.57274+00:00",
+      "updated_at": "2026-09-26T06:22:10.907124+00:00",
       "shield_type": null,
       "loot_area": "Commercial, Residential, Medical",
       "sources": null,
       "ammo_type": null,
       "locations": [],
       "guide_links": [],
-      "article": "The article violates Rule 1 (NO SPECIFIC INGREDIENTS OR CRAFTING OUTPUTS). It names \"Fabric\" as a specific ingredient used for crafting and mentions specific crafting outputs (\"medical supplies and shields\"). It also violates Rule 9 (REDUNDANCY & REPETITION) by repeating \"Fabric\" unnecessarily.\n\nHere is the corrected version:\n\n<p>This is a basic material used for crafting and healing. You can use it to craft various items and shields. It also works as a direct healing item, slowly restoring a small amount of your health over a short period.</p>\n\n<p>You can find this material by scavenging in Commercial, Medical, and Residential areas. It can also be obtained by recycling other items or by purchasing it from Celeste.</p>",
+      "article": "",
       "guide_url": null
     },
     {
@@ -23431,7 +23431,7 @@
       "flavor_text": "",
       "subcategory": "Blueprint",
       "created_at": "2025-10-09T08:09:43.276157+00:00",
-      "updated_at": "2026-06-29T16:24:04.916327+00:00",
+      "updated_at": "2026-09-26T06:21:37.793096+00:00",
       "shield_type": "",
       "loot_area": "",
       "sources": null,
@@ -23443,7 +23443,7 @@
           "label": "How to Find Every Blueprint"
         }
       ],
-      "article": "<p>I need the Refiner level number to complete the correction. The article currently shows \"[NEEDS LEVEL NUMBER]\" as a placeholder.</p><p>Please provide:\n- What level Refiner is required to craft Light Gun Parts?</p><p>Once you provide this, I can output the fully corrected HTML.</p>",
+      "article": "",
       "guide_url": null
     },
     {
@@ -28075,14 +28075,14 @@
       "flavor_text": null,
       "subcategory": "Basic Material",
       "created_at": "2025-09-23T18:21:03.915759+00:00",
-      "updated_at": "2026-06-29T16:24:11.674514+00:00",
+      "updated_at": "2026-09-26T06:22:18.732974+00:00",
       "shield_type": null,
       "loot_area": "Technological, Commercial, Residential",
       "sources": null,
       "ammo_type": null,
       "locations": [],
       "guide_links": [],
-      "article": "This article violates Rule 1 (NO SPECIFIC INGREDIENTS OR CRAFTING OUTPUTS). The text names specific items that are crafted using Plastic Parts (adrenaline shots, angled grips, binoculars, extended light magazines), which is prohibited. These specific item links must be removed and replaced with generic language.\n\nHere is the corrected version:\n\n<p>Plastic Parts are a fundamental crafting material used to make many different items. You can find them by scavenging in various areas, and they are often present inside containers such as Industrial Drawers and Server Racks. These parts can also be obtained by recycling other items, or purchased from Celeste. They are an essential component for crafting useful items at various crafting stations.</p>",
+      "article": "",
       "guide_url": null
     },
     {
