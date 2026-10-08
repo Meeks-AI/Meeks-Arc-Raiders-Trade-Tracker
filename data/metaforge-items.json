@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-07T15:33:03.367Z",
+  "updatedAt": "2026-10-08T15:36:31.775Z",
   "count": 608,
   "data": [
     {
@@ -21070,7 +21070,8 @@
       ],
       "article": "<p>The <strong>Hullcracker Blueprint</strong> is a blueprint that allows you to craft the <a href=\"https://metaforge.app/arc-raiders/database/item/hullcracker-i\">Hullcracker I</a> at the Gunsmith. You can obtain this blueprint as a reward upon completing the quest called \"The Major's Footlocker\". For an overview of available tasks, visit the <a href=\"https://metaforge.app/arc-raiders/database/quests\">Quests</a> page.</p>",
       "guide_url": null,
-      "cosmetic": null
+      "cosmetic": null,
+      "unlocks_weapon": true
     },
     {
       "id": "hullcracker-i",
@@ -21602,7 +21603,8 @@
       "guide_links": [],
       "article": "<p>The <strong>Il Toro Blueprint</strong> is a blueprint that allows Raiders to create the <a href=\"https://metaforge.app/arc-raiders/database/item/il-toro-i\">Il Toro</a> shotgun at a Gunsmith bench. It is known for its high damage output at close distances.</p>",
       "guide_url": "/arc-raiders/how-to-find-il-toro-blueprint-in-arc-raiders",
-      "cosmetic": null
+      "cosmetic": null,
+      "unlocks_weapon": true
     },
     {
       "id": "il-toro-i",
@@ -22746,7 +22748,8 @@
       ],
       "article": "<p>The Jupiter Blueprint is a blueprint that allows you to craft the <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"https://metaforge.app/arc-raiders/database/item/jupiter-i\">Jupiter</a> at a Gunsmith bench. Raiders obtain this blueprint by solving the Harvester puzzle protected by the <a href=\"https://metaforge.app/arc-raiders/database/arc/queen\" target=\"_blank\">Queen</a> during the Harvester minor map condition.</p>",
       "guide_url": null,
-      "cosmetic": null
+      "cosmetic": null,
+      "unlocks_weapon": true
     },
     {
       "id": "kettle-i",
