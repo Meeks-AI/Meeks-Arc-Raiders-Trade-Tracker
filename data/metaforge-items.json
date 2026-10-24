@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-23T13:26:07.587Z",
+  "updatedAt": "2026-10-24T12:40:03.709Z",
   "count": 1110,
   "data": [
     {
@@ -57031,35 +57031,6 @@
       }
     },
     {
-      "id": "study-armchair",
-      "name": "Study Armchair",
-      "description": null,
-      "item_type": "Furniture",
-      "loadout_slots": [],
-      "icon": "https://static.metaforge.app/arc-raiders/preview/20261007/04b92633a931d131142ac0b436d6dbdceb8e8ab1b57e42b6bfd2b668681c9d6d.png",
-      "rarity": "Uncommon",
-      "value": null,
-      "workbench": null,
-      "stat_block": {
-        "footprint": "2 × 2",
-        "placement": "Floor",
-        "attachedSlots": 2
-      },
-      "flavor_text": null,
-      "subcategory": "Seating",
-      "created_at": "2026-10-07T20:03:07.390952+00:00",
-      "updated_at": "2026-10-10T13:53:02.568149+00:00",
-      "shield_type": null,
-      "loot_area": null,
-      "sources": null,
-      "ammo_type": null,
-      "locations": [],
-      "guide_links": [],
-      "article": null,
-      "guide_url": null,
-      "cosmetic": null
-    },
-    {
       "id": "study-armchair-res-armchair-01-a",
       "name": "Study Armchair",
       "description": null,
@@ -57089,13 +57060,42 @@
       "cosmetic": null
     },
     {
-      "id": "study-armchair-design-res-armchair-01-a",
+      "id": "study-armchair",
+      "name": "Study Armchair",
+      "description": null,
+      "item_type": "Furniture",
+      "loadout_slots": [],
+      "icon": "https://static.metaforge.app/arc-raiders/preview/20261007/04b92633a931d131142ac0b436d6dbdceb8e8ab1b57e42b6bfd2b668681c9d6d.png",
+      "rarity": "Uncommon",
+      "value": null,
+      "workbench": null,
+      "stat_block": {
+        "footprint": "2 × 2",
+        "placement": "Floor",
+        "attachedSlots": 2
+      },
+      "flavor_text": null,
+      "subcategory": "Seating",
+      "created_at": "2026-10-07T20:03:07.390952+00:00",
+      "updated_at": "2026-10-10T13:53:02.568149+00:00",
+      "shield_type": null,
+      "loot_area": null,
+      "sources": null,
+      "ammo_type": null,
+      "locations": [],
+      "guide_links": [],
+      "article": null,
+      "guide_url": null,
+      "cosmetic": null
+    },
+    {
+      "id": "study-armchair-design-res-sofa-01-y150-a",
       "name": "Study Armchair Design",
       "description": null,
       "item_type": "Design",
       "loadout_slots": [],
-      "icon": "https://static.metaforge.app/arc-raiders/preview/20261008/1ce44bb1e0fbee784caee51c407292ab63a6525e048626a230087a4a454e8ece.png",
-      "rarity": "Legendary",
+      "icon": "https://static.metaforge.app/arc-raiders/preview/20261007/04b92633a931d131142ac0b436d6dbdceb8e8ab1b57e42b6bfd2b668681c9d6d.png",
+      "rarity": "Uncommon",
       "value": 5000,
       "workbench": null,
       "stat_block": {
@@ -57117,13 +57117,13 @@
       "cosmetic": null
     },
     {
-      "id": "study-armchair-design-res-sofa-01-y150-a",
+      "id": "study-armchair-design-res-armchair-01-a",
       "name": "Study Armchair Design",
       "description": null,
       "item_type": "Design",
       "loadout_slots": [],
-      "icon": "https://static.metaforge.app/arc-raiders/preview/20261007/04b92633a931d131142ac0b436d6dbdceb8e8ab1b57e42b6bfd2b668681c9d6d.png",
-      "rarity": "Uncommon",
+      "icon": "https://static.metaforge.app/arc-raiders/preview/20261008/1ce44bb1e0fbee784caee51c407292ab63a6525e048626a230087a4a454e8ece.png",
+      "rarity": "Legendary",
       "value": 5000,
       "workbench": null,
       "stat_block": {
